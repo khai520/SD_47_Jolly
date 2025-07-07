@@ -1,0 +1,494 @@
+﻿@page "/mon-an/{MonAnId}"
+@layout Layout.MainLayout
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject Service.IService.IApiService apiService
+@inject Service.IService.IMonAnService monAnService
+@inject Service.IService.IChiTietMonAnService ChiTietMonAnService
+
+<link href="/css/DanhSachChiTietMonAn.css" rel="stylesheet" />
+<div class="container">
+    <div class="header">
+        <button class="back-btn" @onclick="GoBack">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </button>
+
+        <h1><i class="fas fa-utensils"></i> Chi Tiết Món Ăn</h1>
+        <p>Xem và chỉnh sửa thông tin chi tiết sản phẩm</p>
+    </div>
+
+    @if (monAn == null)
+    {
+        <div class="loading">
+            <i class="fas fa-spinner fa-spin"></i> Đang tải...
+        </div>
+    }
+    else
+    {
+        <div class="content">
+            <div class="product-overview">
+                <div class="product-main-info">
+                    <div class="product-image-placeholder">
+                        <div class="product-status @(monAn.TrangThai ? "status-active" : "status-inactive")">
+                            <i class="fas @(monAn.TrangThai ? "fa-check-circle" : "fa-times-circle")"></i>
+                            @(monAn.TrangThai ? "Đang bán" : "Ngừng bán")
+                        </div>
+                    </div>
+                    
+                    @if (isEditMode)
+                    {
+                        <EditForm Model="monAn" OnValidSubmit="SaveMonAn">
+                            <DataAnnotationsValidator />
+                            <ValidationSummary />
+                            
+                            <div class="form-group">
+                                <InputText @bind-Value="monAn.Ten" class="form-input product-title-input" placeholder="Tên món ăn" />
+                            </div>
+                            
+                            <div class="form-group">
+                                <InputNumber @bind-Value="monAn.Gia" class="form-input product-price-input" placeholder="Giá" />
+                            </div>
+                            
+                            <div class="product-id">ID: <span>@monAn.Id</span></div>
+                            
+                            <div class="form-group">
+                                <InputTextArea @bind-Value="monAn.Mota" class="form-textarea" placeholder="Mô tả món ăn" />
+                            </div>
+
+                            <div class="product-meta">
+                                <div class="meta-item">
+                                    <i class="fas fa-calendar"></i>
+                                    <span>HSD: <InputDate @bind-Value="monAn.HanSuDung" class="form-input-date" /></span>
+                                </div>
+                                <div class="meta-item">
+                                    <i class="fas fa-toggle-on"></i>
+                                    <span>Trạng thái: <InputCheckbox @bind-Value="monAn.TrangThai" /> Đang bán</span>
+                                </div>
+                            </div>
+                        </EditForm>
+                    }
+                    else
+                    {
+                        <div class="product-title">@monAn.Ten</div>
+                        <div class="product-price">@monAn.Gia.ToString("N0")đ</div>
+                        <div class="product-id">ID: <span>@monAn.Id</span></div>
+                        
+                        <div class="product-description">
+                            @monAn.Mota
+                        </div>
+
+                        <div class="product-meta">
+                            <div class="meta-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>HSD: <span>@monAn.HanSuDung?.ToString("dd/MM/yyyy")</span></span>
+                            </div>
+                            <div class="meta-item">
+                                <i class="fas fa-toggle-on"></i>
+                                <span>Trạng thái: <span class="@(monAn.TrangThai ? "text-success" : "text-danger")">@(monAn.TrangThai ? "Đang bán" : "Ngừng bán")</span></span>
+                            </div>
+                        </div>
+                    }
+
+                    <div class="edit-actions">
+                        <button class="action-btn @(isEditMode ? "btn-save" : "btn-edit")" @onclick="ToggleEditMode">
+                            <i class="fas @(isEditMode ? "fa-save" : "fa-edit")"></i>
+                            @(isEditMode ? "Lưu" : "Chỉnh sửa")
+                        </button>
+                        @if (isEditMode)
+                        {
+                            <button class="action-btn btn-cancel" @onclick="CancelEdit">
+                                <i class="fas fa-times"></i>
+                                Hủy
+                            </button>
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phần hiển thị chi tiết món ăn -->
+            <div class="product-details">
+                <div class="details-header">
+                    <h2><i class="fas fa-list"></i> Chi Tiết Món Ăn</h2>
+                    <button class="btn btn-primary" @onclick="ShowAddDetailModal">
+                        <i class="fas fa-plus"></i> Thêm chi tiết
+                    </button>
+                </div>
+
+                @if (danhSachChiTiet == null)
+                {
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Đang tải chi tiết...
+                    </div>
+                }
+                else
+                {
+                    <div class="details-grid">
+                        @foreach (var chiTiet in danhSachChiTiet)
+                        {
+                            <div class="detail-card">
+                                <div class="detail-header">
+                                    <div class="detail-status @(chiTiet.TrangThai ? "status-active" : "status-inactive")">
+                                        <i class="fas @(chiTiet.TrangThai ? "fa-check-circle" : "fa-times-circle")"></i>
+                                        @(chiTiet.TrangThai ? "Hoạt động" : "Tạm dừng")
+                                    </div>
+                                    <div class="detail-actions">
+                                        <button class="action-btn btn-edit" @onclick="() => EditChiTiet(chiTiet)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="action-btn btn-delete" @onclick="() => DoiTrangThai(chiTiet)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <div class="detail-content">
+                                    <div class="detail-info">
+                                        <div class="info-item">
+                                            <strong>Thể loại:</strong>
+                                            <span>@(theLoaiList.FirstOrDefault(x => x.Id == chiTiet.TheLoaiId)?.Ten ?? "N/A")</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Thương hiệu:</strong>
+                                            <span>@(thuongHieuList.FirstOrDefault(x => x.Id == chiTiet.ThuongHieuId)?.Ten ?? "N/A")</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Nhà cung cấp:</strong>
+                                            <span>@(nhaCungCapList.FirstOrDefault(x => x.Id == chiTiet.NhaCungCapId)?.Ten ?? "N/A")</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Đóng gói:</strong>
+                                            <span>@(dongGoiList.FirstOrDefault(x => x.Id == chiTiet.DongGoiId)?.Ten ?? "N/A")</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Số lượng:</strong>
+                                            <span class="quantity">@chiTiet.Soluong</span>
+                                        </div>
+                                        @if (!string.IsNullOrEmpty(chiTiet.Mota))
+                                        {
+                                            <div class="info-item">
+                                                <strong>Mô tả:</strong>
+                                                <span>@chiTiet.Mota</span>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    @if (chiTiet.DanhSachAnh?.Any() == true)
+                                    {
+                                        <div class="detail-images">
+                                            <div class="image-gallery">
+                                                @foreach (var anh in chiTiet.DanhSachAnh.Take(3))
+                                                {
+                                                    <img src="@anh.DuongDan" alt="@anh.Ten" @onclick="() => ShowImageLightbox(anh.DuongDan)" />
+                                                }
+                                                @if (chiTiet.DanhSachAnh.Count > 3)
+                                                {
+                                                    <div class="more-images">
+                                                        +@(chiTiet.DanhSachAnh.Count - 3)
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Modal thêm/sửa chi tiết -->
+@if (showDetailModal)
+{
+    <div class="modal-overlay" @onclick="CloseDetailModal">
+        <div class="modal-content" @onclick:stopPropagation="true">
+            <div class="modal-header">
+                <h3>@(isEditingDetail ? "Chỉnh sửa" : "Thêm") Chi Tiết Món Ăn</h3>
+                <button class="btn-close" @onclick="CloseDetailModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <ThemChiTietMonAn
+                    DanhSachChiTiet="@tempChiTietList"
+                    MonAnId="@MonAnId"
+                    ButtonText="@(isEditingDetail ? "Cập nhật" : "Thêm")"
+                    ShowFileUpload="true"
+                    ShowDescription="true"
+                    ShowStatus="true"
+                    ShowCancelButton="true"
+                    AllowEditInTable="false"
+                    OnThemChiTiet="OnChiTietAdded"
+                    OnXoaChiTiet="OnChiTietRemoved"
+                    OnSuaChiTiet="OnChiTietEdited"
+                    OnHuyChiTiet="CloseDetailModal" />
+            </div>
+        </div>
+    </div>
+}
+
+<!-- Success/Error Messages -->
+@if (showMessage)
+{
+    <div class="message-overlay">
+        <div class="message-box @(isSuccess ? "success" : "error")">
+            <i class="fas @(isSuccess ? "fa-check-circle" : "fa-exclamation-circle")"></i>
+            <span>@messageContent</span>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public string MonAnId { get; set; } = "";
+
+    private MonAn? monAn;
+    private MonAn? originalMonAn; 
+    private List<ChiTietMonAn> danhSachChiTiet = new();
+    private List<ChiTietMonAn> tempChiTietList = new();
+    private bool isEditMode = false;
+    private bool showDetailModal = false;
+    private bool isEditingDetail = false;
+    private ChiTietMonAn? editingChiTiet = null;
+
+    // Dropdown data
+    private List<TheLoai> theLoaiList = new();
+    private List<ThuongHieu> thuongHieuList = new();
+    private List<NhaCungCap> nhaCungCapList = new();
+    private List<DongGoi> dongGoiList = new();
+
+    // Message handling
+    private bool showMessage = false;
+    private bool isSuccess = false;
+    private string messageContent = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData();
+    }
+
+    private async Task LoadData()
+    {
+        try
+        {
+
+            monAn = await apiService.GetAsync<MonAn>($"MonAn/{MonAnId}");
+            if (monAn != null)
+            {
+                originalMonAn = new MonAn
+                {
+                    Id = monAn.Id,
+                    Ten = monAn.Ten,
+                    Gia = monAn.Gia,
+                    Mota = monAn.Mota,
+                    HanSuDung = monAn.HanSuDung,
+                    TrangThai = monAn.TrangThai
+                };
+            }
+
+            danhSachChiTiet = (await ChiTietMonAnService.GetChiTiet(MonAnId))?.ToList() ?? new List<ChiTietMonAn>();
+
+            await LoadDropdownData();
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Lỗi khi tải dữ liệu: {ex.Message}", false);
+        }
+    }
+
+    private async Task LoadDropdownData()
+    {
+        theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
+        thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
+        nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
+        dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi") ?? new();
+    }
+
+
+    private async Task ToggleEditMode()
+    {
+        if (isEditMode)
+        {
+            await SaveMonAn();
+        }
+        else
+        {
+            isEditMode = true;
+        }
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/quanlysanpham", forceLoad: false);
+    }
+
+    private async Task SaveMonAn()
+    {
+        try
+        {
+            if (monAn != null)
+            {
+                var result = await apiService.PutAsync<MonAn>($"MonAn/{monAn.Id}", monAn);
+                if (result != null)
+                {
+                    isEditMode = false;
+                    originalMonAn = new MonAn
+                    {
+                        Id = monAn.Id,
+                        Ten = monAn.Ten,
+                        Gia = monAn.Gia,
+                        Mota = monAn.Mota,
+                        HanSuDung = monAn.HanSuDung,
+                        TrangThai = monAn.TrangThai
+                    };
+                    ShowMessage("Cập nhật món ăn thành công!", true);
+                }
+                else
+                {
+                    ShowMessage("Lỗi khi cập nhật món ăn!", false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Lỗi: {ex.Message}", false);
+        }
+    }
+
+    private void CancelEdit()
+    {
+        if (originalMonAn != null && monAn != null)
+        {
+            monAn.Ten = originalMonAn.Ten;
+            monAn.Gia = originalMonAn.Gia;
+            monAn.Mota = originalMonAn.Mota;
+            monAn.HanSuDung = originalMonAn.HanSuDung;
+            monAn.TrangThai = originalMonAn.TrangThai;
+        }
+        isEditMode = false;
+    }
+
+    private void ShowAddDetailModal()
+    {
+        isEditingDetail = false;
+        editingChiTiet = null;
+        tempChiTietList = new();
+        showDetailModal = true;
+    }
+
+
+    private void EditChiTiet(ChiTietMonAn chiTiet)
+    {
+        isEditingDetail = true;
+        editingChiTiet = chiTiet;
+        tempChiTietList = new List<ChiTietMonAn> { chiTiet };
+        showDetailModal = true;
+    }
+
+    private void CloseDetailModal()
+    {
+        showDetailModal = false;
+        isEditingDetail = false;
+        editingChiTiet = null;
+        tempChiTietList = new();
+    }
+
+    private async Task DoiTrangThai(ChiTietMonAn chiTiet)
+    {
+        if (await JSRuntime.InvokeAsync<bool>("confirm", $"Bạn có chắc muốn đổi trạng thái không?"))
+        {
+            try
+            {
+                chiTiet.TrangThai = !chiTiet.TrangThai;
+                var success = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", chiTiet);
+                if (success)
+                {
+
+                    LoadData();
+                    ShowMessage("Đổi trạng thái thành công!", true);
+                }
+                else
+                {
+                    ShowMessage("Lỗi khi đổi trạng thái!", false);
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowMessage($"Lỗi: {ex.Message}", false);
+            }
+        }
+    }
+
+    private async Task OnChiTietAdded(ChiTietMonAn chiTiet)
+    {
+        try
+        {
+            if (isEditingDetail && editingChiTiet != null)
+            {
+                chiTiet.Id = editingChiTiet.Id;
+                var result = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", chiTiet);
+                if (result != null)
+                {
+                    ShowMessage("Cập nhật chi tiết thành công!", true);
+                    CloseDetailModal();
+                }
+                else
+                {
+                    ShowMessage("Lỗi khi cập nhật chi tiết!", false);
+                }
+            }
+            else
+            {
+                // Thêm chi tiết mới
+                var result = await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", chiTiet);
+                if (result != null)
+                {
+                    LoadDropdownData();
+                    danhSachChiTiet.Add(result);
+                    ShowMessage("Thêm chi tiết thành công!", true);
+                    CloseDetailModal();
+                }
+                else
+                {
+                    ShowMessage("Lỗi khi thêm chi tiết!", false);
+                }
+            }
+        }
+        catch (Exception ex)
+        {
+            ShowMessage($"Lỗi: {ex.Message}", false);
+        }
+    }
+
+    private async Task OnChiTietRemoved(ChiTietMonAn chiTiet)
+    {
+        // Xử lý khi xóa chi tiết từ component
+        await Task.CompletedTask;
+    }
+
+    private async Task OnChiTietEdited(ChiTietMonAn chiTiet)
+    {
+        // Xử lý khi sửa chi tiết từ component
+        await Task.CompletedTask;
+    }
+
+    private async Task ShowImageLightbox(string imageSrc)
+    {
+        await JSRuntime.InvokeVoidAsync("imageGallery.showLightbox", imageSrc);
+    }
+
+    private void ShowMessage(string message, bool success)
+    {
+        messageContent = message;
+        isSuccess = success;
+        showMessage = true;
+        StateHasChanged();
+
+        
+        _ = Task.Run(async () =>
+        {
+            await Task.Delay(2000);
+            showMessage = false;
+            await InvokeAsync(StateHasChanged);
+        });
+    }
+}

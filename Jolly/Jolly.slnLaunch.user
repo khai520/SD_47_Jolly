@@ -1,0 +1,16 @@
+[
+  {
+    "Name": "New Profile",
+    "Projects": [
+      {
+        "Path": "Admin\\Admin.csproj",
+        "Action": "StartWithoutDebugging",
+        "DebugTarget": "https"
+      },
+      {
+        "Path": "ViewAPI\\ViewAPI.csproj",
+        "Action": "Start"
+      }
+    ]
+  }
+]

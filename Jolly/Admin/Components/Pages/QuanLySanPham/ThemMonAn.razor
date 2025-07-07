@@ -1,0 +1,151 @@
+﻿@page "/them-mon-an"
+@layout Layout.MainLayout
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Navigation
+@inject Service.IService.IMonAnService monAnService 
+@inject Service.IService.IApiService apiService
+@inject Service.IService.IUploadService UploadService
+@inject XulyId xulyId
+
+<link href="/css/ThemMonAn.css" rel="stylesheet" />
+<div class="container">
+    <div class="header">
+        <h1>🍽️ Thêm Món Ăn</h1>
+    </div>
+
+    <div class="form-container">
+        @if (showSuccessMessage)
+        {
+            <div class="success-message">@successMessage</div>
+        }
+
+        <EditForm Model="@model" OnValidSubmit="HandleValidSubmit">
+            <DataAnnotationsValidator />
+
+            <!-- Thông tin cơ bản món ăn -->
+            <div class="form-section">
+                <h3>📋 Thông tin món ăn</h3>
+
+                <div class="form-group">
+                    <label>Tên món ăn</label>
+                    <InputText @bind-Value="model.MonAn.Ten" @oninput="OnTenChanged" />
+                </div>
+                <div class="form-group">
+                    <label>Giá</label>
+                    <InputNumber @bind-Value="model.MonAn.Gia" />
+                </div>
+                <div class="form-group">
+                    <label>Hạn sử dụng</label>
+                    <InputDate @bind-Value="model.MonAn.HanSuDung" />
+                </div>
+                <div class="form-group">
+                    <label>Mô tả</label>
+                    <InputTextArea @bind-Value="model.MonAn.Mota" rows="3" />
+                </div>
+            </div>
+
+            <!-- Sử dụng component chi tiết món ăn -->
+            <ThemChiTietMonAn
+                DanhSachChiTiet="@model.DanhSachChiTiet"
+                MonAnId="@model.MonAn.Id"
+                ButtonText="+ Tạm thêm"
+                ShowFileUpload="true"
+                ShowDescription="false"
+                ShowStatus="false"
+                ShowCancelButton="false"
+                AllowEditInTable="true"
+                OnThemChiTiet="OnChiTietAdded"
+                OnXoaChiTiet="OnChiTietRemoved"
+                OnSuaChiTiet="OnChiTietEdited" />
+
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary">✅ Thêm món ăn và toàn bộ chi tiết</button>
+                <button type="button" class="btn btn-secondary" @onclick="ResetForm">🔄 Làm mới</button>
+            </div>
+        </EditForm>
+    </div>
+</div>
+
+@code {
+    private MonAnFormModel model = new();
+    private bool showSuccessMessage = false;
+    private string successMessage = "";
+
+
+    public class MonAnFormModel
+    {
+        public MonAn MonAn { get; set; } = new();
+        public List<ChiTietMonAn> DanhSachChiTiet { get; set; } = new();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        model.MonAn.Id = await monAnService.GetIdMonAn();
+    }
+
+    private async Task HandleValidSubmit()
+    {
+        try
+        {
+            var monAnResponse = await apiService.PostAsync<MonAn, MonAn>("MonAn", model.MonAn);
+            if (monAnResponse == null)
+            {
+                successMessage = "❌ Lỗi khi thêm món ăn.";
+                showSuccessMessage = true;
+                return;
+            }
+
+            foreach (var ct in model.DanhSachChiTiet)
+            {
+                ct.MonAnId = monAnResponse.Id;
+                await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", ct);
+                Navigation.NavigateTo("/quanlysanpham");
+            }
+
+            successMessage = "✅ Đã thêm món ăn và các chi tiết thành công.";
+            showSuccessMessage = true;
+            await ResetForm();
+        }
+        catch (Exception ex)
+        {
+            successMessage = $"❌ Lỗi: {ex.Message}";
+            showSuccessMessage = true;
+        }
+    }
+
+    private async Task ResetForm()
+    {
+        model = new MonAnFormModel();
+        await OnInitializedAsync();
+        StateHasChanged();
+    }
+
+    private void OnTenChanged(ChangeEventArgs e)
+    {
+        var ten = e.Value?.ToString() ?? "";
+        if (!string.IsNullOrEmpty(ten))
+        {
+            var id = ten.ToLower().Replace(" ", "").Replace("đ", "d").Replace("ă", "a").Replace("â", "a").Replace("ê", "e").Replace("ô", "o").Replace("ơ", "o").Replace("ư", "u");
+            model.MonAn.Id = System.Text.RegularExpressions.Regex.Replace(id, @"[^a-z0-9]", "");
+        }
+    }
+
+    // Event handlers cho component chi tiết
+    private async Task OnChiTietAdded(ChiTietMonAn chiTiet)
+    {
+        
+        Console.WriteLine($"Đã thêm chi tiết: {chiTiet.Id}");
+    }
+
+    private async Task OnChiTietRemoved(ChiTietMonAn chiTiet)
+    {
+        // Có thể thêm logic xử lý khi xóa chi tiết
+        Console.WriteLine($"Đã xóa chi tiết: {chiTiet.Id}");
+    }
+
+    private async Task OnChiTietEdited(ChiTietMonAn chiTiet)
+    {
+        // Có thể thêm logic xử lý khi sửa chi tiết
+        Console.WriteLine($"Đã sửa chi tiết: {chiTiet.Id}");
+    }
+}
