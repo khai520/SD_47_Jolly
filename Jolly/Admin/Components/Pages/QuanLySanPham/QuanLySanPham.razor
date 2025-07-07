@@ -1,0 +1,309 @@
+﻿@page "/quanlysanpham"
+@layout Layout.MainLayout
+@inject IJSRuntime JSRuntime
+@inject IApiService apiService
+@inject NavigationManager nav
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+<link href="/css/QuanLySanPham.css" rel="stylesheet" />
+<PageTitle>Quản lý sản phẩm</PageTitle>
+<div class="container">
+    <div class="header">
+        <h1><i class="fas fa-utensils"></i> Quản lý Sản phẩm</h1>
+        <p>Hệ thống quản lý món ăn và chi tiết sản phẩm</p>
+    </div>
+
+    <div class="controls">
+        <div class="search-box">
+            <input type="text" @bind="searchTerm" @oninput="OnSearchChanged" placeholder="Tìm kiếm sản phẩm...">
+            <i class="fas fa-search"></i>
+        </div>
+        <div class="filters">
+            <select class="filter-select" @bind="statusFilter">
+                <option value="">Tất cả trạng thái</option>
+                <option value="active">Đang hoạt động</option>
+                <option value="inactive">Không hoạt động</option>
+                <option value="expired">Hết hạn</option>
+            </select>
+            <select class="filter-select" @bind="priceFilter">
+                <option value="">Tất cả giá</option>
+                <option value="low">Dưới 50,000đ</option>
+                <option value="medium">50,000đ - 200,000đ</option>
+                <option value="high">Trên 200,000đ</option>
+            </select>
+        </div>
+        <button class="add-btn" @onclick="AddProduct">
+            <i class="fas fa-plus"></i> Thêm sản phẩm
+        </button>
+    </div>
+
+    <div class="stats">
+        <div class="stat-card total">
+            <i class="fas fa-boxes"></i>
+            <h3>@allProducts.Count</h3>
+            <p>Tổng sản phẩm</p>
+        </div>
+        <div class="stat-card active">
+            <i class="fas fa-check-circle"></i>
+            <h3>@activeCount</h3>
+            <p>Đang hoạt động</p>
+        </div>
+        <div class="stat-card inactive">
+            <i class="fas fa-times-circle"></i>
+            <h3>@inactiveCount</h3>
+            <p>Không hoạt động</p>
+        </div>
+        <div class="stat-card expired">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>@expiredCount</h3>
+            <p>Hết hạn</p>
+        </div>
+    </div>
+
+    <div class="products-grid">
+        @if (allProducts != null && paginatedProducts.Any())
+        {
+            @foreach (var product in paginatedProducts)
+            {
+                var status = GetProductStatus(product);
+                var statusClass = $"status-{status}";
+                var chiTiet = product.ChiTietMonAns?.FirstOrDefault();
+                
+                <div class="product-card">
+                    <div class="product-image">
+                        <div class="product-status @statusClass">
+                            @GetStatusText(status)
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3 class="product-title">@product.Ten</h3>
+                        <div class="product-price">@FormatCurrency(product.Gia)</div>
+                        <div class="product-details">
+                            <div class="detail-item">
+                                <i class="fas fa-tag"></i>
+                                <span>@product.Id</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-calendar"></i>
+                                <span>@(product.HanSuDung?.ToString("dd/MM/yyyy") ?? "Không có")</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-boxes"></i>
+                                <span>SL: @(chiTiet?.Soluong ?? 0)</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-star"></i>
+                                <span>@(chiTiet?.ThuongHieu?.Ten ?? "Chưa có")</span>
+                            </div>
+                        </div>
+                        <p class="product-description">@(product.Mota ?? "Không có mô tả")</p>
+                        <div class="product-actions">
+                            <button class="action-btn btn-view" @onclick="() => ViewProduct(product.Id)">
+                                <i class="fas fa-eye"></i> Xem
+                            </button>
+                            <button class="action-btn btn-edit" @onclick="() => EditProduct(product.Id)">
+                                <i class="fas fa-edit"></i> Sửa
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-products">
+                <i class="fas fa-search"></i>
+                <h3>Không tìm thấy sản phẩm</h3>
+                <p>Vui lòng thử lại với từ khóa khác hoặc điều chỉnh bộ lọc</p>
+            </div>
+        }
+    </div>
+
+    @if (totalPages > 1)
+    {
+        <div class="pagination">
+            <button @onclick="() => ChangePage(currentPage - 1)" disabled="@(currentPage == 1)">
+                <i class="fas fa-chevron-left"></i>
+            </button>
+            
+            @for (int i = 1; i <= totalPages; i++)
+            {
+                var page = i;
+                <button @onclick="() => ChangePage(page)" class="@(page == currentPage ? "active" : "")">
+                    
+                </button>
+            }
+            
+            <button @onclick="() => ChangePage(currentPage + 1)" disabled="@(currentPage == totalPages)">
+                <i class="fas fa-chevron-right"></i>
+            </button>
+        </div>
+    }
+</div>
+
+
+@code {
+    private List<MonAn> allProducts = new();
+    private List<MonAn> filteredProducts = new();
+    private List<MonAn> paginatedProducts = new();
+
+    private string searchTerm = "";
+    private string statusFilter
+    {
+        get => _statusFilter;
+        set
+        {
+            if (_statusFilter != value)
+            {
+                _statusFilter = value;
+                FilterProducts(); 
+            }
+        }
+    }
+    private string _statusFilter = "";
+
+    private string priceFilter
+    {
+        get => _priceFilter;
+        set
+        {
+            if (_priceFilter != value)
+            {
+                _priceFilter = value;
+                FilterProducts(); 
+            }
+        }
+    }
+    private string _priceFilter = "";
+    private int currentPage = 1;
+    private int itemsPerPage = 6;
+    private int totalPages = 1;
+
+    private int activeCount = 0;
+    private int inactiveCount = 0;
+    private int expiredCount = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+        FilterProducts();
+    }
+
+    private async Task LoadProducts()
+    {
+
+        allProducts = await apiService.GetAsync<List<MonAn>>("MonAn") ?? new();
+    }
+
+    private void FilterProducts()
+    {
+        var query = allProducts.AsQueryable();
+
+        if (!string.IsNullOrEmpty(searchTerm))
+        {
+            query = query.Where(p => 
+                p.Ten.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                p.Id.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                (p.Mota != null && p.Mota.Contains(searchTerm, StringComparison.OrdinalIgnoreCase))
+            );
+        }
+
+        if (!string.IsNullOrEmpty(statusFilter))
+        {
+            query = query.Where(p => GetProductStatus(p) == statusFilter);
+        }
+
+
+        if (!string.IsNullOrEmpty(priceFilter))
+        {
+            query = priceFilter switch
+            {
+                "low" => query.Where(p => p.Gia < 50000),
+                "medium" => query.Where(p => p.Gia >= 50000 && p.Gia <= 200000),
+                "high" => query.Where(p => p.Gia > 200000),
+                _ => query
+            };
+        }
+
+        filteredProducts = query.ToList();
+
+
+        activeCount = allProducts.Count(p => GetProductStatus(p) == "active");
+        inactiveCount = allProducts.Count(p => GetProductStatus(p) == "inactive");
+        expiredCount = allProducts.Count(p => GetProductStatus(p) == "expired");
+
+        currentPage = 1;
+        UpdatePagination();
+        StateHasChanged();
+    }
+
+    private void UpdatePagination()
+    {
+        totalPages = (int)Math.Ceiling((double)filteredProducts.Count / itemsPerPage);
+
+        var skip = (currentPage - 1) * itemsPerPage;
+        paginatedProducts = filteredProducts.Skip(skip).Take(itemsPerPage).ToList();
+    }
+
+    private async Task OnSearchChanged(ChangeEventArgs e)
+    {
+        searchTerm = e.Value?.ToString() ?? "";
+        FilterProducts();
+        StateHasChanged();
+    }
+
+    private void OnFilterChanged()
+    {
+        FilterProducts();
+        StateHasChanged();
+    }
+
+    private void ChangePage(int page)
+    {
+        if (page < 1 || page > totalPages) return;
+
+        currentPage = page;
+        UpdatePagination();
+        StateHasChanged();
+    }
+
+    private string GetProductStatus(MonAn product)
+    {
+        if (!product.TrangThai) return "inactive";
+        if (product.HanSuDung.HasValue && product.HanSuDung.Value < DateTime.Now) return "expired";
+        return "active";
+
+    }
+
+    private string GetStatusText(string status)
+    {
+        return status switch
+        {
+            "active" => "Đang bán",
+            "inactive" => "Ngừng bán",
+            "expired" => "Hết hạn",
+            _ => "Không xác định"
+        };
+    }
+
+    private string FormatCurrency(float amount)
+    {
+        return amount.ToString("N0") + "đ";
+    }
+
+    private async Task AddProduct()
+    {
+        nav.NavigateTo("/them-mon-an");
+    }
+
+    private async Task ViewProduct(string id)
+    {
+        nav.NavigateTo($"/mon-an/{id}");
+    }
+
+    private async Task EditProduct(string id)
+    {
+        await JSRuntime.InvokeVoidAsync("alert", $"Chức năng chỉnh sửa sản phẩm {id} sẽ được triển khai");
+    }
+
+
+}

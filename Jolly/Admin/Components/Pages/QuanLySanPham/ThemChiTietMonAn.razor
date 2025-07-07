@@ -1,0 +1,422 @@
+﻿@inject IApiService apiService
+@inject IUploadService UploadService
+@inject IJSRuntime JSRuntime
+
+<div class="form-section">
+    <h3>➕ Chi tiết món ăn</h3>
+
+    <div class="form-inline">
+        <div class="select-with-add row-layout">
+            <InputSelect @bind-Value="chiTietMoi.TheLoaiId">
+                <option value="@Guid.Empty">-- Thể loại --</option>
+                @foreach (var item in theLoaiList)
+                {
+                    <option value="@item.Id">@item.Ten</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn-add" @onclick='() => ShowModal("TheLoai")'>+</button>
+        </div>
+        <div class="select-with-add row-layout">
+            <InputSelect @bind-Value="chiTietMoi.ThuongHieuId">
+                <option value="@Guid.Empty">-- Thương hiệu --</option>
+                @foreach (var item in thuongHieuList)
+                {
+                    <option value="@item.Id">@item.Ten</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn-add" @onclick='() => ShowModal("ThuongHieu")'>+</button>
+        </div>
+        <div class="select-with-add row-layout">
+            <InputSelect @bind-Value="chiTietMoi.NhaCungCapId">
+                <option value="@Guid.Empty">-- Nhà cung cấp --</option>
+                @foreach (var item in nhaCungCapList)
+                {
+                    <option value="@item.Id">@item.Ten</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn-add" @onclick='() => ShowModal("NhaCungCap")'>+</button>
+        </div>
+        <div class="select-with-add row-layout">
+            <InputSelect @bind-Value="chiTietMoi.DongGoiId">
+                <option value="@Guid.Empty">-- Đóng gói --</option>
+                @foreach (var item in dongGoiList)
+                {
+                    <option value="@item.Id">@item.Ten</option>
+                }
+            </InputSelect>
+            <button type="button" class="btn-add" @onclick='() => ShowModal("DongGoi")'>+</button>
+        </div>
+
+        <InputNumber @bind-Value="chiTietMoi.Soluong" placeholder="Số lượng" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+
+        @if (ShowFileUpload)
+        {
+            <InputFile OnChange="OnFileSelected" multiple accept="image/*" />
+        }
+
+        @if (ShowDescription)
+        {
+            <div class="form-group full-width">
+                <label>Mô tả chi tiết</label>
+                <InputTextArea @bind-Value="chiTietMoi.Mota" rows="2" placeholder="Nhập mô tả chi tiết" />
+            </div>
+        }
+
+        @if (ShowStatus)
+        {
+            <div class="form-group">
+                <label>
+                    <InputCheckbox @bind-Value="chiTietMoi.TrangThai" />
+                    Trạng thái hoạt động
+                </label>
+            </div>
+        }
+    </div>
+
+    @if (chiTietMoi.DanhSachAnh?.Any() == true)
+    {
+        <div class="image-preview">
+            <h4>Ảnh đã chọn</h4>
+            <div class="image-count-badge">
+                @chiTietMoi.DanhSachAnh.Count ảnh
+            </div>
+
+            <div class="image-gallery">
+                @foreach (var image in chiTietMoi.DanhSachAnh)
+                {
+                    <div class="image-item" data-title="@image.Ten">
+                        <img src="@image.DuongDan" alt="@image.Ten"
+                             @onclick="() => ShowImageLightbox(image.DuongDan)" />
+                        <button type="button" class="btn-delete-image"
+                                title="Xóa ảnh: @image.Ten"
+                                @onclick="() => XoaAnh(image)">
+                            ×
+                        </button>
+                        <div class="image-info">
+                            @image.Ten
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <div style="text-align: center">
+        <button class="btn btn-success" type="button" @onclick="ThemChiTiet">
+            @ButtonText
+        </button>
+        @if (ShowCancelButton)
+        {
+            <button class="btn btn-secondary" type="button" @onclick="HuyChiTiet">
+                Hủy
+            </button>
+        }
+    </div>
+
+    @if (DanhSachChiTiet.Any())
+    {
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Thể loại</th>
+                    <th>Thương hiệu</th>
+                    <th>Nhà CC</th>
+                    <th>Đóng gói</th>
+                    <th>Số lượng</th>
+                    @if (ShowDescription)
+                    {
+                        <th>Mô tả</th>
+                    }
+                    @if (ShowStatus)
+                    {
+                        <th>Trạng thái</th>
+                    }
+                    <th>Ảnh</th>
+                    <th>Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var ct in DanhSachChiTiet)
+                {
+                    <tr>
+                        <td>@theLoaiList.FirstOrDefault(x => x.Id == ct.TheLoaiId)?.Ten</td>
+                        <td>@thuongHieuList.FirstOrDefault(x => x.Id == ct.ThuongHieuId)?.Ten</td>
+                        <td>@nhaCungCapList.FirstOrDefault(x => x.Id == ct.NhaCungCapId)?.Ten</td>
+                        <td>@dongGoiList.FirstOrDefault(x => x.Id == ct.DongGoiId)?.Ten</td>
+                        <td>
+                            @if (AllowEditInTable)
+                            {
+                                <InputNumber @bind-Value="@ct.Soluong" placeholder="Số lượng"
+                                             @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+                            }
+                            else
+                            {
+                                @ct.Soluong
+                            }
+                        </td>
+                        @if (ShowDescription)
+                        {
+                            <td>@ct.Mota</td>
+                        }
+                        @if (ShowStatus)
+                        {
+                            <td>
+                                <span class="badge @(ct.TrangThai ? "badge-success" : "badge-secondary")">
+                                    @(ct.TrangThai ? "Hoạt động" : "Tạm dừng")
+                                </span>
+                            </td>
+                        }
+                        <td>
+                            @if (ct.DanhSachAnh?.Any() == true)
+                            {
+                                <img src="@ct.DanhSachAnh.First().DuongDan" width="50" />
+                                @if (ct.DanhSachAnh.Count > 1)
+                                {
+                                    <small>(+@(ct.DanhSachAnh.Count - 1))</small>
+                                }
+                            }
+                        </td>
+                        <td>
+                            @if (AllowEditInTable)
+                            {
+                                <button type="button" @onclick="() => SuaChiTiet(ct)" class="btn btn-warning btn-sm">Sửa</button>
+                            }
+                            <button type="button" @onclick="() => XoaChiTiet(ct)" class="btn btn-danger btn-sm">Xóa</button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>
+
+@if (showModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h4>Thêm mới @modalType</h4>
+            <div class="form-group">
+                <label>Tên</label>
+                <InputText @bind-Value="newItemTen" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Mô tả</label>
+                <InputTextArea @bind-Value="newItemMota" class="form-control" rows="3" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-secondary" @onclick="CloseModal">Hủy</button>
+                <button class="btn btn-primary" @onclick="ConfirmAddNewItem">Thêm</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    // Parameters - có thể tùy chỉnh từ component cha
+    [Parameter] public List<ChiTietMonAn> DanhSachChiTiet { get; set; } = new();
+    [Parameter] public EventCallback<List<ChiTietMonAn>> DanhSachChiTietChanged { get; set; }
+    [Parameter] public string MonAnId { get; set; } = "";
+    [Parameter] public string ButtonText { get; set; } = "+ Tạm thêm";
+    [Parameter] public bool ShowFileUpload { get; set; } = true;
+    [Parameter] public bool ShowDescription { get; set; } = false;
+    [Parameter] public bool ShowStatus { get; set; } = false;
+    [Parameter] public bool ShowCancelButton { get; set; } = false;
+    [Parameter] public bool AllowEditInTable { get; set; } = true;
+    [Parameter] public EventCallback<ChiTietMonAn> OnThemChiTiet { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAn> OnSuaChiTiet { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAn> OnXoaChiTiet { get; set; }
+    [Parameter] public EventCallback OnHuyChiTiet { get; set; }
+    [Parameter] public ChiTietMonAn ChiTietMonAnSua { get; set; } = new();
+    // Private fields
+    private ChiTietMonAn chiTietMoi = new() { DanhSachAnh = new List<Anh>(), TrangThai = true };
+    private string modalType = "";
+    private string newItemTen = "";
+    private string newItemMota = "";
+    private bool showModal = false;
+
+    // Dropdown lists
+    private List<TheLoai> theLoaiList = new();
+    private List<ThuongHieu> thuongHieuList = new();
+    private List<NhaCungCap> nhaCungCapList = new();
+    private List<DongGoi> dongGoiList = new();
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDropdownData();
+    }
+
+    private async Task LoadDropdownData()
+    {
+        theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
+        thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
+        nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
+        dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi") ?? new();
+        StateHasChanged();
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (ChiTietMonAnSua != null)
+        {
+            chiTietMoi = new ChiTietMonAn
+            {
+                Id = ChiTietMonAnSua.Id,
+                MonAnId = ChiTietMonAnSua.MonAnId,
+                TheLoaiId = ChiTietMonAnSua.TheLoaiId,
+                ThuongHieuId = ChiTietMonAnSua.ThuongHieuId,
+                NhaCungCapId = ChiTietMonAnSua.NhaCungCapId,
+                DongGoiId = ChiTietMonAnSua.DongGoiId,
+                Soluong = ChiTietMonAnSua.Soluong,
+                TrangThai = ChiTietMonAnSua.TrangThai,
+                Mota = ChiTietMonAnSua.Mota,
+                DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new()
+            };
+        }
+    }
+
+    private async Task ThemChiTiet()
+    {
+        if (string.IsNullOrEmpty(MonAnId))
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Vui lòng nhập thông tin món ăn trước");
+            return;
+        }
+
+        chiTietMoi.MonAnId = MonAnId;
+
+        
+
+        var trung = DanhSachChiTiet.FirstOrDefault(x =>
+            x.TheLoaiId == chiTietMoi.TheLoaiId &&
+            x.ThuongHieuId == chiTietMoi.ThuongHieuId &&
+            x.NhaCungCapId == chiTietMoi.NhaCungCapId &&
+            x.DongGoiId == chiTietMoi.DongGoiId);
+
+        if (trung != null)
+        {
+            trung.Soluong += chiTietMoi.Soluong;
+            if (chiTietMoi.DanhSachAnh != null)
+                trung.DanhSachAnh.AddRange(chiTietMoi.DanhSachAnh);
+        }
+        else
+        {
+            chiTietMoi.Id = Guid.NewGuid();
+            DanhSachChiTiet.Add(chiTietMoi);
+        }
+        
+        // Notify parent component
+        await OnThemChiTiet.InvokeAsync(chiTietMoi);
+
+        // Reset form
+        ResetChiTietMoi();
+    }
+
+    private async Task SuaChiTiet(ChiTietMonAn chiTiet)
+    {
+        await OnSuaChiTiet.InvokeAsync(chiTiet);
+    }
+
+    private async Task XoaChiTiet(ChiTietMonAn chiTiet)
+    {
+        DanhSachChiTiet.Remove(chiTiet);
+        await OnXoaChiTiet.InvokeAsync(chiTiet);
+    }
+
+    private async Task HuyChiTiet()
+    {
+        ResetChiTietMoi();
+        await OnHuyChiTiet.InvokeAsync();
+    }
+
+    private void ResetChiTietMoi()
+    {
+        chiTietMoi = new ChiTietMonAn { DanhSachAnh = new List<Anh>(), TrangThai = true };
+    }
+
+    private async Task OnFileSelected(InputFileChangeEventArgs e)
+    {
+        foreach (var file in e.GetMultipleFiles())
+        {
+            var result = await UploadService.UploadImageAsync(file);
+            if (result != null && !string.IsNullOrEmpty(result.Url))
+            {
+                chiTietMoi.DanhSachAnh.Add(new Anh
+                {
+                    Id = Guid.NewGuid(),
+                    Ten = result.FileName,
+                    DuongDan = result.Url
+                });
+                StateHasChanged();
+            }
+        }
+    }
+
+    private void XoaAnh(Anh anh)
+    {
+        chiTietMoi.DanhSachAnh.Remove(anh);
+    }
+
+    private async Task ShowImageLightbox(string imageSrc)
+    {
+        await JSRuntime.InvokeVoidAsync("imageGallery.showLightbox", imageSrc);
+    }
+
+    private void ShowModal(string type)
+    {
+        modalType = type;
+        newItemTen = "";
+        newItemMota = "";
+        showModal = true;
+    }
+
+    private void CloseModal()
+    {
+        showModal = false;
+        modalType = "";
+    }
+
+    private async Task ConfirmAddNewItem()
+    {
+        if (string.IsNullOrWhiteSpace(newItemTen)) return;
+        var id = Guid.NewGuid();
+
+        switch (modalType)
+        {
+            case "TheLoai":
+                var newTheLoai = new TheLoai { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<TheLoai, TheLoai>("TheLoai", newTheLoai);
+                LoadDropdownData();
+                break;
+            case "ThuongHieu":
+                var newThuongHieu = new ThuongHieu { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<ThuongHieu, ThuongHieu>("ThuongHieu", newThuongHieu);
+                LoadDropdownData();
+                break;
+            case "NhaCungCap":
+                var newNCC = new NhaCungCap { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<NhaCungCap, NhaCungCap>("NhaCungCap", newNCC);
+                LoadDropdownData();
+                break;
+            case "DongGoi":
+                var newDongGoi = new DongGoi { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<DongGoi, DongGoi>("DongGoi", newDongGoi);
+                LoadDropdownData();
+                break;
+        }
+
+        CloseModal();
+        StateHasChanged();
+    }
+
+    public void ClearForm()
+    {
+        ResetChiTietMoi();
+        StateHasChanged();
+    }
+
+    public async Task RefreshDropdownData()
+    {
+        await LoadDropdownData();
+        StateHasChanged();
+    }
+}
