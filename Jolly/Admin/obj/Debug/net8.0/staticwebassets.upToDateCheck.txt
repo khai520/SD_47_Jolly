@@ -3,9 +3,12 @@ wwwroot\bootstrap\bootstrap.min.css.map
 wwwroot\css\BanHang.css
 wwwroot\css\DanhSachChiTietMonAn.css
 wwwroot\css\Login.css
+wwwroot\css\QuanLyDanhMuc.css
 wwwroot\css\QuanLySanPham.css
 wwwroot\css\Sidebar.css
 wwwroot\css\site.css
+wwwroot\css\ThemChiTiet.css
+wwwroot\css\ThemDanhMuc.css
 wwwroot\css\ThemMonAn.css
 wwwroot\css\Thongke.css
 wwwroot\favicon.png

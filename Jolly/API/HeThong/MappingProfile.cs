@@ -12,6 +12,36 @@ namespace API.HeThong
             CreateMap<Combo, ComboDTO>().ReverseMap();
             CreateMap<ChiTietCombo, ChiTietComboDTO>().ReverseMap();
             CreateMap<ChiTietGiamGia, ChiTietGiamGiaDTO>().ReverseMap();
+            CreateMap<ChiTietMonAn, ChiTietMonAnDTO>()
+            .ForMember(t => t.Ten, opt => opt.MapFrom(src =>
+                src.MonAn != null &&
+                !string.IsNullOrWhiteSpace(src.MonAn.Ten)
+                ? src.MonAn.Ten : ""
+            ))
+            .ForMember
+            (tl => tl.TheLoai, opt => opt.MapFrom(src =>
+                src.TheLoai != null &&
+                !string.IsNullOrWhiteSpace(src.TheLoai.Ten)
+                ? src.TheLoai.Ten : ""
+            ))
+             .ForMember
+            (dg => dg.DongGoi, opt => opt.MapFrom(src =>
+                src.DongGoi != null &&
+                !string.IsNullOrWhiteSpace(src.DongGoi.Ten)
+                ? src.DongGoi.Ten : ""
+            ))
+             .ForMember
+            (th => th.ThuongHieu, opt => opt.MapFrom(src =>
+                src.ThuongHieu != null &&
+                !string.IsNullOrWhiteSpace(src.ThuongHieu.Ten)
+                ? src.ThuongHieu.Ten : ""
+            ))
+             .ForMember
+            (ncc => ncc.NhaCungCap, opt => opt.MapFrom(src =>
+                src.NhaCungCap != null &&
+                !string.IsNullOrWhiteSpace(src.NhaCungCap.Ten)
+                ? src.NhaCungCap.Ten : ""
+            ));
             CreateMap<ChiTietMonAn, ChiTietMonAnDTO>().ReverseMap();
             CreateMap<ChucVu, ChucVuDTO>().ReverseMap();
             CreateMap<DiaChi, DiaChiDTO>().ReverseMap();

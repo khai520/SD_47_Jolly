@@ -9,7 +9,7 @@ namespace API.Data
         {
         }
 
-        protected DBAppContext()
+        public DBAppContext()
         {
         }
 
@@ -26,17 +26,17 @@ namespace API.Data
                 .WithOne(nd => nd.NhanVien)
                 .HasForeignKey<NhanVien>(nv => nv.NguoiDungId);
             modelBuilder.Entity<NguoiDung>()
-                .HasOne(nd => nd.NhanVien) 
-                .WithOne(nv => nv.NguoiDung) 
-                .HasForeignKey<NhanVien>(nv => nv.NguoiDungId) 
-                .IsRequired(); 
+                .HasOne(nd => nd.NhanVien)
+                .WithOne(nv => nv.NguoiDung)
+                .HasForeignKey<NhanVien>(nv => nv.NguoiDungId)
+                .IsRequired();
 
             // Cấu hình mối quan hệ TaiKhoan - NguoiDung (1-1)
             modelBuilder.Entity<TaiKhoan>()
                 .HasOne(tk => tk.NguoiDung)
-                .WithOne() 
+                .WithOne()
                 .HasForeignKey<TaiKhoan>(tk => tk.NguoiDungId)
-                .IsRequired(); 
+                .IsRequired();
 
             // Cấu hình mối quan hệ NhanVien - ChucVu (nhiều-một)
             modelBuilder.Entity<NhanVien>()
@@ -50,8 +50,51 @@ namespace API.Data
                 .WithMany(c => c.Anhs)
                 .HasForeignKey(a => a.ChiTietMonAnId)
                 .OnDelete(DeleteBehavior.Cascade);
-            
-
+            modelBuilder.Entity<ChucVu>().HasData(
+                new ChucVu
+                {
+                    Id = Guid.Parse("11111111-1111-1111-1111-111111111111"),
+                    Ten = "Admin",
+                    Mota = "Quản trị hệ thống",
+                    TrangThai = true
+                },
+                new ChucVu
+                {
+                    Id = Guid.Parse("22222222-2222-2222-2222-222222222222"),
+                    Ten = "NhanVien",
+                    Mota = "Nhân viên bán hàng",
+                    TrangThai = true
+                });
+            var adminTaiKhoanId = Guid.Parse("99999999-9999-9999-9999-999999999999");
+            modelBuilder.Entity<TaiKhoan>()
+                .HasData(new TaiKhoan
+                {
+                    Id = Guid.NewGuid(),
+                    UserName = "admin",
+                    Password = "admin123",
+                    NguoiDungId = adminTaiKhoanId,
+                    NgayTaoTk = DateTime.Now
+                });
+            modelBuilder.Entity<NguoiDung>()
+                .HasData(new NguoiDung
+                {
+                    Id = adminTaiKhoanId,
+                    Ho = "Nguyễn Văn",
+                    Ten = " Quản Trị",
+                    Sdt = "0987654321",
+                    Gmail = "admin@shop.com",
+                    GioiTinh = "Nam",
+                    NgaySinh = new DateTime(1995, 1, 1),
+                });
+            modelBuilder.Entity<NhanVien>()
+                .HasData(new NhanVien
+                {
+                    Id = "NV01",
+                    NgayVaoLam = DateTime.Now,
+                    NguoiDungId = adminTaiKhoanId,
+                    TrangThai = true,
+                    ChucVuId = Guid.Parse("11111111-1111-1111-1111-111111111111")
+                });
         }
         public DbSet<Anh> anhs { get; set; }
         public DbSet<Combo> combos { get; set; }

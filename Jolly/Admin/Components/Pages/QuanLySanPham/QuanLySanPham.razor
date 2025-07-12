@@ -4,7 +4,7 @@
 @inject IApiService apiService
 @inject NavigationManager nav
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-<link href="/css/QuanLySanPham.css" rel="stylesheet" />
+<link href="css/QuanLySanPham.css" rel="stylesheet" />
 <PageTitle>Quản lý sản phẩm</PageTitle>
 <div class="container">
     <div class="header">
@@ -23,13 +23,7 @@
                 <option value="active">Đang hoạt động</option>
                 <option value="inactive">Không hoạt động</option>
                 <option value="expired">Hết hạn</option>
-            </select>
-            <select class="filter-select" @bind="priceFilter">
-                <option value="">Tất cả giá</option>
-                <option value="low">Dưới 50,000đ</option>
-                <option value="medium">50,000đ - 200,000đ</option>
-                <option value="high">Trên 200,000đ</option>
-            </select>
+            </select> 
         </div>
         <button class="add-btn" @onclick="AddProduct">
             <i class="fas fa-plus"></i> Thêm sản phẩm
@@ -76,7 +70,6 @@
                     </div>
                     <div class="product-info">
                         <h3 class="product-title">@product.Ten</h3>
-                        <div class="product-price">@FormatCurrency(product.Gia)</div>
                         <div class="product-details">
                             <div class="detail-item">
                                 <i class="fas fa-tag"></i>
@@ -161,19 +154,7 @@
     }
     private string _statusFilter = "";
 
-    private string priceFilter
-    {
-        get => _priceFilter;
-        set
-        {
-            if (_priceFilter != value)
-            {
-                _priceFilter = value;
-                FilterProducts(); 
-            }
-        }
-    }
-    private string _priceFilter = "";
+
     private int currentPage = 1;
     private int itemsPerPage = 6;
     private int totalPages = 1;
@@ -212,17 +193,6 @@
             query = query.Where(p => GetProductStatus(p) == statusFilter);
         }
 
-
-        if (!string.IsNullOrEmpty(priceFilter))
-        {
-            query = priceFilter switch
-            {
-                "low" => query.Where(p => p.Gia < 50000),
-                "medium" => query.Where(p => p.Gia >= 50000 && p.Gia <= 200000),
-                "high" => query.Where(p => p.Gia > 200000),
-                _ => query
-            };
-        }
 
         filteredProducts = query.ToList();
 

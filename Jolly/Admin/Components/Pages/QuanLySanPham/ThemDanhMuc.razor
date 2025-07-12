@@ -1,0 +1,130 @@
+﻿@inject IApiService apiService
+@inject IJSRuntime JS
+<link href="css/ThemDanhMuc.css" rel="stylesheet" />
+@if (showModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h4>Thêm mới @(modalType == "theloai" ? "Thể loại" : modalType == "thuonghieu" ? "Thương Hiệu" : modalType == "nhacungcap" ? "Nhà Cung Cấp" : "Đóng Gói")</h4>
+            @if (showSuccessMessage)
+            {
+                <div class="success-message">@successMessage</div>
+            }
+            <div class="form-group">
+                <label>Tên</label>
+                <InputText @bind-Value="newItemTen" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Mô tả</label>
+                <InputTextArea @bind-Value="newItemMota" class="form-control" rows="3" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-secondary" @onclick="Close">Hủy</button>
+                <button class="btn btn-primary" @onclick="ConfirmAddNewItem">@(type == "add" ? "Thêm" : "Sửa")</button>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter] public string modalType { get; set; } = "";
+    [Parameter] public string type { get; set; } = "add";
+    [Parameter] public Guid id { get; set; }
+    [Parameter] public bool showModal { get; set; } = false;
+    [Parameter] public string check { get; set; } = "";
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnLoad { get; set; }
+    [Parameter] public string itemTen { get; set; } = "";
+    [Parameter] public string? itemMota { get; set; } = "";
+
+
+    private string newItemTen = "";
+    private string? newItemMota = "";
+    private string successMessage = "";
+    private bool showSuccessMessage = false;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        newItemTen = itemTen;
+        newItemMota = itemMota;
+    }
+
+    private async Task ConfirmAddNewItem()
+    {
+        if (string.IsNullOrWhiteSpace(newItemTen))
+        {
+            string checktype = type == "add" ? "Thêm" : "Sửa";
+            successMessage = $"❌ Lỗi khi {checktype} {modalType}";
+            showSuccessMessage = true;
+            return;
+        }
+        if (type == "add")
+        {
+            switch (modalType)
+            {
+                case "theloai":
+                    var newTheLoai = new TheLoai { Ten = newItemTen, Mota = newItemMota };
+                    await apiService.PostAsync<TheLoai, TheLoai>("TheLoai", newTheLoai);
+                    break;
+                case "thuonghieu":
+                    var newThuongHieu = new ThuongHieu {Ten = newItemTen, Mota = newItemMota };
+                    await apiService.PostAsync<ThuongHieu, ThuongHieu>("ThuongHieu", newThuongHieu);
+                    break;
+                case "nhacungcap":
+                    var newNCC = new NhaCungCap { Ten = newItemTen, Mota = newItemMota };
+                    await apiService.PostAsync<NhaCungCap, NhaCungCap>("NhaCungCap", newNCC);
+                    break;
+                case "donggoi":
+                    var newDongGoi = new DongGoi { Ten = newItemTen, Mota = newItemMota };
+                    await apiService.PostAsync<DongGoi, DongGoi>("DongGoi", newDongGoi);
+                    break;
+            }
+        } 
+        else
+        {
+            if (id == Guid.Empty)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Lỗi!",
+                    text = "Sản phẩm không có trong dữ liệu!"
+                });
+            }
+            else
+            {
+                switch (modalType)
+                {
+                    case "theloai":
+                        var newTheLoai = new TheLoai { Id = id, Ten = newItemTen, Mota = newItemMota };
+                        await apiService.PutAsync<TheLoai>("TheLoai", newTheLoai);
+                        break;
+                    case "thuonghieu":
+                        var newThuongHieu = new ThuongHieu { Id = id, Ten = newItemTen, Mota = newItemMota };
+                        await apiService.PutAsync<ThuongHieu>("ThuongHieu", newThuongHieu);
+                        break;
+                    case "nhacungcap":
+                        var newNCC = new NhaCungCap { Id = id, Ten = newItemTen, Mota = newItemMota };
+                        await apiService.PutAsync<NhaCungCap>("NhaCungCap", newNCC);
+                        break;
+                    case "donggoi":
+                        var newDongGoi = new DongGoi { Id = id, Ten = newItemTen, Mota = newItemMota };
+                        await apiService.PutAsync<DongGoi>("DongGoi", newDongGoi);
+                        break;
+                }
+            }
+        }
+        await OnLoad.InvokeAsync();
+
+        await Close();
+        StateHasChanged();
+    }
+
+    private async Task Close()
+    {
+        itemTen = "";
+        itemMota = "";
+        newItemTen = "";
+        newItemMota = "";
+        await OnClose.InvokeAsync();
+    }
+}

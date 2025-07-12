@@ -11,7 +11,6 @@ namespace API.Models
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string Ten { get; set; }
         [Range(1, float.MaxValue, ErrorMessage = "Giá phải lớn hơn 0")]
-        public float Gia { get; set; }
         public DateTime? HanSuDung { get; set; }
         public bool TrangThai { get; set; } = false;
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]

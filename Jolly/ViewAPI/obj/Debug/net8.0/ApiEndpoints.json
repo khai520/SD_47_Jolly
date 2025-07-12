@@ -434,7 +434,7 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "GetAll",
     "RelativePath": "api/ChiTietMonAn",
     "HttpMethod": "GET",
@@ -443,7 +443,7 @@
     "Parameters": [],
     "ReturnTypes": [
       {
-        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -454,7 +454,7 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Create",
     "RelativePath": "api/ChiTietMonAn",
     "HttpMethod": "POST",
@@ -463,7 +463,7 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "API.Models.DTO.ChiTietMonAnDTO",
+        "Type": "API.Models.ChiTietMonAn",
         "IsRequired": true
       }
     ],
@@ -480,7 +480,7 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Update",
     "RelativePath": "api/ChiTietMonAn",
     "HttpMethod": "PUT",
@@ -489,13 +489,13 @@
     "Parameters": [
       {
         "Name": "dto",
-        "Type": "API.Models.DTO.ChiTietMonAnDTO",
+        "Type": "API.Models.ChiTietMonAn",
         "IsRequired": true
       }
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Models.DTO.ChiTietMonAnDTO",
+        "Type": "API.Models.ChiTietMonAn",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -506,7 +506,7 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "GetById",
     "RelativePath": "api/ChiTietMonAn/{id}",
     "HttpMethod": "GET",
@@ -521,7 +521,7 @@
     ],
     "ReturnTypes": [
       {
-        "Type": "API.Models.DTO.ChiTietMonAnDTO",
+        "Type": "API.Models.ChiTietMonAn",
         "MediaTypes": [
           "text/plain",
           "application/json",
@@ -532,7 +532,7 @@
     ]
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "Delete",
     "RelativePath": "api/ChiTietMonAn/{id}",
     "HttpMethod": "DELETE",
@@ -548,7 +548,27 @@
     "ReturnTypes": []
   },
   {
-    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.DTO.ChiTietMonAnDTO, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
+    "ContainingType": "ViewAPI.Controllers.ChiTietMonAnController",
+    "Method": "GetAll",
+    "RelativePath": "api/ChiTietMonAn/all",
+    "HttpMethod": "GET",
+    "IsController": true,
+    "Order": 0,
+    "Parameters": [],
+    "ReturnTypes": [
+      {
+        "Type": "System.Collections.Generic.IEnumerable\u00601[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null]]",
+        "MediaTypes": [
+          "text/plain",
+          "application/json",
+          "text/json"
+        ],
+        "StatusCode": 200
+      }
+    ]
+  },
+  {
+    "ContainingType": "API.Controllers.BaseController\u00603[[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[API.Models.ChiTietMonAn, API, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null],[System.Guid, System.Private.CoreLib, Version=8.0.0.0, Culture=neutral, PublicKeyToken=7cec85d7bea7798e]]",
     "Method": "GenerateMonAnId",
     "RelativePath": "api/ChiTietMonAn/GenerateMonAnId",
     "HttpMethod": "GET",
