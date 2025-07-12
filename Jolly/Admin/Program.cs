@@ -33,7 +33,7 @@ builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddHttpClient();
-builder.WebHost.UseUrls("https://localhost:7041", "http://localhost:5292");
+builder.WebHost.UseUrls("https://localhost:7041");
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddAuthorization();
