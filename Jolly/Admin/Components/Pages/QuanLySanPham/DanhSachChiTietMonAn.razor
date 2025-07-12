@@ -328,7 +328,7 @@
         {
             if (monAn != null)
             {
-                var result = await apiService.PutAsync<MonAn>($"MonAn/{monAn.Id}", monAn);
+                var result = await apiService.PutAsync<MonAn>($"MonAn", monAn);
                 if (result != null)
                 {
                     isEditMode = false;
