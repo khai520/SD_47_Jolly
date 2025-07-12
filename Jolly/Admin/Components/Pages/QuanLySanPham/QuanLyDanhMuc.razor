@@ -314,7 +314,7 @@
     OnLoad="Load"
     />
 
-<!-- Loading Overlay -->
+
 @if (isLoading)
 {
     <div class="loading-overlay">
@@ -330,13 +330,11 @@
 
 
 @code {
-    // Data lists
     private List<TheLoai> theLoaiList = new();
     private List<ThuongHieu> thuongHieuList = new();
     private List<NhaCungCap> nhaCungCapList = new();
     private List<DongGoi> dongGoiList = new();
 
-    // Filtered lists
     private List<TheLoai> filteredTheLoai = new();
     private List<ThuongHieu> filteredThuongHieu = new();
     private List<NhaCungCap> filteredNhaCungCap = new();

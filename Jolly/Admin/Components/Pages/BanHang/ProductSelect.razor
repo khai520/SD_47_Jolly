@@ -1,0 +1,107 @@
+﻿@inject IChiTietMonAnService GetChiTietMonAnService
+@inject IJSRuntime JS
+@if (Visible)
+{
+    <div class="customer-select-overlay"></div>
+    <div class="product-select-box">
+        <div class="product-select-list">
+            @if (Products.Count == 0)
+            {
+                <div class="empty-notice">Không có sản phẩm nào để hiển thị.</div>
+            }
+            else
+            {
+                @foreach (var product in Products)
+                {
+                    <div class="product-select-item">
+                        <img src="@product.Anhs?.FirstOrDefault()?.DuongDan" class="order-img" alt="@product.Ten" />
+                        <div class="item-info">
+                            <div class="order-name">@product.Ten</div>
+                            <div class="order-price">
+                                <span class="old-price">@FormatMoney(product.Gia)</span>
+                            </div>
+                            <div class="order-size">
+                                Size:
+                                <select @bind="@product.TheLoai">
+                                    <option value="@product.TheLoai">@product.TheLoai.ToString()</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="order-qty">
+                            <button class="decrease-btn" @onclick="@(() => ChangeQty(product, -1))">-</button>
+                            <input type="number" class="qty-input" value="@product.SoLuongDat" readonly />
+                            <button class="increase-btn" @onclick="@(() => ChangeQty(product, 1))">+</button>
+                        </div>
+                        <div class="order-total">@FormatMoney(product.Gia * product.SoLuongDat)</div>
+                        <button class="add-to-order" @onclick="@(() => AddToOrder(product))">Thêm vào đơn</button>
+                    </div>
+                }
+            }
+        </div>
+        <button class="close-customer-select" @onclick="Close">Đóng</button>
+    </div>
+}
+
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAnDTO> OnAddProduct { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    private List<ChiTietMonAnDTO> Products = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var all = await GetChiTietMonAnService.GetAll();
+        Products = all.Select(g =>
+        {
+            g.Soluong = 1;
+            g.DongGoi = g.DongGoi;
+            return g;
+        }).ToList();
+    }
+
+    private async void ChangeQty(ChiTietMonAnDTO g, int delta)
+    {
+        g.SoLuongDat += delta;
+        if (g.SoLuongDat > g.Soluong)
+        {
+            g.SoLuongDat = g.Soluong;
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                toast = true,
+                position = "top-end",
+                icon = "info",
+                title = "Số lượng sản phẩm tối đa",
+                showConfirmButton = false,
+                timer = 3000,
+                timerProgressBar = true
+            });
+        }
+        if (g.SoLuongDat < 1) g.SoLuongDat = 1;
+
+        StateHasChanged();
+    }
+
+    private async Task AddToOrder(ChiTietMonAnDTO g)
+    {
+        var item = new ChiTietMonAnDTO
+        {
+            Id = g.Id,
+            Gia = (float)g.Gia,
+            Soluong = g.Soluong,
+            TrangThai = true
+        };
+        await OnAddProduct.InvokeAsync(item);
+        await OnClose.InvokeAsync();
+    }
+
+    private void Close()
+    {
+        OnClose.InvokeAsync();
+    }
+
+    private string FormatMoney(float amount)
+    {
+        return string.Format("{0:N0} VND", amount);
+    }
+}

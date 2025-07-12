@@ -28,12 +28,11 @@ builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<IChiTietMonAnRepository, ChiTietMonAnRepository>();
-
+builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
 
 builder.Services.AddAuthorization();
-
-builder.WebHost.UseUrls("http://localhost:5021", "https://localhost:7047");
+builder.WebHost.UseUrls("https://localhost:7047", "http://localhost:5021");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

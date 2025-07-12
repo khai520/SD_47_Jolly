@@ -7,9 +7,8 @@ using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 builder.Services.AddControllers();
-builder.WebHost.UseUrls("http://localhost:5078", "https://localhost:7118");
+builder.WebHost.UseUrls("https://localhost:7118", "http://localhost:5078");
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -17,6 +17,10 @@
 		<Folder Include=".\wwwroot\bootstrap\" />
 		<Folder Include=".\wwwroot\js\" />
 		<Folder Include=".\wwwroot\img\" />
+		<Folder Include="Components\Pages\GiamGia\" />
+		<Folder Include="Components\Pages\DonHang\" />
+		<Folder Include="Components\Pages\QuanLyNhanVien\" />
+		<Folder Include="Components\Pages\TaiKhoan\" />
 	</ItemGroup>
 
 	<ItemGroup>

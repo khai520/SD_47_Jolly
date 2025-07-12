@@ -17,7 +17,7 @@ namespace API.Models
         public string? Gmail { get; set; }
         [Phone]
         public string? Sdt { get; set; }
-        public virtual ICollection<DiaChi> DiaChis { get; set; }
+        public virtual ICollection<DiaChi>? DiaChis { get; set; }
         public virtual NhanVien? NhanVien { get; set; }
     }
     public class MinimumAgeAttribute(int minimumAge) : ValidationAttribute

@@ -29,10 +29,11 @@ builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IUploadService, ImageUploadService>();
 builder.Services.AddScoped<IMonAnService, MonAnService>();
 builder.Services.AddScoped<IChiTietMonAnService, ChiTietMonAnService>();
+builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddHttpClient();
-builder.WebHost.UseUrls("http://localhost:5292", "https://localhost:7041");
+builder.WebHost.UseUrls("https://localhost:7041", "http://localhost:5292");
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
 
 builder.Services.AddAuthorization();
@@ -54,7 +55,6 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     app.UseHsts();
 }
-
 
 
 app.UseRouting();

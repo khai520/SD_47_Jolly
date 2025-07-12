@@ -131,22 +131,19 @@
 	</div>
 	<div class="stats-right">
 		<div class="chart-area">
-			<div class="chart-title">Biểu đồ trạng thái tùy chỉnh</div>
-			<div class="fake-pie"></div>
+			<div class="fake-pie" style="background: @BuildPieGradient()"></div>
+
 			<div class="chart-legend">
-				<div class="chart-legend">
-					<div><span class="legend-color" style="background:#e74c3c"></span>Đã huỷ - @PercentDaHuy</div>
-					<div><span class="legend-color" style="background:#f1c40f"></span>Chờ xác nhận - @PercentChoXacNhan</div>
-					<div><span class="legend-color" style="background:#8e44ad"></span>Chờ giao hàng - @PercentChoGiaoHang</div>
-					<div><span class="legend-color" style="background:#3498db"></span>Đang vận chuyển - @PercentDangVanChuyen</div>
-					<div><span class="legend-color" style="background:#1abc9c"></span>Đã giao hàng - @PercentDaGiaoHang</div>
-					<div><span class="legend-color" style="background:#2ecc71"></span>Đã thanh toán - @PercentDaThanhToan</div>
-					<div><span class="legend-color" style="background:#95a5a6"></span>Chờ thanh toán - @PercentChoThanhToan</div>
-					<div><span class="legend-color" style="background:#27ae60"></span>Hoàn thành - @PercentHoanThanh</div>
-					<div><span class="legend-color" style="background:#16a085"></span>Trả hàng - @PercentTraHang</div>
-				</div>
+				@foreach (var item in Data)
+				{
+					<div>
+						<div class="legend-color" style="background:@item.Color"></div>
+						<span>@item.Label (@item.Value)</span>
+					</div>
+				}
 			</div>
 		</div>
+
 	</div>
 </div>
 <div class="dashboard-table-chart">
@@ -316,15 +313,15 @@
 	private string PercentDonHangNamNay { get; set; } = "0%";
 	private string PercentSanPhamNamNay { get; set; } = "0%";
 
-	private string PercentDaHuy { get; set; } = "0.00%";
-	private string PercentChoXacNhan { get; set; } = "0.00%";
-	private string PercentChoGiaoHang { get; set; } = "0.00%";
-	private string PercentDangVanChuyen { get; set; } = "0.00%";
-	private string PercentDaGiaoHang { get; set; } = "0.00%";
-	private string PercentDaThanhToan { get; set; } = "0.00%";
-	private string PercentChoThanhToan { get; set; } = "0.00%";
-	private string PercentHoanThanh { get; set; } = "0.00%";
-	private string PercentTraHang { get; set; } = "0.00%";
+	private int PercentDaHuy { get; set; } = 0;
+	private int PercentChoXacNhan { get; set; } = 0;
+	private int PercentChoGiaoHang { get; set; } = 0;
+	private int PercentDangVanChuyen { get; set; } = 0;
+	private int PercentDaGiaoHang { get; set; } = 0;
+	private int PercentDaThanhToan { get; set; } = 0;
+	private int PercentChoThanhToan { get; set; } = 0;
+	private int PercentHoanThanh { get; set; } = 0;
+	private int PercentTraHang { get; set; } = 0;
 
 	public List<DanhSachSanPhamBanChay> sanPhamBanChays { get; set; } = new List<DanhSachSanPhamBanChay>();
 	private string activeFilter = "NGÀY";
@@ -335,7 +332,37 @@
 	private DateTime StartDate { get; set; } = DateTime.Now.AddDays(-7);
 	private DateTime EndDate { get; set; } = DateTime.Now;
 
+	public class ChartSegment
+	{
+		public string Label { get; set; } = string.Empty;
+		public string Color { get; set; } = "#ccc";
+		public int Value { get; set; }
+	}
 
+	List<ChartSegment> Data = new()
+	{
+		new ChartSegment { Label = "Hoạt động", Color = "#2ecc71", Value = 35 },
+		new ChartSegment { Label = "Tạm dừng", Color = "#f1c40f", Value = 20 },
+		new ChartSegment { Label = "Ngưng hoạt động", Color = "#e74c3c", Value = 10 },
+		new ChartSegment { Label = "Chưa rõ", Color = "#95a5a6", Value = 5 },
+	};
+
+	string BuildPieGradient()
+	{
+		var total = Data.Sum(x => x.Value);
+		var gradientParts = new List<string>();
+		double start = 0;
+
+		foreach (var item in Data)
+		{
+			double percent = item.Value / (double)total;
+			double end = start + percent * 360;
+			gradientParts.Add($"{item.Color} {start:F0}deg {end:F0}deg");
+			start = end;
+		}
+
+		return $"conic-gradient({string.Join(", ", gradientParts)})";
+	}
 
 	private List<int> PageSizes1 = new List<int> { 5, 10 };
 	private int _pageSize1 = 5;
@@ -387,7 +414,18 @@
 			hoaDons = await apiService.GetAsync<List<HoaDon>>("HoaDon");
 			hoaDonChiTiets = await apiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet");
 			chitietmonAns = await ChiTietMonAnService.GetAll();
-
+			Data = new()
+			{
+				new ChartSegment { Label = "Đã huỷ", Color = "#e74c3c", Value = PercentDaHuy },
+				new ChartSegment { Label = "Chờ xác nhận", Color = "#f1c40f", Value = PercentChoXacNhan },
+				new ChartSegment { Label = "Chờ giao hàng", Color = "#8e44ad", Value = PercentChoGiaoHang },
+				new ChartSegment { Label = "Đang vận chuyển", Color = "#3498db", Value = PercentDangVanChuyen },
+				new ChartSegment { Label = "Đã giao hàng", Color = "#1abc9c", Value = PercentDaGiaoHang },
+				new ChartSegment { Label = "Đã thanh toán", Color = "#2ecc71", Value = PercentDaThanhToan },
+				new ChartSegment { Label = "Chờ thanh toán", Color = "#95a5a6", Value = PercentChoThanhToan },
+				new ChartSegment { Label = "Hoàn thành", Color = "#27ae60", Value = PercentHoanThanh },
+				new ChartSegment { Label = "Trả hàng", Color = "#16a085", Value = PercentTraHang },
+			}; ;
 			Console.WriteLine($"Loaded {hoaDons.Count} HoaDon records.");
 			Console.WriteLine($"Loaded {hoaDonChiTiets.Count} HoaDonChiTiet records.");
 			Console.WriteLine($"Loaded {chitietmonAns.Count} GiayChiTiet records.");
@@ -676,15 +714,15 @@
 		if (totalOrdersInPeriod == 0)
 		{
 
-			PercentDaHuy = "0.00%";
-			PercentChoXacNhan = "0.00%";
-			PercentChoGiaoHang = "0.00%";
-			PercentDangVanChuyen = "0.00%";
-			PercentDaGiaoHang = "0.00%";
-			PercentDaThanhToan = "0.00%";
-			PercentChoThanhToan = "0.00%";
-			PercentHoanThanh = "0.00%";
-			PercentTraHang = "0.00%";
+			PercentDaHuy = 0;
+			PercentChoXacNhan = 0;
+			PercentChoGiaoHang = 0;
+			PercentDangVanChuyen = 0;
+			PercentDaGiaoHang = 0;
+			PercentDaThanhToan = 0;
+			PercentChoThanhToan = 0;
+			PercentHoanThanh = 0;
+			PercentTraHang = 0;
 			return;
 		}
 
@@ -705,15 +743,15 @@
 			.Count();
 
 
-		PercentDaHuy = ((decimal)countDaHuy / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentChoXacNhan = ((decimal)countChoXacNhan / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentChoGiaoHang = ((decimal)countChoGiaoHang / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentDangVanChuyen = ((decimal)countDangVanChuyen / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentDaGiaoHang = ((decimal)countDaGiaoHang / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentDaThanhToan = ((decimal)countDaThanhToan / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentChoThanhToan = ((decimal)countChoThanhToan / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentHoanThanh = ((decimal)countHoanThanh / totalOrdersInPeriod * 100m).ToString("F2") + "%";
-		PercentTraHang = ((decimal)countTraHang / totalOrdersInPeriod * 100m).ToString("F2") + "%";
+		PercentDaHuy = countDaHuy / totalOrdersInPeriod * 100;
+		PercentChoXacNhan = countChoXacNhan / totalOrdersInPeriod * 100;
+		PercentChoGiaoHang = countChoGiaoHang / totalOrdersInPeriod * 100;
+		PercentDangVanChuyen = countDangVanChuyen / totalOrdersInPeriod * 100;
+		PercentDaGiaoHang = countDaGiaoHang / totalOrdersInPeriod * 100;
+		PercentDaThanhToan = countDaThanhToan / totalOrdersInPeriod * 100;
+		PercentChoThanhToan = countChoThanhToan / totalOrdersInPeriod * 100;
+		PercentHoanThanh = countHoanThanh / totalOrdersInPeriod * 100;
+		PercentTraHang = countTraHang / totalOrdersInPeriod * 100;
 	}
 
 	private void UpdatePaging1()
