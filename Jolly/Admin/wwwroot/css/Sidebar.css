@@ -34,10 +34,11 @@
 }
 
     .sidebar ul li {
+        user-select: none;
         display: flex;
         align-items: center;
         gap: 12px;
-        padding: 14px 32px 14px 32px;
+        padding: 0px;
         color: #222;
         cursor: pointer;
         border-left: 4px solid transparent;
