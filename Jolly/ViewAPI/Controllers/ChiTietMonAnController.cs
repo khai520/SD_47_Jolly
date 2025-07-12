@@ -23,12 +23,15 @@ namespace ViewAPI.Controllers
         public async Task<IActionResult> GetMonAnId(string id)
         {
             var result = await chiTietMonAn.GetMonAnId(id);
-            return Ok(result);
+            var dto = _mapper.Map<IEnumerable<ChiTietMonAnDTO>>(result);
+            return Ok(dto);
         }
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<ChiTietMonAn>>> GetAll()
         {
-            return Ok(await chiTietMonAn.GetAll());
+            var result = await chiTietMonAn.GetAll();
+            var dto = _mapper.Map<IEnumerable<ChiTietMonAnDTO>>(result);
+            return Ok(dto);
         }
     }
 }

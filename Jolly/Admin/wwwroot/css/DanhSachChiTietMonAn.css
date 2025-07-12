@@ -580,3 +580,6 @@ input[type="checkbox"] {
     margin-right: 8px;
     accent-color: #667eea;
 }
+.modal-content{
+    width:70%;
+}

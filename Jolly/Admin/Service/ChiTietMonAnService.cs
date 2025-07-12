@@ -1,5 +1,6 @@
 ﻿using Admin.Service.IService;
 using API.Models;
+using API.Models.DTO;
 using Azure;
 
 namespace Admin.Service
@@ -12,24 +13,24 @@ namespace Admin.Service
             _httpclient = httpClient;
         }
 
-        public async Task<List<ChiTietMonAn>> GetChiTiet(string id)
+        public async Task<List<ChiTietMonAnDTO>> GetChiTiet(string id)
         {
             try
             {
                 var response = await _httpclient.GetAsync($"ChiTietMonAn/monan/{id}");
                 if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadFromJsonAsync<List<ChiTietMonAn>>();
-                    return data ?? new List<ChiTietMonAn>();
+                    var data = await response.Content.ReadFromJsonAsync<List<ChiTietMonAnDTO>>();
+                    return data ?? new List<ChiTietMonAnDTO>();
                 }
-                return new List<ChiTietMonAn>();
+                return new List<ChiTietMonAnDTO>();
             }
             catch (Exception)
             {
-                return new List<ChiTietMonAn>();
+                return new List<ChiTietMonAnDTO>();
             }
         }
-        public async Task<List<ChiTietMonAn>> GetAll()
+        public async Task<List<ChiTietMonAnDTO>> GetAll()
         {
 
             try
@@ -37,14 +38,14 @@ namespace Admin.Service
                     var response = await _httpclient.GetAsync("ChiTietMonAn/all");
                 if (response.IsSuccessStatusCode)
                 {
-                    var data = await response.Content.ReadFromJsonAsync<List<ChiTietMonAn>>();
-                    return data ?? new List<ChiTietMonAn>();
+                    var data = await response.Content.ReadFromJsonAsync<List<ChiTietMonAnDTO>>();
+                    return data ?? new List<ChiTietMonAnDTO>();
                 }
-                return new List<ChiTietMonAn>();
+                return new List<ChiTietMonAnDTO>();
             }
             catch (Exception)
             {
-                return new List<ChiTietMonAn>();
+                return new List<ChiTietMonAnDTO>();
             }
         }
 

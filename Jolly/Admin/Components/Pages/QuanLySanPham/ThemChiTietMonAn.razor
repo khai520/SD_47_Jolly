@@ -1,7 +1,8 @@
 ﻿@inject IApiService apiService
 @inject IUploadService UploadService
 @inject IJSRuntime JSRuntime
-<link href="css/ThemChiTiet.css" rel="stylesheet" />
+@using API.Models.DTO
+<link href="/css/ThemChiTiet.css" rel="stylesheet" />
 
 <div class="form-section">
     <h3>➕ Chi tiết món ăn</h3>
@@ -49,20 +50,6 @@
         </div>
 
         <InputNumber @bind-Value="chiTietMoi.Soluong" placeholder="Số lượng" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
-
-        @if (ShowFileUpload)
-        {
-            <InputFile OnChange="OnFileSelected" multiple accept="image/*" />
-        }
-
-        @if (ShowDescription)
-        {
-            <div class="form-group full-width">
-                <label>Mô tả chi tiết</label>
-                <InputTextArea @bind-Value="chiTietMoi.Mota" rows="2" placeholder="Nhập mô tả chi tiết" />
-            </div>
-        }
-
         @if (ShowStatus)
         {
             <div class="form-group">
@@ -72,6 +59,21 @@
                 </label>
             </div>
         }
+
+        @if (ShowFileUpload)
+        {
+            <InputFile OnChange="OnFileSelected" multiple accept="image/*" />
+        }
+
+        @if (ShowDescription)
+        {
+
+            <div class="form-group full-width">
+                <label>Mô tả chi tiết</label>
+                <InputTextArea @bind-Value="chiTietMoi.Mota" rows="2" placeholder="Nhập mô tả chi tiết" />
+            </div>
+        }
+        
     </div>
 
     @if (chiTietMoi.DanhSachAnh?.Any() == true)
@@ -218,8 +220,8 @@
 
 @code {
     // Parameters - có thể tùy chỉnh từ component cha
-    [Parameter] public List<ChiTietMonAn> DanhSachChiTiet { get; set; } = new();
-    [Parameter] public EventCallback<List<ChiTietMonAn>> DanhSachChiTietChanged { get; set; }
+    [Parameter] public List<ChiTietMonAnDTO> DanhSachChiTiet { get; set; } = new();
+    [Parameter] public EventCallback<List<ChiTietMonAnDTO>> DanhSachChiTietChanged { get; set; }
     [Parameter] public string MonAnId { get; set; } = "";
     [Parameter] public string ButtonText { get; set; } = "+ Tạm thêm";
     [Parameter] public bool ShowFileUpload { get; set; } = true;
@@ -227,13 +229,13 @@
     [Parameter] public bool ShowStatus { get; set; } = false;
     [Parameter] public bool ShowCancelButton { get; set; } = false;
     [Parameter] public bool AllowEditInTable { get; set; } = true;
-    [Parameter] public EventCallback<ChiTietMonAn> OnThemChiTiet { get; set; }
-    [Parameter] public EventCallback<ChiTietMonAn> OnSuaChiTiet { get; set; }
-    [Parameter] public EventCallback<ChiTietMonAn> OnXoaChiTiet { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAnDTO> OnThemChiTiet { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAnDTO> OnSuaChiTiet { get; set; }
+    [Parameter] public EventCallback<ChiTietMonAnDTO> OnXoaChiTiet { get; set; }
     [Parameter] public EventCallback OnHuyChiTiet { get; set; }
-    [Parameter] public ChiTietMonAn ChiTietMonAnSua { get; set; } = new();
+    [Parameter] public ChiTietMonAnDTO ChiTietMonAnSua { get; set; } = new();
     // Private fields
-    private ChiTietMonAn chiTietMoi = new() { DanhSachAnh = new List<Anh>(), TrangThai = true };
+    private ChiTietMonAnDTO chiTietMoi = new() { DanhSachAnh = new List<Anh>(), TrangThai = true };
     private string modalType = "";
     private string newItemTen = "";
     private string newItemMota = "";
@@ -264,7 +266,7 @@
     {
         if (ChiTietMonAnSua != null)
         {
-            chiTietMoi = new ChiTietMonAn
+            chiTietMoi = new ChiTietMonAnDTO
             {
                 Id = ChiTietMonAnSua.Id,
                 MonAnId = ChiTietMonAnSua.MonAnId,
@@ -276,6 +278,7 @@
                 TrangThai = ChiTietMonAnSua.TrangThai,
                 Mota = ChiTietMonAnSua.Mota,
                 DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new()
+                
             };
         }
     }
@@ -317,12 +320,12 @@
         ResetChiTietMoi();
     }
 
-    private async Task SuaChiTiet(ChiTietMonAn chiTiet)
+    private async Task SuaChiTiet(ChiTietMonAnDTO chiTiet)
     {
         await OnSuaChiTiet.InvokeAsync(chiTiet);
     }
 
-    private async Task XoaChiTiet(ChiTietMonAn chiTiet)
+    private async Task XoaChiTiet(ChiTietMonAnDTO chiTiet)
     {
         DanhSachChiTiet.Remove(chiTiet);
         await OnXoaChiTiet.InvokeAsync(chiTiet);
@@ -336,7 +339,7 @@
 
     private void ResetChiTietMoi()
     {
-        chiTietMoi = new ChiTietMonAn { DanhSachAnh = new List<Anh>(), TrangThai = true };
+        chiTietMoi = new ChiTietMonAnDTO { DanhSachAnh = new List<Anh>(), TrangThai = true };
     }
 
     private async Task OnFileSelected(InputFileChangeEventArgs e)

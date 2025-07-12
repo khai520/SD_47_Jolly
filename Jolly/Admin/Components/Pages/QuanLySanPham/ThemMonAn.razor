@@ -1,4 +1,6 @@
 ﻿@page "/them-mon-an"
+@using API.Models.DTO
+@using AutoMapper
 @layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
@@ -6,6 +8,7 @@
 @inject Service.IService.IApiService apiService
 @inject Service.IService.IUploadService UploadService
 @inject XulyId xulyId
+@inject IMapper _mapper
 
 <link href="css/ThemMonAn.css" rel="stylesheet" />
 <div class="container">
@@ -75,7 +78,7 @@
     public class MonAnFormModel
     {
         public MonAn MonAn { get; set; } = new();
-        public List<ChiTietMonAn> DanhSachChiTiet { get; set; } = new();
+        public List<ChiTietMonAnDTO> DanhSachChiTiet { get; set; } = new();
     }
 
 
@@ -104,7 +107,7 @@
                 foreach (var ct in model.DanhSachChiTiet)
                 {
                     ct.MonAnId = monAnResponse.Id;
-                    await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", ct);
+                    await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", _mapper.Map<ChiTietMonAn>(ct));
                     Navigation.NavigateTo("/quanlysanpham");
                 }
 
@@ -138,19 +141,19 @@
     }
 
     
-    private async Task OnChiTietAdded(ChiTietMonAn chiTiet)
+    private async Task OnChiTietAdded(ChiTietMonAnDTO chiTiet)
     {
         
         Console.WriteLine($"Đã thêm chi tiết: {chiTiet.Id}");
     }
 
-    private async Task OnChiTietRemoved(ChiTietMonAn chiTiet)
+    private async Task OnChiTietRemoved(ChiTietMonAnDTO chiTiet)
     {
         
         Console.WriteLine($"Đã xóa chi tiết: {chiTiet.Id}");
     }
 
-    private async Task OnChiTietEdited(ChiTietMonAn chiTiet)
+    private async Task OnChiTietEdited(ChiTietMonAnDTO chiTiet)
     {
         
         Console.WriteLine($"Đã sửa chi tiết: {chiTiet.Id}");
