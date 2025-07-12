@@ -158,8 +158,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\Account\\Logout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T17:30:42.412Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T17:30:42.412Z"
             },
             {
               "$type": "Document",
@@ -171,8 +170,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:09.589Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:09.589Z"
             },
             {
               "$type": "Document",
@@ -184,8 +182,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\Account\\Login.razor",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:04.483Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:04.483Z"
             },
             {
               "$type": "Document",
@@ -197,8 +194,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:51:45.259Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:51:45.259Z"
             },
             {
               "$type": "Document",
@@ -210,8 +206,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:51:54.941Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:51:54.941Z"
             },
             {
               "$type": "Document",
@@ -223,8 +218,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:51:50.169Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:51:50.169Z"
             },
             {
               "$type": "Document",
@@ -236,8 +230,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:51:58.998Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:51:58.998Z"
             },
             {
               "$type": "Document",
@@ -249,8 +242,7 @@
               "RelativeToolTip": "Admin\\wwwroot\\css\\QuanLySanPham.css",
               "ViewState": "AgIAAHMBAAAAAAAAAAAAAJIBAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
-              "WhenOpened": "2025-07-07T16:53:25.906Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:53:25.906Z"
             },
             {
               "$type": "Document",
@@ -262,8 +254,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\BanHang.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:08.381Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:08.381Z"
             },
             {
               "$type": "Document",
@@ -275,8 +266,7 @@
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:09.064Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:09.064Z"
             },
             {
               "$type": "Document",
@@ -288,8 +278,7 @@
               "RelativeToolTip": "Admin\\Components\\Layout\\MainLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:11.784Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:11.784Z"
             },
             {
               "$type": "Document",
@@ -301,8 +290,7 @@
               "RelativeToolTip": "Admin\\Components\\Layout\\AdminLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:52:16.54Z",
-              "EditorCaption": ""
+              "WhenOpened": "2025-07-07T16:52:16.54Z"
             }
           ]
         }

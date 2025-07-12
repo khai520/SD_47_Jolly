@@ -5,6 +5,7 @@
 @inject Service.IService.IApiService apiService
 @inject Service.IService.IMonAnService monAnService
 @inject Service.IService.IChiTietMonAnService ChiTietMonAnService
+@inject IJSRuntime JS
 
 <link href="/css/DanhSachChiTietMonAn.css" rel="stylesheet" />
 <div class="container">
@@ -45,9 +46,6 @@
                                 <InputText @bind-Value="monAn.Ten" class="form-input product-title-input" placeholder="Tên món ăn" />
                             </div>
                             
-                            <div class="form-group">
-                                <InputNumber @bind-Value="monAn.Gia" class="form-input product-price-input" placeholder="Giá" />
-                            </div>
                             
                             <div class="product-id">ID: <span>@monAn.Id</span></div>
                             
@@ -70,7 +68,6 @@
                     else
                     {
                         <div class="product-title">@monAn.Ten</div>
-                        <div class="product-price">@monAn.Gia.ToString("N0")đ</div>
                         <div class="product-id">ID: <span>@monAn.Id</span></div>
                         
                         <div class="product-description">
@@ -133,10 +130,10 @@
                                     </div>
                                     <div class="detail-actions">
                                         <button class="action-btn btn-edit" @onclick="() => EditChiTiet(chiTiet)">
-                                            <i class="fas fa-edit"></i>
+                                            <i class="fas fa-edit">Sửa</i>
                                         </button>
                                         <button class="action-btn btn-delete" @onclick="() => DoiTrangThai(chiTiet)">
-                                            <i class="fas fa-trash"></i>
+                                            <i class="fas fa-trash">Đổi trạng thái</i>
                                         </button>
                                     </div>
                                 </div>
@@ -206,11 +203,11 @@
         <div class="modal-content" @onclick:stopPropagation="true">
             <div class="modal-header">
                 <h3>@(isEditingDetail ? "Chỉnh sửa" : "Thêm") Chi Tiết Món Ăn</h3>
-                <button class="btn-close" @onclick="CloseDetailModal">&times;</button>
+                <button class="btn-close" @onclick="CloseDetailModal"></button>
             </div>
             <div class="modal-body">
                 <ThemChiTietMonAn
-                    DanhSachChiTiet="@tempChiTietList"
+                    ChiTietMonAnSua="@editingChiTiet"
                     MonAnId="@MonAnId"
                     ButtonText="@(isEditingDetail ? "Cập nhật" : "Thêm")"
                     ShowFileUpload="true"
@@ -266,6 +263,7 @@
         await LoadData();
     }
 
+
     private async Task LoadData()
     {
         try
@@ -278,7 +276,6 @@
                 {
                     Id = monAn.Id,
                     Ten = monAn.Ten,
-                    Gia = monAn.Gia,
                     Mota = monAn.Mota,
                     HanSuDung = monAn.HanSuDung,
                     TrangThai = monAn.TrangThai
@@ -335,7 +332,6 @@
                     {
                         Id = monAn.Id,
                         Ten = monAn.Ten,
-                        Gia = monAn.Gia,
                         Mota = monAn.Mota,
                         HanSuDung = monAn.HanSuDung,
                         TrangThai = monAn.TrangThai
@@ -359,7 +355,6 @@
         if (originalMonAn != null && monAn != null)
         {
             monAn.Ten = originalMonAn.Ten;
-            monAn.Gia = originalMonAn.Gia;
             monAn.Mota = originalMonAn.Mota;
             monAn.HanSuDung = originalMonAn.HanSuDung;
             monAn.TrangThai = originalMonAn.TrangThai;
@@ -428,6 +423,7 @@
                 var result = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", chiTiet);
                 if (result != null)
                 {
+                    LoadData();
                     ShowMessage("Cập nhật chi tiết thành công!", true);
                     CloseDetailModal();
                 }

@@ -7,9 +7,12 @@
 @inject Service.IService.IUploadService UploadService
 @inject XulyId xulyId
 
-<link href="/css/ThemMonAn.css" rel="stylesheet" />
+<link href="css/ThemMonAn.css" rel="stylesheet" />
 <div class="container">
     <div class="header">
+        <button class="back-btn" @onclick="GoBack">
+            <i class="fas fa-arrow-left"></i> Quay lại
+        </button>
         <h1>🍽️ Thêm Món Ăn</h1>
     </div>
 
@@ -29,10 +32,6 @@
                 <div class="form-group">
                     <label>Tên món ăn</label>
                     <InputText @bind-Value="model.MonAn.Ten" @oninput="OnTenChanged" />
-                </div>
-                <div class="form-group">
-                    <label>Giá</label>
-                    <InputNumber @bind-Value="model.MonAn.Gia" />
                 </div>
                 <div class="form-group">
                     <label>Hạn sử dụng</label>
@@ -59,7 +58,7 @@
                 OnSuaChiTiet="OnChiTietEdited" />
 
             <div class="form-actions">
-                <button type="submit" class="btn btn-primary">✅ Thêm món ăn và toàn bộ chi tiết</button>
+                <button type="submit" @onclick="() => submitcheck = true" class="btn btn-primary">✅ Thêm món ăn và toàn bộ chi tiết</button>
                 <button type="button" class="btn btn-secondary" @onclick="ResetForm">🔄 Làm mới</button>
             </div>
         </EditForm>
@@ -70,6 +69,7 @@
     private MonAnFormModel model = new();
     private bool showSuccessMessage = false;
     private string successMessage = "";
+    private bool submitcheck = false;
 
 
     public class MonAnFormModel
@@ -77,6 +77,7 @@
         public MonAn MonAn { get; set; } = new();
         public List<ChiTietMonAn> DanhSachChiTiet { get; set; } = new();
     }
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -87,24 +88,30 @@
     {
         try
         {
-            var monAnResponse = await apiService.PostAsync<MonAn, MonAn>("MonAn", model.MonAn);
-            if (monAnResponse == null)
+            if (submitcheck)
             {
-                successMessage = "❌ Lỗi khi thêm món ăn.";
+                var monAnResponse = await apiService.PostAsync<MonAn, MonAn>("MonAn", model.MonAn);
+                if (monAnResponse == null)
+                {
+
+                    successMessage = "❌ Lỗi khi thêm món ăn.";
+                    showSuccessMessage = true;
+                    submitcheck = false;
+                    return;
+
+                }
+
+                foreach (var ct in model.DanhSachChiTiet)
+                {
+                    ct.MonAnId = monAnResponse.Id;
+                    await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", ct);
+                    Navigation.NavigateTo("/quanlysanpham");
+                }
+
+                successMessage = "✅ Đã thêm món ăn và các chi tiết thành công.";
                 showSuccessMessage = true;
-                return;
+                await ResetForm();
             }
-
-            foreach (var ct in model.DanhSachChiTiet)
-            {
-                ct.MonAnId = monAnResponse.Id;
-                await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", ct);
-                Navigation.NavigateTo("/quanlysanpham");
-            }
-
-            successMessage = "✅ Đã thêm món ăn và các chi tiết thành công.";
-            showSuccessMessage = true;
-            await ResetForm();
         }
         catch (Exception ex)
         {
@@ -130,7 +137,7 @@
         }
     }
 
-    // Event handlers cho component chi tiết
+    
     private async Task OnChiTietAdded(ChiTietMonAn chiTiet)
     {
         
@@ -139,13 +146,17 @@
 
     private async Task OnChiTietRemoved(ChiTietMonAn chiTiet)
     {
-        // Có thể thêm logic xử lý khi xóa chi tiết
+        
         Console.WriteLine($"Đã xóa chi tiết: {chiTiet.Id}");
     }
 
     private async Task OnChiTietEdited(ChiTietMonAn chiTiet)
     {
-        // Có thể thêm logic xử lý khi sửa chi tiết
+        
         Console.WriteLine($"Đã sửa chi tiết: {chiTiet.Id}");
+    }
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/quanlysanpham", forceLoad: false);
     }
 }

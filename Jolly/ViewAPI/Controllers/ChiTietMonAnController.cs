@@ -12,7 +12,7 @@ namespace ViewAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class ChiTietMonAnController : BaseController<ChiTietMonAn, ChiTietMonAnDTO, Guid>
+    public class ChiTietMonAnController : BaseController<ChiTietMonAn, ChiTietMonAn, Guid>
     {
         private readonly IChiTietMonAnRepository chiTietMonAn;
         public ChiTietMonAnController(IChiTietMonAnRepository repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
@@ -24,6 +24,11 @@ namespace ViewAPI.Controllers
         {
             var result = await chiTietMonAn.GetMonAnId(id);
             return Ok(result);
+        }
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<ChiTietMonAn>>> GetAll()
+        {
+            return Ok(await chiTietMonAn.GetAll());
         }
     }
 }

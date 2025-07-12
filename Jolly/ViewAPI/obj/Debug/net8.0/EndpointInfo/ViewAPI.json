@@ -758,6 +758,44 @@
         }
       }
     },
+    "/api/ChiTietMonAn/all": {
+      "get": {
+        "tags": [
+          "ChiTietMonAn"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChiTietMonAn"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChiTietMonAn"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ChiTietMonAn"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/ChiTietMonAn": {
       "get": {
         "tags": [
@@ -771,7 +809,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                    "$ref": "#/components/schemas/ChiTietMonAn"
                   }
                 }
               },
@@ -779,7 +817,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                    "$ref": "#/components/schemas/ChiTietMonAn"
                   }
                 }
               },
@@ -787,7 +825,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                    "$ref": "#/components/schemas/ChiTietMonAn"
                   }
                 }
               }
@@ -803,17 +841,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             }
           }
@@ -849,17 +887,17 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                "$ref": "#/components/schemas/ChiTietMonAn"
               }
             }
           }
@@ -870,17 +908,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               }
             }
@@ -910,17 +948,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/ChiTietMonAnDTO"
+                  "$ref": "#/components/schemas/ChiTietMonAn"
                 }
               }
             }
@@ -5181,6 +5219,10 @@
             "format": "uuid",
             "nullable": true
           },
+          "gia": {
+            "type": "number",
+            "format": "float"
+          },
           "trangThai": {
             "type": "boolean"
           },
@@ -5215,49 +5257,6 @@
             "items": {
               "$ref": "#/components/schemas/Anh"
             },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "ChiTietMonAnDTO": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid"
-          },
-          "monAnId": {
-            "type": "string",
-            "nullable": true
-          },
-          "soluong": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "mota": {
-            "type": "string",
-            "nullable": true
-          },
-          "theLoaiId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "dongGoiId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "thuongHieuId": {
-            "type": "string",
-            "format": "uuid",
-            "nullable": true
-          },
-          "nhaCungCapId": {
-            "type": "string",
-            "format": "uuid",
             "nullable": true
           }
         },
@@ -5801,8 +5800,12 @@
             "type": "number",
             "format": "float"
           },
-          "trangThai": {
+          "tongTienSauKhiGiam": {
             "pattern": "^[\\p{L}0-9\\s]+$",
+            "type": "number",
+            "format": "float"
+          },
+          "trangThai": {
             "type": "string",
             "nullable": true
           },
@@ -6116,12 +6119,8 @@
             "pattern": "^[\\p{L}0-9\\s]+$",
             "type": "string"
           },
-          "gia": {
-            "minimum": 1,
-            "type": "number",
-            "format": "float"
-          },
           "hanSuDung": {
+            "minimum": 1,
             "type": "string",
             "format": "date-time",
             "nullable": true

@@ -20,7 +20,7 @@
 
 
 
-<link href="/css/Login.css" rel="stylesheet" />
+<link href="css/Login.css" rel="stylesheet" />
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 <PageTitle>Login</PageTitle>
 <div class="signup-container">
@@ -80,10 +80,7 @@
     [SupplyParameterFromForm]
     private LoginViewModel Input { get; set; } = new();
     private bool _hasRendered = false;
-    protected override async Task OnInitializedAsync()
-    {
-        StateHasChanged();
-    }
+
     private string ErrorMessage = string.Empty;
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
@@ -91,9 +88,9 @@
         {
             _hasRendered = true;
 
-            var role = await JS.InvokeAsync<string>("localStorage.removeItem", "currentRole");
-            var username = await JS.InvokeAsync<string>("localStorage.removeItem", "currentUserName");
-
+            await JS.InvokeAsync<string>("localStorage.removeItem", "currentRole");
+            await JS.InvokeAsync<string>("localStorage.removeItem", "currentUserName");
+            StateHasChanged();
         }
 
     }
@@ -121,7 +118,7 @@
 
             Navigation.NavigateTo(user.Quyen switch
             {
-                "Admin" => "/quanlysanpham",
+                "Admin" => "/thongke",
                 "NhanVien" => "/quanlysanpham",
                 _ => "/"
             });

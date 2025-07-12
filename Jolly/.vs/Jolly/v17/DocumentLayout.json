@@ -1,53 +1,73 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\khai5\\source\\repos\\Jolly\\",
+  "WorkspaceRootPath": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\quanlysanpham\\themmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\layout\\mainlayout.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\layout\\mainlayout.razor.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{A2FE74E1-B743-11D0-AE1A-00A0C90FFFC3}|\u003CMiscFiles\u003E|solutionrelative:Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\wwwroot\\css\\banhang.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\wwwroot\\css\\banhang.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\quanlysanpham\\themmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\quanlysanpham\\themmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\quanlysanpham\\themchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\quanlysanpham\\themchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\quanlysanpham\\themchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\quanlysanpham\\quanlysanpham.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\quanlysanpham\\quanlysanpham.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\quanlysanpham\\quanlysanpham.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\quanlysanpham\\danhsachchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\quanlysanpham\\danhsachchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\quanlysanpham\\danhsachchitietmonan.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\banhang\\addressselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\banhang\\addressselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\banhang\\addressselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\account\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\account\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\account\\login.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\account\\logout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\account\\logout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\account\\logout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\wwwroot\\css\\quanlysanpham.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\wwwroot\\css\\quanlysanpham.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\wwwroot\\css\\quanlysanpham.css||{A5401142-F49D-43DB-90B1-F57BA349E55C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\layout\\adminlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\layout\\adminlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\layout\\adminlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\layout\\mainlayout.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\banhang\\customerselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\banhang\\customerselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\banhang\\customerselect.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|c:\\users\\khai5\\source\\repos\\jolly\\admin\\components\\pages\\banhang\\banhang.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
+      "AbsoluteMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|h:\\duantotnghiep\\sd_47_jolly\\jolly\\admin\\components\\pages\\banhang\\banhang.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}",
       "RelativeMoniker": "D:0:0:{038AF02B-1664-49B9-B51B-C6A48294D2FF}|Admin\\Admin.csproj|solutionrelative:admin\\components\\pages\\banhang\\banhang.razor||{40D31677-CBC0-4297-A9EF-89D907823A98}"
     }
   ],
@@ -58,8 +78,73 @@
       "DocumentGroups": [
         {
           "DockedWidth": 265,
-          "SelectedChildIndex": 28,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "QuanLyDanhMuc.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css",
+              "RelativeDocumentMoniker": "Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css",
+              "RelativeToolTip": "Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLyDanhMuc.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-07-12T08:02:57.275Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "MainLayout.razor.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor.css",
+              "RelativeDocumentMoniker": "Admin\\Components\\Layout\\MainLayout.razor.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor.css",
+              "RelativeToolTip": "Admin\\Components\\Layout\\MainLayout.razor.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-07-12T08:00:02.083Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Admin.styles.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css",
+              "RelativeDocumentMoniker": "Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css",
+              "RelativeToolTip": "Admin\\obj\\Release\\net8.0\\scopedcss\\bundle\\Admin.styles.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-07-12T07:59:40.818Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "QuanLySanPham.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css",
+              "RelativeDocumentMoniker": "Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css",
+              "RelativeToolTip": "Admin\\obj\\Release\\net8.0\\PubTmp\\Out\\wwwroot\\css\\QuanLySanPham.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-07-12T07:59:32.599Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "BanHang.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\wwwroot\\css\\BanHang.css",
+              "RelativeDocumentMoniker": "Admin\\wwwroot\\css\\BanHang.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\wwwroot\\css\\BanHang.css",
+              "RelativeToolTip": "Admin\\wwwroot\\css\\BanHang.css",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
+              "WhenOpened": "2025-07-12T07:56:55.829Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:129:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
@@ -150,23 +235,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "Logout.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\Account\\Logout.razor",
-              "RelativeDocumentMoniker": "Admin\\Components\\Pages\\Account\\Logout.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\Account\\Logout.razor",
-              "RelativeToolTip": "Admin\\Components\\Pages\\Account\\Logout.razor",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T17:30:42.412Z"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
+              "DocumentIndex": 9,
               "Title": "AddressSelect.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\AddressSelect.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -174,11 +247,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
+              "DocumentIndex": 10,
               "Title": "Login.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\Account\\Login.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\Account\\Login.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\Account\\Login.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\Account\\Login.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\Account\\Login.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\Account\\Login.razor",
               "ViewState": "AgIAAAMAAAAAAAAAAAAAABYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -186,11 +259,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 3,
+              "DocumentIndex": 8,
               "Title": "DanhSachChiTietMonAn.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\DanhSachChiTietMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -198,11 +271,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 6,
               "Title": "ThemChiTietMonAn.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\ThemChiTietMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -210,11 +283,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 2,
+              "DocumentIndex": 7,
               "Title": "QuanLySanPham.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\QuanLySanPham.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -222,23 +295,36 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
+              "DocumentIndex": 5,
               "Title": "ThemMonAn.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\QuanLySanPham\\ThemMonAn.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAANAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
-              "WhenOpened": "2025-07-07T16:51:58.998Z"
+              "WhenOpened": "2025-07-07T16:51:58.998Z",
+              "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 7,
+              "DocumentIndex": 11,
+              "Title": "Logout.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\Account\\Logout.razor",
+              "RelativeDocumentMoniker": "Admin\\Components\\Pages\\Account\\Logout.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\Account\\Logout.razor",
+              "RelativeToolTip": "Admin\\Components\\Pages\\Account\\Logout.razor",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
+              "WhenOpened": "2025-07-07T17:30:42.412Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
               "Title": "QuanLySanPham.css",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\wwwroot\\css\\QuanLySanPham.css",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\wwwroot\\css\\QuanLySanPham.css",
               "RelativeDocumentMoniker": "Admin\\wwwroot\\css\\QuanLySanPham.css",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\wwwroot\\css\\QuanLySanPham.css",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\wwwroot\\css\\QuanLySanPham.css",
               "RelativeToolTip": "Admin\\wwwroot\\css\\QuanLySanPham.css",
               "ViewState": "AgIAAHMBAAAAAAAAAAAAAJIBAAAFAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003000|",
@@ -246,11 +332,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
+              "DocumentIndex": 16,
               "Title": "BanHang.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\BanHang.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\BanHang.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\BanHang\\BanHang.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\BanHang.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\BanHang.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\BanHang.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -258,11 +344,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 10,
+              "DocumentIndex": 15,
               "Title": "CustomerSelect.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
               "RelativeToolTip": "Admin\\Components\\Pages\\BanHang\\CustomerSelect.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -270,11 +356,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 9,
+              "DocumentIndex": 14,
               "Title": "MainLayout.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Layout\\MainLayout.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\MainLayout.razor",
               "RelativeToolTip": "Admin\\Components\\Layout\\MainLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",
@@ -282,11 +368,11 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 8,
+              "DocumentIndex": 13,
               "Title": "AdminLayout.razor",
-              "DocumentMoniker": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Layout\\AdminLayout.razor",
+              "DocumentMoniker": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\AdminLayout.razor",
               "RelativeDocumentMoniker": "Admin\\Components\\Layout\\AdminLayout.razor",
-              "ToolTip": "C:\\Users\\khai5\\source\\repos\\Jolly\\Admin\\Components\\Layout\\AdminLayout.razor",
+              "ToolTip": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\Admin\\Components\\Layout\\AdminLayout.razor",
               "RelativeToolTip": "Admin\\Components\\Layout\\AdminLayout.razor",
               "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAAMAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000759|",

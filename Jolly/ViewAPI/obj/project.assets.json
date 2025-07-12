@@ -3388,11 +3388,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\khai5\\source\\repos\\Jolly\\ViewAPI\\ViewAPI.csproj",
+      "projectUniqueName": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\ViewAPI\\ViewAPI.csproj",
       "projectName": "ViewAPI",
-      "projectPath": "C:\\Users\\khai5\\source\\repos\\Jolly\\ViewAPI\\ViewAPI.csproj",
+      "projectPath": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\ViewAPI\\ViewAPI.csproj",
       "packagesPath": "C:\\Users\\khai5\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\khai5\\source\\repos\\Jolly\\ViewAPI\\obj\\",
+      "outputPath": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\ViewAPI\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -3413,8 +3413,8 @@
         "net8.0": {
           "targetAlias": "net8.0",
           "projectReferences": {
-            "C:\\Users\\khai5\\source\\repos\\Jolly\\API\\API.csproj": {
-              "projectPath": "C:\\Users\\khai5\\source\\repos\\Jolly\\API\\API.csproj"
+            "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\API\\API.csproj": {
+              "projectPath": "H:\\DuAnTotNghiep\\SD_47_Jolly\\Jolly\\API\\API.csproj"
             }
           }
         }
@@ -3459,7 +3459,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.301/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\9.0.302/PortableRuntimeIdentifierGraph.json"
       }
     }
   }

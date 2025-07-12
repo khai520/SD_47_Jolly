@@ -29,6 +29,24 @@ namespace Admin.Service
                 return new List<ChiTietMonAn>();
             }
         }
+        public async Task<List<ChiTietMonAn>> GetAll()
+        {
+
+            try
+            {
+                    var response = await _httpclient.GetAsync("ChiTietMonAn/all");
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = await response.Content.ReadFromJsonAsync<List<ChiTietMonAn>>();
+                    return data ?? new List<ChiTietMonAn>();
+                }
+                return new List<ChiTietMonAn>();
+            }
+            catch (Exception)
+            {
+                return new List<ChiTietMonAn>();
+            }
+        }
 
     }
 }

@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
-
+builder.WebHost.UseUrls("http://localhost:5078", "https://localhost:7118");
 var app = builder.Build();
 app.UseHttpsRedirection();
 app.UseAuthorization();

@@ -49,8 +49,11 @@
         overflow: hidden;
         text-overflow: ellipsis;
     }
-
+.submenu {
+    display: none;
+}
 .menu-label {
+    color: black;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -58,7 +61,9 @@
     flex: 1 1 auto;
     min-width: 0;
 }
-
+.menu-con-label{
+    color:black;
+}
 .sidebar ul li.active, .sidebar ul li:hover {
     background: #e6f7ff;
     color: #1890ff;

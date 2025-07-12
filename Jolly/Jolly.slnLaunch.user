@@ -4,7 +4,7 @@
     "Projects": [
       {
         "Path": "Admin\\Admin.csproj",
-        "Action": "StartWithoutDebugging",
+        "Action": "Start",
         "DebugTarget": "https"
       },
       {

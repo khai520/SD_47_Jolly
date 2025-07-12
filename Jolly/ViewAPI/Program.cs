@@ -23,6 +23,7 @@ builder.Services.AddDbContext<DBAppContext>(options =>
 
 builder.Services.AddScoped<XulyId>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddScoped(typeof(IRepository<,>), typeof(Repository<,>));
 builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
@@ -32,7 +33,7 @@ builder.Services.AddScoped<IChiTietMonAnRepository, ChiTietMonAnRepository>();
 
 builder.Services.AddAuthorization();
 
-
+builder.WebHost.UseUrls("http://localhost:5021", "https://localhost:7047");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -43,7 +44,13 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); 
+app.UseStaticFiles();
+var uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "Uploads", "Images");
+if (!Directory.Exists(uploadPath))
+{
+    Directory.CreateDirectory(uploadPath);
+}
+
 app.UseStaticFiles(new StaticFileOptions
 {
     FileProvider = new PhysicalFileProvider(Path.Combine(builder.Environment.ContentRootPath, "Uploads", "Images")),
@@ -51,11 +58,8 @@ app.UseStaticFiles(new StaticFileOptions
 });
 
 
-
-
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
