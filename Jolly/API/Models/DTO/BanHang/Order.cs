@@ -8,5 +8,6 @@ namespace API.Models.DTO.BanHang
         public KhachHang? Customer { get; set; }
         public DiaChiNhap? Address { get; set; }
         public ThongTinHoaDon ThongTinHoaDon { get; set; } = new();
+        
     }
 }

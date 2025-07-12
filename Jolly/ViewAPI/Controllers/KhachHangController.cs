@@ -13,11 +13,20 @@ namespace ViewAPI.Controllers
     [Route("api/[controller]")]
     public class KhachHangController : BaseController<KhachHang, KhachHangDTO, string>
     {
-        public KhachHangController(IRepository<KhachHang, string> repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
+        private readonly IKhachHangRepository _khachhang;
+        public KhachHangController(IKhachHangRepository repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
         {
+            _khachhang = repository;
             _useXulyIdGeneration = true;
             _idPrefix = "KH";
             _idColumnName = "Id";
+        }
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<KhachHang>>> GetAll()
+        {
+            var result = await _khachhang.GetAll();
+            var dto = _mapper.Map<IEnumerable<KhachHangDTO>>(result);
+            return Ok(dto);
         }
     }
 }

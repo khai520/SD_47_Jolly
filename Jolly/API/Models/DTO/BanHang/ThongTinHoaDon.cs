@@ -10,6 +10,7 @@
         public string XaPhuongThiTran { get; set; }
         public string DiaChiCuThe { get; set; }
         public string? GhiChu { get; set; }
+        public string GiamGiaId { get; set; }
         public bool IsDelivery { get; set; } = false;
         
     }

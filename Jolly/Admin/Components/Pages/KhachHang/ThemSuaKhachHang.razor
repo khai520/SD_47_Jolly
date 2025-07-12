@@ -1,0 +1,261 @@
+﻿@using AutoMapper
+@using System.Text.RegularExpressions
+@inject IJSRuntime JS
+@inject Service.IService.IApiService apiService
+@inject IMapper _mapper
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @if (isEdit)
+                        {
+                            <div>
+                                <i class="fas fa-edit me-2"></i>
+                                Chỉnh sửa khách hàng
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div>
+                                <i class="fas fa-plus me-2"></i>
+                                Thêm khách hàng mới
+                            </div>
+
+                        }
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseModel"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="currentKhachHang" OnValidSubmit="SaveKhachHang">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Họ *</label>
+                                    <InputText class="form-control" @bind-Value="currentKhachHang.Ho" placeholder="Nhập họ" />
+                                    <ValidationMessage For="() => currentKhachHang.Ho" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên *</label>
+                                    <InputText class="form-control" @bind-Value="currentKhachHang.Ten" placeholder="Nhập tên" />
+                                    <ValidationMessage For="() => currentKhachHang.Ten" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại *</label>
+                                    <InputText class="form-control" @bind-Value="currentKhachHang.Sdt" placeholder="Nhập số điện thoại" />
+                                    <ValidationMessage For="() => currentKhachHang.Sdt" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <InputText class="form-control" @bind-Value="currentKhachHang.Gmail" placeholder="Nhập email" />
+                                    <ValidationMessage For="() => currentKhachHang.Gmail" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <InputCheckbox class="form-check-input" @bind-Value="currentKhachHang.TrangThai" />
+                                        <label class="form-check-label">
+                                            Trạng thái hoạt động
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ghi chú</label>
+                            <InputTextArea class="form-control" @bind-Value="currentKhachHang.GhiChu"
+                                           placeholder="Nhập ghi chú (không bắt buộc)" rows="3" />
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" @onclick="CloseModel">
+                                <i class="fas fa-times me-2"></i>Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Lưu
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnLoad { get; set; }
+    [Parameter] public bool showModal { get; set; } = false;
+    [Parameter] public bool isEdit { get; set; } = false;
+    [Parameter] public KhachHangDTO khach { get; set; } = new();
+    private KhachHangDTO currentKhachHang = new();
+    private async Task CloseModel()
+    {
+        currentKhachHang = new();
+        await OnLoad.InvokeAsync();
+        await OnClose.InvokeAsync();
+    }
+    private async Task SaveKhachHang()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(currentKhachHang.Ten) && string.IsNullOrWhiteSpace(currentKhachHang.Ho))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = $"Chưa nhập thông tin Họ Tên",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (Regex.IsMatch(currentKhachHang.Ten, @"[\d]|[^a-zA-Z0-9\s]") && Regex.IsMatch(currentKhachHang.Ho, @"[\d]|[^a-zA-Z0-9\s]"))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = $"Họ hoặc tên chứa ký tự đặc biệt",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (isEdit)
+            {
+                if (khach != null)
+                {
+                    NguoiDung nguoiDung = new()
+                    {
+                        Id = currentKhachHang.NguoiDungId,
+                        Ho = currentKhachHang.Ho,
+                        Ten = currentKhachHang.Ten,
+                        Sdt = currentKhachHang.Sdt,
+                        Gmail = currentKhachHang.Gmail
+                    };
+                    var result = await apiService.PutAsync<NguoiDung>("NguoiDung", nguoiDung);
+                    var result2 = await apiService.PutAsync<KhachHang>("KhachHang",_mapper.Map<KhachHang>(currentKhachHang));
+                    if (result && result2)
+                    {
+                        await JS.InvokeVoidAsync("Swal.fire", new
+                        {
+                            icon = "success",
+                            title = "Thành công",
+                            text = "Sửa khách hàng thành công."
+                        });
+                    }
+                    else
+                    {
+                        await JS.InvokeVoidAsync("Swal.fire", new
+                        {
+                            icon = "warning",
+                            title = "Lỗi!",
+                            text = "Có lỗi khi lưu khách hàng."
+                        });
+                    }
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = $"Lỗi hệ thống!",
+                        text = $"Khách hàng không tồn tại",
+                        confirmButtonText = "OK"
+                    });
+                    CloseModel();
+                    return;
+                }
+
+            }
+            else
+            {
+
+                NguoiDung nguoiDung = new()
+                {
+                    Ho = currentKhachHang.Ho,
+                    Ten = currentKhachHang.Ten,
+                    Sdt = currentKhachHang.Sdt,
+                    Gmail = currentKhachHang.Gmail
+                };
+                var result = await apiService.PostAsync<NguoiDung,NguoiDung>("NguoiDung", nguoiDung);
+                currentKhachHang.NguoiDungId = result.Id;
+                var result2 = await apiService.PostAsync<KhachHang, KhachHang>("KhachHang", _mapper.Map<KhachHang>(currentKhachHang));
+                if (result != null && result2 != null)
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "success",
+                        title = "Thành công",
+                        text = "Thêm khách hàng thành công."
+                    });
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = "Lỗi!",
+                        text = "Có lỗi khi lưu khách hàng."
+                    });
+                }
+            }
+
+            CloseModel();
+        }
+        catch (Exception)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = $"Lỗi hệ thống!",
+                text = $"Lỗi không xác định",
+                confirmButtonText = "OK"
+            });
+            CloseModel();
+            return;
+        }
+        
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (isEdit)
+        {
+            currentKhachHang = new KhachHangDTO
+            {
+                Id = khach.Id,
+                Ho = khach.Ho,
+                Ten = khach.Ten,
+                Sdt = khach.Sdt,
+                Gmail = khach.Gmail,
+                TrangThai = khach.TrangThai,
+                GhiChu = khach.GhiChu,
+                NguoiDungId = khach.NguoiDungId
+                
+            };
+        }
+    }
+
+}

@@ -14,6 +14,6 @@ namespace API.Models
         public string Password { get; set; }
         public DateTime NgayTaoTk { get; set; } = DateTime.Now;
         public Guid NguoiDungId { get; set; }
-        public virtual NguoiDung NguoiDung { get; set; }
+        public virtual NguoiDung? NguoiDung { get; set; }
     }
 }

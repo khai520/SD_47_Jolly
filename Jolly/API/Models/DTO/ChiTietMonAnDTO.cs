@@ -23,6 +23,6 @@ namespace API.Models.DTO
         public virtual ICollection<Anh> Anhs { get; set; } = new List<Anh>();
         [NotMapped]
         public List<Anh> DanhSachAnh { get; set; } = new();
-
+        public int SoLuongDat { get; set; } = 1;
     }
 }
