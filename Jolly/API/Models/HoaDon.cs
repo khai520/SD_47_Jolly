@@ -10,6 +10,7 @@ namespace API.Models
         [Range(1, int.MaxValue, ErrorMessage = "Tổng tiền phải lớn hơn 0")]
         public float TongTien { get; set; }
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
+        public float TongTienSauKhiGiam { get; set; }
         public required string TrangThai { get; set; } = "Tạo đơn hàng"; 
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string? GhiChu { get; set; }

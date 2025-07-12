@@ -1,6 +1,7 @@
 ﻿@inject IApiService apiService
 @inject IUploadService UploadService
 @inject IJSRuntime JSRuntime
+<link href="css/ThemChiTiet.css" rel="stylesheet" />
 
 <div class="form-section">
     <h3>➕ Chi tiết món ăn</h3>
@@ -195,6 +196,10 @@
     <div class="modal-overlay">
         <div class="modal-box">
             <h4>Thêm mới @modalType</h4>
+            @if (showSuccessMessage)
+            {
+                <div class="success-message">@successMessage</div>
+            }
             <div class="form-group">
                 <label>Tên</label>
                 <InputText @bind-Value="newItemTen" class="form-control" />
@@ -233,7 +238,8 @@
     private string newItemTen = "";
     private string newItemMota = "";
     private bool showModal = false;
-
+    private string successMessage = "";
+    private bool showSuccessMessage = false;
     // Dropdown lists
     private List<TheLoai> theLoaiList = new();
     private List<ThuongHieu> thuongHieuList = new();
@@ -284,7 +290,7 @@
 
         chiTietMoi.MonAnId = MonAnId;
 
-        
+
 
         var trung = DanhSachChiTiet.FirstOrDefault(x =>
             x.TheLoaiId == chiTietMoi.TheLoaiId &&
@@ -303,7 +309,7 @@
             chiTietMoi.Id = Guid.NewGuid();
             DanhSachChiTiet.Add(chiTietMoi);
         }
-        
+
         // Notify parent component
         await OnThemChiTiet.InvokeAsync(chiTietMoi);
 
@@ -377,7 +383,12 @@
 
     private async Task ConfirmAddNewItem()
     {
-        if (string.IsNullOrWhiteSpace(newItemTen)) return;
+        if (string.IsNullOrWhiteSpace(newItemTen))
+        {
+            successMessage = $"❌ Lỗi khi thêm {modalType}";
+            showSuccessMessage = true;
+            return;
+        }
         var id = Guid.NewGuid();
 
         switch (modalType)

@@ -1,0 +1,454 @@
+﻿@page "/quanlydanhmuc"
+@inject IApiService apiService
+@inject IJSRuntime JSRuntime
+@inject IConfiguration Configuration
+
+
+<PageTitle>Quản lý Danh mục</PageTitle>
+<link href="css/QuanLyDanhMuc.css" rel="stylesheet" />
+<div class="container">
+    <div class="header">
+        <h1>🏷️ Quản lý Danh mục</h1>
+        <p>Quản lý thể loại, thương hiệu, nhà cung cấp và đóng gói</p>
+    </div>
+
+    <div class="tabs">
+        <button class="tab @(currentTab == "theloai" ? "active" : "")" @onclick='() => SwitchTab("theloai")'>
+            🏷️ Thể loại
+        </button>
+        <button class="tab @(currentTab == "thuonghieu" ? "active" : "")" @onclick='() => SwitchTab("thuonghieu")'>
+            🏢 Thương hiệu
+        </button>
+        <button class="tab @(currentTab == "nhacungcap" ? "active" : "")" @onclick='() => SwitchTab("nhacungcap")'>
+            🏭 Nhà cung cấp
+        </button>
+        <button class="tab @(currentTab == "donggoi" ? "active" : "")" @onclick='() => SwitchTab("donggoi")'>
+            📦 Đóng gói
+        </button>
+    </div>
+
+    @if (!string.IsNullOrEmpty(successMessage))
+    {
+        <div class="success-message">
+            @successMessage
+        </div>
+    }
+
+    @if (!string.IsNullOrEmpty(errorMessage))
+    {
+        <div class="error-message-banner">
+            @errorMessage
+        </div>
+    }
+
+    <!-- Tab Thể loại -->
+    <div class="tab-content @(currentTab == "theloai" ? "active" : "")">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number">@theLoaiList.Count</div>
+                <div class="stat-label">Tổng thể loại</div>
+            </div>
+        </div>
+
+        <div class="management-header">
+            <div class="search-box">
+                <input type="text" @bind="searchTheLoai" @bind:event="oninput" placeholder="Tìm kiếm thể loại..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("theloai")'>🔍 Tìm</button>
+            </div>
+            <button class="btn btn-success" @onclick='() => Them("theloai", "add")'>
+                ➕ Thêm thể loại
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên thể loại</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredTheLoai.Any())
+                    {
+                        @for (int i = 0; i < filteredTheLoai.Count; i++)
+                        {
+                            var item = filteredTheLoai[i];
+                            var index = i;
+                            <tr>
+                                <td>@(index + 1)</td>
+                                <td><strong>@item.Ten</strong></td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("theloai", "sua", item.Id , item.Ten , item.Mota )'>
+                                            ✏️ Sửa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="empty-state-icon">📄</div>
+                                <h3>@(string.IsNullOrEmpty(searchTheLoai) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchTheLoai) ? "Nhấn nút \"Thêm\" để tạo thể loại mới" : "Thử lại với từ khóa khác")</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Thương hiệu -->
+    <div class="tab-content @(currentTab == "thuonghieu" ? "active" : "")">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number">@thuongHieuList.Count</div>
+                <div class="stat-label">Tổng thương hiệu</div>
+            </div>
+        </div>
+
+        <div class="management-header">
+            <div class="search-box">
+                <input type="text" @bind="searchThuongHieu" @bind:event="oninput" placeholder="Tìm kiếm thương hiệu..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("thuonghieu")'>🔍 Tìm</button>
+            </div>
+            <button class="btn btn-success" @onclick='() => Them("thuonghieu", "add")'>
+                ➕ Thêm thương hiệu
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên thương hiệu</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredThuongHieu.Any())
+                    {
+                        @for (int i = 0; i < filteredThuongHieu.Count; i++)
+                        {
+                            var item = filteredThuongHieu[i];
+                            var index = i;
+                            <tr>
+                                <td>@(index + 1)</td>
+                                <td><strong>@item.Ten</strong></td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("thuonghieu", "sua", item.Id, item.Ten, item.Mota)'>
+                                            ✏️ Sửa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="empty-state-icon">📄</div>
+                                <h3>@(string.IsNullOrEmpty(searchThuongHieu) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchThuongHieu) ? "Nhấn nút \"Thêm\" để tạo thương hiệu mới" : "Thử lại với từ khóa khác")</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Nhà cung cấp -->
+    <div class="tab-content @(currentTab == "nhacungcap" ? "active" : "")">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number">@nhaCungCapList.Count</div>
+                <div class="stat-label">Tổng nhà cung cấp</div>
+            </div>
+        </div>
+
+        <div class="management-header">
+            <div class="search-box">
+                <input type="text" @bind="searchNhaCungCap" @bind:event="oninput" placeholder="Tìm kiếm nhà cung cấp..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("nhacungcap")'>🔍 Tìm</button>
+            </div>
+            <button class="btn btn-success" @onclick='() => Them("nhacungcap", "add")'>
+                ➕ Thêm nhà cung cấp
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên nhà cung cấp</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredNhaCungCap.Any())
+                    {
+                        @for (int i = 0; i < filteredNhaCungCap.Count; i++)
+                        {
+                            var item = filteredNhaCungCap[i];
+                            var index = i;
+                            <tr>
+                                <td>@(index + 1)</td>
+                                <td><strong>@item.Ten</strong></td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("nhacungcap", "sua", item.Id, item.Ten, item.Mota )'>
+                                            ✏️ Sửa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="empty-state-icon">📄</div>
+                                <h3>@(string.IsNullOrEmpty(searchNhaCungCap) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchNhaCungCap) ? "Nhấn nút \"Thêm\" để tạo nhà cung cấp mới" : "Thử lại với từ khóa khác")</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Tab Đóng gói -->
+    <div class="tab-content @(currentTab == "donggoi" ? "active" : "")">
+        <div class="stats-cards">
+            <div class="stat-card">
+                <div class="stat-number">@dongGoiList.Count</div>
+                <div class="stat-label">Tổng loại đóng gói</div>
+            </div>
+        </div>
+
+        <div class="management-header">
+            <div class="search-box">
+                <input type="text" @bind="searchDongGoi" @bind:event="oninput" placeholder="Tìm kiếm loại đóng gói..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("donggoi")'>🔍 Tìm</button>
+            </div>
+            <button class="btn btn-success" @onclick='() => Them("donggoi","add")'>
+                ➕ Thêm đóng gói
+            </button>
+        </div>
+
+        <div class="table-container">
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>STT</th>
+                        <th>Tên loại đóng gói</th>
+                        <th>Mô tả</th>
+                        <th>Thao tác</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (filteredDongGoi.Any())
+                    {
+                        @for (int i = 0; i < filteredDongGoi.Count; i++)
+                        {
+                            var item = filteredDongGoi[i];
+                            var index = i;
+                            <tr>
+                                <td>@(index + 1)</td>
+                                <td><strong>@item.Ten</strong></td>
+                                <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("donggoi", "sua", item.Id, item.Ten, item.Mota)'>
+                                            ✏️ Sửa
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="4" class="empty-state">
+                                <div class="empty-state-icon">📄</div>
+                                <h3>@(string.IsNullOrEmpty(searchDongGoi) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchDongGoi) ? "Nhấn nút \"Thêm\" để tạo đóng gói mới" : "Thử lại với từ khóa khác")</p>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<ThemDanhMuc 
+    modalType="@currentTab"
+    showModal="@showModal"
+    type="@currentAction"
+    itemTen="@itemname"
+    itemMota="@itemmota"
+    id="@id"
+    OnClose="Close" 
+    OnLoad="Load"
+    />
+
+<!-- Loading Overlay -->
+@if (isLoading)
+{
+    <div class="loading-overlay">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Đang tải dữ liệu...</p>
+        </div>
+    </div>
+}
+
+
+
+@code {
+    // Data lists
+    private List<TheLoai> theLoaiList = new();
+    private List<ThuongHieu> thuongHieuList = new();
+    private List<NhaCungCap> nhaCungCapList = new();
+    private List<DongGoi> dongGoiList = new();
+
+    // Filtered lists
+    private List<TheLoai> filteredTheLoai = new();
+    private List<ThuongHieu> filteredThuongHieu = new();
+    private List<NhaCungCap> filteredNhaCungCap = new();
+    private List<DongGoi> filteredDongGoi = new();
+
+    private string currentTab = "theloai";
+    private string searchTheLoai = string.Empty;
+    private string searchThuongHieu = string.Empty;
+    private string searchNhaCungCap = string.Empty;
+    private string searchDongGoi = string.Empty;
+
+    private bool showModal = false;
+    private string modalTitle = "";
+    private string currentAction = "add";
+    private bool isProcessing = false;
+    private bool isLoading = false;
+
+
+    private string successMessage = "";
+    private string errorMessage = "";
+
+    private Guid id;
+    private string itemname = "";
+    private string? itemmota = "";
+
+
+    private async Task SwitchTab(string tab)
+    {
+        currentTab = tab;
+        await LoadData(tab);
+    }
+
+    private async Task LoadData(string tab)
+    {
+        isLoading = true;
+        try
+        {
+            switch (tab)
+            {
+                case "theloai":
+                    theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai");
+                    filteredTheLoai = theLoaiList;
+                    break;
+                case "thuonghieu":
+                    thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu");
+                    filteredThuongHieu = thuongHieuList;
+                    break;
+                case "nhacungcap":
+                    nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap");
+                    filteredNhaCungCap = nhaCungCapList;
+                    break;
+                case "donggoi":
+                    dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi");
+                    filteredDongGoi = dongGoiList;
+                    break;
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Lỗi tải dữ liệu: {ex.Message}";
+        }
+        isLoading = false;
+    }
+
+    private void SearchData(string tab)
+    {
+        switch (tab)
+        {
+            case "theloai":
+                filteredTheLoai = theLoaiList.Where(x => x.Ten.Contains(searchTheLoai, StringComparison.OrdinalIgnoreCase)).ToList();
+                break;
+            case "thuonghieu":
+                filteredThuongHieu = thuongHieuList.Where(x => x.Ten.Contains(searchThuongHieu, StringComparison.OrdinalIgnoreCase)).ToList();
+                break;
+            case "nhacungcap":
+                filteredNhaCungCap = nhaCungCapList.Where(x => x.Ten.Contains(searchNhaCungCap, StringComparison.OrdinalIgnoreCase)).ToList();
+                break;
+            case "donggoi":
+                filteredDongGoi = dongGoiList.Where(x => x.Ten.Contains(searchDongGoi, StringComparison.OrdinalIgnoreCase)).ToList();
+                break;
+        }
+    }
+
+    private void Them(string ten , string av)
+    {
+        showModal = true;
+        currentTab = ten;
+        currentAction = av;
+    }
+    private void EditItem(string ten , string av , Guid itemid , string tendanhmuc , string? mota)
+    {
+        id = itemid;
+        itemname = tendanhmuc;
+        itemmota = mota;
+        showModal = true;
+        currentTab = ten;
+        currentAction = av;
+    }
+    private async Task Close()
+    {
+        showModal = false;
+        itemmota = "";
+        itemname = "";
+    }
+
+    private async Task Load()
+    {
+        await LoadData(currentTab);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadData(currentTab);
+    }
+}

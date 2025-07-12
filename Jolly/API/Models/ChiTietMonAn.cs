@@ -15,6 +15,7 @@ namespace API.Models
         public Guid? DongGoiId { get; set; }
         public Guid? ThuongHieuId { get; set; }
         public Guid? NhaCungCapId { get; set; }
+        public float Gia { get; set; }
         public bool TrangThai { get; set; } = false;
         public string MonAnId { get; set; }
         public virtual MonAn MonAn { get; set; }

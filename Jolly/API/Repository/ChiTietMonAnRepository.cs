@@ -17,5 +17,9 @@ namespace API.Repository
         {
             return await _context.chiTietMonAns.Where(x => x.MonAnId == Id).ToListAsync();
         }
+        public async Task<IEnumerable<ChiTietMonAn>> GetAll()
+        {
+            return await _context.chiTietMonAns.ToListAsync();
+        }
     }
 }

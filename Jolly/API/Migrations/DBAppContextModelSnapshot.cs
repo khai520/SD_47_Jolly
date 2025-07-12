@@ -110,6 +110,9 @@ namespace API.Migrations
                     b.Property<Guid?>("DongGoiId")
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<float>("Gia")
+                        .HasColumnType("real");
+
                     b.Property<string>("MonAnId")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
@@ -166,6 +169,22 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("chucVus");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("11111111-1111-1111-1111-111111111111"),
+                            Mota = "Quản trị hệ thống",
+                            Ten = "Admin",
+                            TrangThai = true
+                        },
+                        new
+                        {
+                            Id = new Guid("22222222-2222-2222-2222-222222222222"),
+                            Mota = "Nhân viên bán hàng",
+                            Ten = "NhanVien",
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("API.Models.Combo", b =>
@@ -365,6 +384,9 @@ namespace API.Migrations
                     b.Property<float>("TongTien")
                         .HasColumnType("real");
 
+                    b.Property<float>("TongTienSauKhiGiam")
+                        .HasColumnType("real");
+
                     b.Property<string>("TrangThai")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -464,9 +486,6 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float>("Gia")
-                        .HasColumnType("real");
-
                     b.Property<DateTime?>("HanSuDung")
                         .HasColumnType("datetime2");
 
@@ -513,6 +532,18 @@ namespace API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("nguoiDungs");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("99999999-9999-9999-9999-999999999999"),
+                            GioiTinh = "Nam",
+                            Gmail = "admin@shop.com",
+                            Ho = "Nguyễn Văn",
+                            NgaySinh = new DateTime(1995, 1, 1, 0, 0, 0, 0, DateTimeKind.Unspecified),
+                            Sdt = "0987654321",
+                            Ten = " Quản Trị"
+                        });
                 });
 
             modelBuilder.Entity("API.Models.NhaCungCap", b =>
@@ -558,6 +589,16 @@ namespace API.Migrations
                         .IsUnique();
 
                     b.ToTable("nhanViens");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = "NV01",
+                            ChucVuId = new Guid("11111111-1111-1111-1111-111111111111"),
+                            NgayVaoLam = new DateTime(2025, 7, 11, 17, 32, 49, 286, DateTimeKind.Local).AddTicks(980),
+                            NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            TrangThai = true
+                        });
                 });
 
             modelBuilder.Entity("API.Models.TaiKhoan", b =>
@@ -586,6 +627,16 @@ namespace API.Migrations
                         .IsUnique();
 
                     b.ToTable("taiKhoans");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = new Guid("21dd99bc-88c1-4f2d-8c3b-a87672c4f3c4"),
+                            NgayTaoTk = new DateTime(2025, 7, 11, 17, 32, 49, 286, DateTimeKind.Local).AddTicks(845),
+                            NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
+                            Password = "admin123",
+                            UserName = "admin"
+                        });
                 });
 
             modelBuilder.Entity("API.Models.TheLoai", b =>
