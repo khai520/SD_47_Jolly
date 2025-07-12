@@ -17,36 +17,28 @@
             <input type="text" @bind="searchTerm" @oninput="OnSearchChanged" placeholder="Tìm kiếm sản phẩm...">
             <i class="fas fa-search"></i>
         </div>
-        <div class="filters">
-            <select class="filter-select" @bind="statusFilter">
-                <option value="">Tất cả trạng thái</option>
-                <option value="active">Đang hoạt động</option>
-                <option value="inactive">Không hoạt động</option>
-                <option value="expired">Hết hạn</option>
-            </select> 
-        </div>
         <button class="add-btn" @onclick="AddProduct">
             <i class="fas fa-plus"></i> Thêm sản phẩm
         </button>
     </div>
 
     <div class="stats">
-        <div class="stat-card total">
+        <div class="stat-card total" @onclick='() => statusFilter = "" '>
             <i class="fas fa-boxes"></i>
             <h3>@allProducts.Count</h3>
             <p>Tổng sản phẩm</p>
         </div>
-        <div class="stat-card active">
+        <div class="stat-card active" @onclick='() => statusFilter = "active"'>
             <i class="fas fa-check-circle"></i>
             <h3>@activeCount</h3>
             <p>Đang hoạt động</p>
         </div>
-        <div class="stat-card inactive">
+        <div class="stat-card inactive" @onclick='() => statusFilter = "inactive"'>
             <i class="fas fa-times-circle"></i>
             <h3>@inactiveCount</h3>
             <p>Không hoạt động</p>
         </div>
-        <div class="stat-card expired">
+        <div class="stat-card expired" @onclick='() => statusFilter = "expired"'>
             <i class="fas fa-exclamation-triangle"></i>
             <h3>@expiredCount</h3>
             <p>Hết hạn</p>
