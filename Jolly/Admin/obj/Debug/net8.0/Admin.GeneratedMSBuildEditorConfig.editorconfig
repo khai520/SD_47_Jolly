@@ -32,8 +32,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTG9naW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-=======
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Layout/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
@@ -42,7 +40,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2QWRtaW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Layout/NhanVienLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmhhblZpZW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -55,25 +52,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xBY2NvdW50XExvZ291dC5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/BanHang/AddressSelect.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCYW5IYW5nXEFkZHJlc3NTZWxlY3QucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/BanHang/BanHang.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCYW5IYW5nXEJhbkhhbmcucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/BanHang/CustomerSelect.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCYW5IYW5nXEN1c3RvbWVyU2VsZWN0LnJhem9y
-build_metadata.AdditionalFiles.CssScope = 
-
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/BanHang/ProductSelect.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xCYW5IYW5nXFByb2R1Y3RTZWxlY3QucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = 
-
-=======
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/Counter.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xDb3VudGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -86,13 +64,10 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXERhbmhTYWNoQ2hpVGlldE1vbkFuLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-=======
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/QuanLySanPham/QuanLyDanhMuc.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXFF1YW5MeURhbmhNdWMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/QuanLySanPham/QuanLySanPham.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXFF1YW5MeVNhblBoYW0ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
@@ -101,24 +76,18 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXFRoZW1DaGlUaWV0TW9uQW4ucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-=======
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/QuanLySanPham/ThemDanhMuc.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXFRoZW1EYW5oTXVjLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/QuanLySanPham/ThemMonAn.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xRdWFuTHlTYW5QaGFtXFRoZW1Nb25Bbi5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-<<<<<<< HEAD
-=======
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/ThongKe/ThongKe.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xUaG9uZ0tlXFRob25nS2UucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Pages/Weather.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xQYWdlc1xXZWF0aGVyLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
@@ -130,14 +99,3 @@ build_metadata.AdditionalFiles.CssScope =
 [H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xfSW1wb3J0cy5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
-<<<<<<< HEAD
-
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Layout/MainLayout.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTWFpbkxheW91dC5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = b-fh7v0nuy6r
-
-[H:/DuAnTotNghiep/SD_47_Jolly/Jolly/Admin/Components/Layout/NavAdmin.razor]
-build_metadata.AdditionalFiles.TargetPath = Q29tcG9uZW50c1xMYXlvdXRcTmF2QWRtaW4ucmF6b3I=
-build_metadata.AdditionalFiles.CssScope = b-8ub58euivs
-=======
->>>>>>> 5b1887d9b641cf6726885d20146e7d46fd2e9ca5
