@@ -6,6 +6,10 @@
 @inject Service.IService.IMonAnService monAnService
 @inject Service.IService.IChiTietMonAnService ChiTietMonAnService
 @inject IJSRuntime JS
+@inject IMapper _mapper
+@using API.HeThong
+@using API.Models.DTO
+@using AutoMapper
 
 <link href="/css/DanhSachChiTietMonAn.css" rel="stylesheet" />
 <div class="container">
@@ -169,18 +173,18 @@
                                         }
                                     </div>
 
-                                    @if (chiTiet.DanhSachAnh?.Any() == true)
+                                    @if (chiTiet.Anhs?.Any() == true)
                                     {
                                         <div class="detail-images">
                                             <div class="image-gallery">
-                                                @foreach (var anh in chiTiet.DanhSachAnh.Take(3))
+                                                @foreach (var anh in chiTiet.Anhs.Take(3))
                                                 {
                                                     <img src="@anh.DuongDan" alt="@anh.Ten" @onclick="() => ShowImageLightbox(anh.DuongDan)" />
                                                 }
-                                                @if (chiTiet.DanhSachAnh.Count > 3)
+                                                @if (chiTiet.Anhs.Count > 3)
                                                 {
                                                     <div class="more-images">
-                                                        +@(chiTiet.DanhSachAnh.Count - 3)
+                                                        +@(chiTiet.Anhs.Count - 3)
                                                     </div>
                                                 }
                                             </div>
@@ -240,12 +244,12 @@
 
     private MonAn? monAn;
     private MonAn? originalMonAn; 
-    private List<ChiTietMonAn> danhSachChiTiet = new();
-    private List<ChiTietMonAn> tempChiTietList = new();
+    private List<ChiTietMonAnDTO> danhSachChiTiet = new();
+    private List<ChiTietMonAnDTO> tempChiTietList = new();
     private bool isEditMode = false;
     private bool showDetailModal = false;
     private bool isEditingDetail = false;
-    private ChiTietMonAn? editingChiTiet = null;
+    private ChiTietMonAnDTO? editingChiTiet = null;
 
     // Dropdown data
     private List<TheLoai> theLoaiList = new();
@@ -282,7 +286,7 @@
                 };
             }
 
-            danhSachChiTiet = (await ChiTietMonAnService.GetChiTiet(MonAnId))?.ToList() ?? new List<ChiTietMonAn>();
+            danhSachChiTiet = (await ChiTietMonAnService.GetChiTiet(MonAnId))?.ToList() ?? new List<ChiTietMonAnDTO>();
 
             await LoadDropdownData();
         }
@@ -371,11 +375,11 @@
     }
 
 
-    private void EditChiTiet(ChiTietMonAn chiTiet)
+    private void EditChiTiet(ChiTietMonAnDTO chiTiet)
     {
         isEditingDetail = true;
         editingChiTiet = chiTiet;
-        tempChiTietList = new List<ChiTietMonAn> { chiTiet };
+        tempChiTietList = new List<ChiTietMonAnDTO> { chiTiet };
         showDetailModal = true;
     }
 
@@ -387,14 +391,15 @@
         tempChiTietList = new();
     }
 
-    private async Task DoiTrangThai(ChiTietMonAn chiTiet)
+    private async Task DoiTrangThai(ChiTietMonAnDTO chiTiet)
     {
         if (await JSRuntime.InvokeAsync<bool>("confirm", $"Bạn có chắc muốn đổi trạng thái không?"))
         {
             try
             {
+
                 chiTiet.TrangThai = !chiTiet.TrangThai;
-                var success = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", chiTiet);
+                var success = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
                 if (success)
                 {
 
@@ -413,14 +418,14 @@
         }
     }
 
-    private async Task OnChiTietAdded(ChiTietMonAn chiTiet)
+    private async Task OnChiTietAdded(ChiTietMonAnDTO chiTiet)
     {
         try
         {
             if (isEditingDetail && editingChiTiet != null)
             {
                 chiTiet.Id = editingChiTiet.Id;
-                var result = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", chiTiet);
+                var result = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
                 if (result != null)
                 {
                     LoadData();
@@ -434,19 +439,41 @@
             }
             else
             {
-                // Thêm chi tiết mới
-                var result = await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", chiTiet);
-                if (result != null)
+                var check = danhSachChiTiet.Find(x => x.TheLoaiId == chiTiet.TheLoaiId && x.DongGoiId == chiTiet.DongGoiId && x.NhaCungCapId == chiTiet.NhaCungCapId && x.ThuongHieuId == chiTiet.ThuongHieuId);
+                if (check != null)
                 {
-                    LoadDropdownData();
-                    danhSachChiTiet.Add(result);
-                    ShowMessage("Thêm chi tiết thành công!", true);
-                    CloseDetailModal();
+                    chiTiet.Id = check.Id; 
+                    var result2 = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
+                    if (result2 != null)
+                    {
+                        LoadData();
+                        ShowMessage("Cập nhật chi tiết thành công!", true);
+                        CloseDetailModal();
+                    }
+                    else
+                    {
+                        ShowMessage("Lỗi khi cập nhật chi tiết!", false);
+                    }
                 }
+                
                 else
                 {
-                    ShowMessage("Lỗi khi thêm chi tiết!", false);
+                    // Thêm chi tiết mới
+                    var result = await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
+                    if (result != null)
+                    {
+                        LoadDropdownData();
+                        danhSachChiTiet.Add(_mapper.Map<ChiTietMonAnDTO>(result));
+                        ShowMessage("Thêm chi tiết thành công!", true);
+                        CloseDetailModal();
+                    }
+                    else
+                    {
+                        ShowMessage("Lỗi khi thêm chi tiết!", false);
+                    }
                 }
+                
+                
             }
         }
         catch (Exception ex)
@@ -455,13 +482,13 @@
         }
     }
 
-    private async Task OnChiTietRemoved(ChiTietMonAn chiTiet)
+    private async Task OnChiTietRemoved(ChiTietMonAnDTO chiTiet)
     {
         // Xử lý khi xóa chi tiết từ component
         await Task.CompletedTask;
     }
 
-    private async Task OnChiTietEdited(ChiTietMonAn chiTiet)
+    private async Task OnChiTietEdited(ChiTietMonAnDTO chiTiet)
     {
         // Xử lý khi sửa chi tiết từ component
         await Task.CompletedTask;

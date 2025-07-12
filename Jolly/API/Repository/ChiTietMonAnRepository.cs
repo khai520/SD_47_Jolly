@@ -13,13 +13,31 @@ namespace API.Repository
             _context = context;
         }
 
-        public async Task<IEnumerable<ChiTietMonAn>> GetMonAnId(string Id)
+        public async Task<IEnumerable<ChiTietMonAn>> GetMonAnId(string id)
         {
-            return await _context.chiTietMonAns.Where(x => x.MonAnId == Id).ToListAsync();
+            return await _context.chiTietMonAns
+                .Where(x => x.MonAnId == id)
+                .Include(c => c.MonAn)
+                .Include(c => c.TheLoai)
+                .Include(c => c.DongGoi)
+                .Include(c => c.ThuongHieu)
+                .Include(c => c.NhaCungCap)
+                .AsNoTracking()
+                .ToListAsync();
         }
+
         public async Task<IEnumerable<ChiTietMonAn>> GetAll()
         {
-            return await _context.chiTietMonAns.ToListAsync();
+            return await _context.chiTietMonAns
+                .Include(c => c.MonAn)
+                .Include(c => c.TheLoai)
+                .Include(c => c.DongGoi)
+                .Include(c => c.ThuongHieu)
+                .Include(c => c.NhaCungCap)
+                .Include(c => c.Anhs)
+                .AsNoTracking()
+                .ToListAsync();
         }
+
     }
 }

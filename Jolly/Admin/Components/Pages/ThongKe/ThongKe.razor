@@ -272,7 +272,7 @@
 
 	private List<HoaDon> hoaDons = new List<HoaDon>();
 	private List<HoaDonChiTiet> hoaDonChiTiets = new List<HoaDonChiTiet>();
-	private List<ChiTietMonAn> chitietmonAns = new List<ChiTietMonAn>();
+	private List<ChiTietMonAnDTO> chitietmonAns = new List<ChiTietMonAnDTO>();
 
 	private decimal TongSoTienHomNay ;
 	private int SoLuongSanPhamHomNay ;
@@ -401,8 +401,8 @@
 			return new DanhSachSanPhamBanChay
 				{
 					Anh = first.Anhs?.FirstOrDefault()?.DuongDan ?? "",
-					TheLoai = first.TheLoai?.Ten ?? "Không rõ",
-					TenSanPham = first.MonAn?.Ten ?? "Chưa rõ tên",
+					TheLoai = first.TheLoai ?? "Không rõ",
+					TenSanPham = first.Ten ?? "Chưa rõ tên",
 					SoLuong = group.Sum(x => x.Soluong),
 					GiaTien = group.Min(x => x.Gia)
 				};
@@ -594,10 +594,10 @@
 									hdct.TrangThai == true
 									select new
 									{
-										TenGiay = ma.MonAn.Ten,
+										TenGiay = ma.Ten,
 										DuongDanAnh = ma.Anhs.FirstOrDefault()?.DuongDan ?? "",
 										Gia = hdct.ThanhTien,
-										kc = ma.TheLoai.Ten,
+										kc = ma.TheLoai,
 										SoLuong = hdct.Soluong
 									})
 									.GroupBy(x => x.TenGiay)

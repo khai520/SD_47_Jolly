@@ -29,6 +29,8 @@ builder.Services.AddScoped<ITaiKhoanService, TaiKhoanService>();
 builder.Services.AddScoped<IUploadService, ImageUploadService>();
 builder.Services.AddScoped<IMonAnService, MonAnService>();
 builder.Services.AddScoped<IChiTietMonAnService, ChiTietMonAnService>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 builder.Services.AddHttpClient();
 builder.WebHost.UseUrls("http://localhost:5292", "https://localhost:7041");
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();

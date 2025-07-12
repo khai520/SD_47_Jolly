@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DBAppContext))]
-    partial class DBAppContextModelSnapshot : ModelSnapshot
+    [Migration("20250712101258_ver15")]
+    partial class ver15
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -595,7 +598,7 @@ namespace API.Migrations
                         {
                             Id = "NV01",
                             ChucVuId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayVaoLam = new DateTime(2025, 7, 12, 17, 29, 47, 107, DateTimeKind.Local).AddTicks(9932),
+                            NgayVaoLam = new DateTime(2025, 7, 12, 17, 12, 57, 386, DateTimeKind.Local).AddTicks(1881),
                             NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
                             TrangThai = true
                         });
@@ -631,8 +634,8 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("80bb2011-7aea-4563-8a8c-daa9f1f3d983"),
-                            NgayTaoTk = new DateTime(2025, 7, 12, 17, 29, 47, 107, DateTimeKind.Local).AddTicks(9878),
+                            Id = new Guid("b8b522aa-56f0-47af-be84-3220796343d7"),
+                            NgayTaoTk = new DateTime(2025, 7, 12, 17, 12, 57, 386, DateTimeKind.Local).AddTicks(1834),
                             NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
                             Password = "admin123",
                             UserName = "admin"
