@@ -4,7 +4,6 @@
 		<TargetFramework>net8.0</TargetFramework>
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
-		
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -18,7 +17,6 @@
 		<Folder Include=".\wwwroot\img\" />
 		<Folder Include="Components\Pages\GiamGia\" />
 		<Folder Include="Components\Pages\DonHang\" />
-		<Folder Include="Components\Pages\QuanLyNhanVien\" />
 		<Folder Include="Components\Pages\TaiKhoan\" />
 	</ItemGroup>
 

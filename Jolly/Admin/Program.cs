@@ -13,6 +13,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 string url = "https://localhost:7047/api/";
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(url) });
+
+
 builder.Services.AddDbContext<DBAppContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 builder.Services.AddHttpClient<IApiService, ApiService>(client =>
@@ -30,11 +32,13 @@ builder.Services.AddScoped<IUploadService, ImageUploadService>();
 builder.Services.AddScoped<IMonAnService, MonAnService>();
 builder.Services.AddScoped<IChiTietMonAnService, ChiTietMonAnService>();
 builder.Services.AddScoped<IKhachHangService, KhachHangService>();
+builder.Services.AddScoped<INhanVienService, NhanVienService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddHttpClient();
-builder.WebHost.UseUrls("https://localhost:7041");
+builder.WebHost.UseUrls("http://localhost:6005", "https://localhost:6006");
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
@@ -56,12 +60,13 @@ if (!app.Environment.IsDevelopment())
     app.UseHsts();
 }
 
-
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-app.UseHttpsRedirection();
-app.UseStaticFiles();
+
+
 app.UseAntiforgery();
 
 app.MapRazorComponents<App>().AddInteractiveServerRenderMode();

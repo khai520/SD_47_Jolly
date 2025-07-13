@@ -43,8 +43,8 @@
 
     private List<KhachHangDTO> FilteredCustomers => Customers
         .Where(kh => string.IsNullOrWhiteSpace(searchTerm)
-            || kh.NguoiDung.Ten.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
-            || kh.NguoiDung.Sdt.Contains(searchTerm))
+            || kh.Ten.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)
+            || kh.Sdt.Contains(searchTerm))
         .OrderByDescending(k => k.TrangThai)
         .ToList();
 

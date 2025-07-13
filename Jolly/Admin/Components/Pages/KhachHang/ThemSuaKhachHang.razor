@@ -68,6 +68,11 @@
                             </div>
                         </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Ngày Sinh</label>
+                            <InputDate @bind-Value="currentKhachHang.NgaySinh"  />
+                        </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -111,10 +116,14 @@
     private KhachHangDTO currentKhachHang = new();
     private async Task CloseModel()
     {
-        currentKhachHang = new();
+        currentKhachHang = new KhachHangDTO
+        {
+            NgaySinh = DateTime.Today
+        };
         await OnLoad.InvokeAsync();
         await OnClose.InvokeAsync();
     }
+
     private async Task SaveKhachHang()
     {
         try
@@ -153,9 +162,10 @@
                         Ho = currentKhachHang.Ho,
                         Ten = currentKhachHang.Ten,
                         Sdt = currentKhachHang.Sdt,
-                        Gmail = currentKhachHang.Gmail
+                        Gmail = currentKhachHang.Gmail,
+                        NgaySinh = currentKhachHang.NgaySinh
                     };
-                    var result = await apiService.PutAsync<NguoiDung>("NguoiDung", nguoiDung);
+                    var result = await apiService.PutAsync<NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDung));
                     var result2 = await apiService.PutAsync<KhachHang>("KhachHang",_mapper.Map<KhachHang>(currentKhachHang));
                     if (result && result2)
                     {
@@ -198,9 +208,10 @@
                     Ho = currentKhachHang.Ho,
                     Ten = currentKhachHang.Ten,
                     Sdt = currentKhachHang.Sdt,
-                    Gmail = currentKhachHang.Gmail
+                    Gmail = currentKhachHang.Gmail,
+                    NgaySinh = currentKhachHang.NgaySinh
                 };
-                var result = await apiService.PostAsync<NguoiDung,NguoiDung>("NguoiDung", nguoiDung);
+                var result = await apiService.PostAsync<NguoiDung,NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDung));
                 currentKhachHang.NguoiDungId = result.Id;
                 var result2 = await apiService.PostAsync<KhachHang, KhachHang>("KhachHang", _mapper.Map<KhachHang>(currentKhachHang));
                 if (result != null && result2 != null)
@@ -237,24 +248,13 @@
             CloseModel();
             return;
         }
-        
+
     }
     protected override async Task OnParametersSetAsync()
     {
         if (isEdit)
         {
-            currentKhachHang = new KhachHangDTO
-            {
-                Id = khach.Id,
-                Ho = khach.Ho,
-                Ten = khach.Ten,
-                Sdt = khach.Sdt,
-                Gmail = khach.Gmail,
-                TrangThai = khach.TrangThai,
-                GhiChu = khach.GhiChu,
-                NguoiDungId = khach.NguoiDungId
-                
-            };
+            currentKhachHang = khach;
         }
     }
 

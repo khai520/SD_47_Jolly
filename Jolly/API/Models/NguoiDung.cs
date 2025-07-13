@@ -1,4 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Models
 {
@@ -18,7 +20,8 @@ namespace API.Models
         [Phone]
         public string? Sdt { get; set; }
         public virtual ICollection<DiaChi>? DiaChis { get; set; }
-        public virtual NhanVien? NhanVien { get; set; }
+        [JsonIgnore]
+        public virtual NhanVien? NhanVien { get; set; } 
     }
     public class MinimumAgeAttribute(int minimumAge) : ValidationAttribute
     {

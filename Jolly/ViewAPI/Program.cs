@@ -32,7 +32,7 @@ builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
 
 
 builder.Services.AddAuthorization();
-builder.WebHost.UseUrls("https://localhost:7047", "http://localhost:5021");
+builder.WebHost.UseUrls("https://localhost:7047");
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
