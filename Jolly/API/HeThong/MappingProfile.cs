@@ -66,7 +66,28 @@ namespace API.HeThong
             CreateMap<MonAn, MonAnDTO>().ReverseMap();
             CreateMap<NguoiDung, NguoiDungDTO>().ReverseMap();
             CreateMap<NhaCungCap, NhaCungCapDTO>().ReverseMap();
-            CreateMap<NhanVien, NhanVienDTO>().ReverseMap();
+            CreateMap<NhanVien, NhanVienDTO>()
+            .ForMember(dest => dest.Ho, opt => opt.MapFrom(src =>
+                src.NguoiDung != null && !string.IsNullOrWhiteSpace(src.NguoiDung.Ho)
+                ? src.NguoiDung.Ho : ""))
+            .ForMember(dest => dest.Ten, opt => opt.MapFrom(src =>
+                src.NguoiDung != null && !string.IsNullOrWhiteSpace(src.NguoiDung.Ten)
+                ? src.NguoiDung.Ten : ""))
+            .ForMember(dest => dest.Sdt, opt => opt.MapFrom(src =>
+                src.NguoiDung != null && !string.IsNullOrWhiteSpace(src.NguoiDung.Sdt)
+                ? src.NguoiDung.Sdt : ""))
+            .ForMember(dest => dest.Gmail, opt => opt.MapFrom(src =>
+                src.NguoiDung != null && !string.IsNullOrWhiteSpace(src.NguoiDung.Gmail)
+                ? src.NguoiDung.Gmail : ""))
+            .ForMember(dest => dest.TenChucVu, opt => opt.MapFrom(src =>
+                src.ChucVu != null && !string.IsNullOrWhiteSpace(src.ChucVu.Ten)
+                ? src.ChucVu.Ten : ""))
+            .ReverseMap(); 
+
+            CreateMap<NhanVienDTO,NhanVien>()
+                .ForMember(dest => dest.NguoiDung, opt => opt.Ignore());
+
+
             CreateMap<TaiKhoan, TaiKhoanDTO>()
             .ForMember(dest => dest.Quyen, opt => opt.MapFrom(src =>
                 src.NguoiDung != null &&

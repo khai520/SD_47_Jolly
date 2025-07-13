@@ -1,0 +1,299 @@
+﻿@using AutoMapper
+@using System.Text.RegularExpressions
+@inject IJSRuntime JS
+@inject Service.IService.IApiService apiService
+@inject IMapper _mapper
+@if (showModal)
+{
+    <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        @if (isEdit)
+                        {
+                            <div>
+                                <i class="fas fa-edit me-2"></i>
+                                Chỉnh sửa Nhân Viên
+                            </div>
+
+                        }
+                        else
+                        {
+                            <div>
+                                <i class="fas fa-plus me-2"></i>
+                                Thêm nhân viên mới
+                            </div>
+
+                        }
+                    </h5>
+                    <button type="button" class="btn-close" @onclick="CloseModel"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="currentnhanvien" OnValidSubmit="SaveNhanVien">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Họ *</label>
+                                    <InputText class="form-control" @bind-Value="currentnhanvien.Ho" placeholder="Nhập họ" />
+                                    <ValidationMessage For="() => currentnhanvien.Ho" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Tên *</label>
+                                    <InputText class="form-control" @bind-Value="currentnhanvien.Ten" placeholder="Nhập tên" />
+                                    <ValidationMessage For="() => currentnhanvien.Ten" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Số điện thoại *</label>
+                                    <InputText class="form-control" @bind-Value="currentnhanvien.Sdt" placeholder="Nhập số điện thoại" />
+                                    <ValidationMessage For="() => currentnhanvien.Sdt" />
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label class="form-label">Email *</label>
+                                    <InputText class="form-control" @bind-Value="currentnhanvien.Gmail" placeholder="Nhập email" />
+                                    <ValidationMessage For="() => currentnhanvien.Gmail" />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Ngày Sinh</label>
+                            <InputDate @bind-Value="currentnhanvien.NgaySinh" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Chức vụ</label>
+                            <InputSelect @bind-Value="currentnhanvien.ChucVuId">
+                                <option value="@Guid.Empty">-- Chức vụ --</option>
+                                @foreach (var item in chucVus)
+                                {
+                                    <option value="@item.Id">@item.Ten</option>
+                                }
+                            </InputSelect>
+                            @* <button type="button" class="btn-add" @onclick='ThemChucVu'>+</button> *@
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <div class="form-check">
+                                        <InputCheckbox class="form-check-input" @bind-Value="currentnhanvien.TrangThai" />
+                                        <label class="form-check-label">
+                                            Trạng thái hoạt động
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        
+
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-secondary me-2" @onclick="CloseModel">
+                                <i class="fas fa-times me-2"></i>Hủy
+                            </button>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save me-2"></i>Lưu
+                            </button>
+                        </div>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+<ThemChucVu 
+    
+    />
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnLoad { get; set; }
+    [Parameter] public bool showModal { get; set; } = false;
+    [Parameter] public bool isEdit { get; set; } = false;
+    [Parameter] public NhanVienDTO nv { get; set; } = new();
+
+    private bool showChucVu = false;
+    private NhanVienDTO currentnhanvien = new() { NgaySinh = DateTime.Now };
+
+    private List<ChucVu> chucVus = new();
+    protected override async Task OnInitializedAsync()
+    {
+        chucVus = await apiService.GetAsync<List<ChucVu>>("ChucVu");
+    }
+    private async Task CloseModel()
+    {
+        currentnhanvien = new NhanVienDTO
+        {
+            NgaySinh = DateTime.Today
+        };
+        await OnLoad.InvokeAsync();
+        await OnClose.InvokeAsync();
+    }
+    private void ThemChucVu()
+    {
+        showChucVu = true;
+    }
+    private async Task SaveNhanVien()
+    {
+
+        if (string.IsNullOrWhiteSpace(currentnhanvien.Ten) && string.IsNullOrWhiteSpace(currentnhanvien.Ho))
+        {
+            string checktype = isEdit ? "Thêm" : "Sửa";
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = $"{checktype} thất bại!",
+                text = $"Chưa nhập thông tin Họ Tên",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+        if ((!string.IsNullOrWhiteSpace(currentnhanvien.Ten) && Regex.IsMatch(currentnhanvien.Ten, @"[\d]|[^a-zA-Z0-9\s]")) ||
+        (!string.IsNullOrWhiteSpace(currentnhanvien.Ho) && Regex.IsMatch(currentnhanvien.Ho, @"[\d]|[^a-zA-Z0-9\s]")))
+        {
+            string checktype = isEdit ? "Sửa" : "Thêm";
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = $"{checktype} thất bại!",
+                text = $"Họ hoặc tên chứa ký tự đặc biệt",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+
+        var today = DateTime.Today;
+        var age = today.Year - currentnhanvien.NgaySinh.Year;
+
+        if (currentnhanvien.NgaySinh.Date > today.AddYears(-age))
+        {
+            age--; 
+        }
+
+        if (age < 13)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = "Tuổi không hợp lệ!",
+                text = "Nhân viên phải từ 13 tuổi trở lên.",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+
+        if (isEdit)
+        {
+            if (nv != null)
+            {
+                NguoiDung nguoiDung = new()
+                {
+                    Id = currentnhanvien.NguoiDungId,
+                    Ho = currentnhanvien.Ho,
+                    Ten = currentnhanvien.Ten,
+                    Sdt = currentnhanvien.Sdt,
+                    Gmail = currentnhanvien.Gmail,
+                    NgaySinh = currentnhanvien.NgaySinh
+
+                };
+                var result = await apiService.PutAsync<NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDung));
+                var result2 = await apiService.PutAsync<NhanVien>("NhanVien", _mapper.Map<NhanVien>(currentnhanvien));
+                if (result && result2)
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "success",
+                        title = "Thành công",
+                        text = "Sửa nhân viên thành công."
+                    });
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = "Lỗi!",
+                        text = "Có lỗi khi lưu nhân viên."
+                    });
+                }
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"Lỗi hệ thống!",
+                    text = $"Nhân viên không tồn tại",
+                    confirmButtonText = "OK"
+                });
+                CloseModel();
+                return;
+            }
+
+        }
+        else
+        {
+
+            NguoiDung nguoiDung = new()
+            {
+                Ho = currentnhanvien.Ho,
+                Ten = currentnhanvien.Ten,
+                Sdt = currentnhanvien.Sdt,
+                Gmail = currentnhanvien.Gmail,
+                NgaySinh = currentnhanvien.NgaySinh
+            };
+            var result = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDung));
+            currentnhanvien.NguoiDungId = result.Id;
+            var result2 = await apiService.PostAsync<NhanVien, NhanVien>("NhanVien", _mapper.Map<NhanVien>(currentnhanvien));
+            if (result != null && result2 != null)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "success",
+                    title = "Thành công",
+                    text = "Thêm nhân viên thành công."
+                });
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Lỗi!",
+                    text = "Có lỗi khi lưu nhân viên."
+                });
+            }
+        }
+
+        CloseModel();
+
+    }
+    protected override async Task OnParametersSetAsync()
+    {
+        if (isEdit)
+        {
+            currentnhanvien = new NhanVienDTO
+            {
+                Id = nv.Id,
+                Ho = nv.Ho,
+                Ten = nv.Ten,
+                Gmail = nv.Gmail,
+                Sdt = nv.Sdt,
+                TrangThai = nv.TrangThai,
+                NgaySinh = nv.NgaySinh,
+                NguoiDungId = nv.NguoiDungId
+            };
+        }
+    }
+
+}

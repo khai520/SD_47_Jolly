@@ -8,6 +8,7 @@ namespace API.Models.DTO
         public string? Ho { get; set; }
         public string? Ten { get; set; }
         public string? HoTen => $"{Ho ?? ""} {Ten ?? ""}".Trim();
+        public DateTime NgaySinh { get; set; } = DateTime.Now;
         [Phone(ErrorMessage = "Lỗi định dạng số điện thoại!")]
         public string? Sdt { get; set; }
         [EmailAddress(ErrorMessage = "Lỗi định dạng Gmail!")]
@@ -15,7 +16,6 @@ namespace API.Models.DTO
         public bool TrangThai { get; set; } = true;
         public string? GhiChu { get; set; }
         public Guid NguoiDungId { get; set; }
-        public virtual NguoiDung? NguoiDung { get; set; }
         public virtual ICollection<DiaChiDTO>? DiaChis { get; set; }
     }
 }

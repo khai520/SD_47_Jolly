@@ -13,11 +13,13 @@ namespace API.Repository
             _context = context;
         }
 
-        public async Task<NhanVien> GetChucVu(Guid id)
+        public async Task<IEnumerable<NhanVien>> GetAll()
         {
             return await _context.nhanViens
-                                 .Include(nv => nv.ChucVu) 
-                                 .FirstOrDefaultAsync(x => x.NguoiDungId == id);
+            .Include(kh => kh.NguoiDung)
+            .ThenInclude(nd => nd.DiaChis)
+            .Include(nv => nv.ChucVu)
+            .ToListAsync();
         }
     }
 }

@@ -1,0 +1,89 @@
+﻿@inject IApiService apiService
+@inject IJSRuntime JS
+<link href="css/ThemDanhMuc.css" rel="stylesheet" />
+@if (showModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h4>Thêm mới Chức Vụ</h4>
+            @if (showSuccessMessage)
+            {
+                <div class="success-message">@successMessage</div>
+            }
+            <div class="form-group">
+                <label>Tên</label>
+                <InputText @bind-Value="newItemTen" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Mô tả</label>
+                <InputTextArea @bind-Value="newItemMota" class="form-control" rows="3" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-secondary" @onclick="Close">Hủy</button>
+                <button class="btn btn-primary" @onclick="ConfirmAddNewItem">@(type == "add" ? "Thêm" : "Sửa")</button>
+            </div>
+        </div>
+    </div>
+}
+@code {
+    [Parameter] public string type { get; set; } = "add";
+    [Parameter] public Guid id { get; set; }
+    [Parameter] public bool showModal { get; set; } = false;
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnLoad { get; set; }
+    [Parameter] public string itemTen { get; set; } = "";
+    [Parameter] public string? itemMota { get; set; } = "";
+
+    private string newItemTen = "";
+    private string? newItemMota = "";
+    private string successMessage = "";
+    private bool showSuccessMessage = false;
+    protected override async Task OnParametersSetAsync()
+    {
+        newItemTen = itemTen;
+        newItemMota = itemMota;
+    }
+    private async Task ConfirmAddNewItem()
+    {
+        if (string.IsNullOrWhiteSpace(newItemTen))
+        {
+            string checktype = type == "add" ? "Thêm" : "Sửa";
+            successMessage = $"❌ Lỗi khi {checktype} Chức vụ";
+            showSuccessMessage = true;
+            return;
+        }
+        if (type == "add")
+        {
+            var newTheLoai = new ChucVu { Ten = newItemTen, Mota = newItemMota };
+            await apiService.PostAsync<ChucVu, ChucVu>("TheLoai", newTheLoai);
+        } 
+        else
+        {
+            if (id == Guid.Empty)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Lỗi!",
+                    text = "Chức vụ không có trong dữ liệu!"
+                });
+            }
+            else
+            {
+                var newTheLoai = new ChucVu { Ten = newItemTen, Mota = newItemMota };
+                await apiService.PutAsync<ChucVu>("TheLoai", newTheLoai);
+            }
+        }
+        await OnLoad.InvokeAsync();
+        await Close();
+    }
+
+    private async Task Close()
+    {
+        itemTen = "";
+        itemMota = "";
+        newItemTen = "";
+        newItemMota = "";
+        await OnClose.InvokeAsync();
+    }
+}
