@@ -128,7 +128,7 @@
     {
         try
         {
-            if (string.IsNullOrWhiteSpace(currentKhachHang.Ten) && string.IsNullOrWhiteSpace(currentKhachHang.Ho))
+            if (string.IsNullOrWhiteSpace(currentKhachHang.Ten) || string.IsNullOrWhiteSpace(currentKhachHang.Ho))
             {
                 string checktype = isEdit ? "Thêm" : "Sửa";
                 await JS.InvokeVoidAsync("Swal.fire", new
@@ -140,7 +140,8 @@
                 });
                 return;
             }
-            if (Regex.IsMatch(currentKhachHang.Ten, @"[\d]|[^a-zA-Z0-9\s]") && Regex.IsMatch(currentKhachHang.Ho, @"[\d]|[^a-zA-Z0-9\s]"))
+            if (Regex.IsMatch(currentKhachHang.Ten, @"[\d]|[^\p{L}\s]") ||
+                Regex.IsMatch(currentKhachHang.Ho, @"[\d]|[^\p{L}\s]"))
             {
                 string checktype = isEdit ? "Thêm" : "Sửa";
                 await JS.InvokeVoidAsync("Swal.fire", new
@@ -152,10 +153,70 @@
                 });
                 return;
             }
+            if (string.IsNullOrWhiteSpace(currentKhachHang.Sdt))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = $"Số điện thoại trống.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (!Regex.IsMatch(currentKhachHang.Sdt, @"^(0|\+84)[0-9]{9}$"))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = $"Số điện thoại không hợp lệ. Định dạng đúng: 10 số và bắt đầu bằng 0 hoặc +84.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (!string.IsNullOrWhiteSpace(currentKhachHang.Gmail))
+            {
+                if (!Regex.IsMatch(currentKhachHang.Gmail, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+                {
+                    string checktype = isEdit ? "Thêm" : "Sửa";
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = $"{checktype} thất bại!",
+                        text = "Email không hợp lệ. Vui lòng nhập đúng định dạng (VD: example@gmail.com).",
+                        confirmButtonText = "OK"
+                    });
+                    return;
+                }
+            }
+
+            var today = DateTime.Today;
+            var age = today.Year - currentKhachHang.NgaySinh.Year;
+
+            if (currentKhachHang.NgaySinh > today.AddYears(-age))
+            {
+                age--;
+            }
+
+            if (age < 13)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Tuổi không hợp lệ!",
+                    text = "Khách hàng phải từ 13 tuổi trở lên.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
             if (isEdit)
             {
                 if (khach != null)
                 {
+                    
                     NguoiDung nguoiDung = new()
                     {
                         Id = currentKhachHang.NguoiDungId,
@@ -246,7 +307,7 @@
                 confirmButtonText = "OK"
             });
             CloseModel();
-            return;
+            throw;
         }
 
     }

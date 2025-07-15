@@ -16,6 +16,15 @@ namespace Admin.Service
             _httpClient = httpClient;
         }
 
+        public async Task<bool> DeleteImageAsync(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName)) return false;
+
+            var response = await _httpClient.DeleteAsync($"upload/tamthoi?fileName={fileName}" );
+            return response.IsSuccessStatusCode;
+        }
+
+
         public async Task<UploadResult?> UploadImageAsync(IBrowserFile file)
         {
             var content = new MultipartFormDataContent();

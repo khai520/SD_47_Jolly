@@ -20,6 +20,5 @@ namespace ViewAPI.Controllers
             _idPrefix = "CB";
             _idColumnName = "Id";
         }
-
     }
 }

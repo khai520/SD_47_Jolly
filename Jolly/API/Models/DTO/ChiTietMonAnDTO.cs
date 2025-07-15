@@ -13,6 +13,7 @@ namespace API.Models.DTO
         public string? NhaCungCap { get; set; }
         public string MonAnId { get; set; }
         public float Gia { get; set; }
+        public float GiaGiam { get; set; }
         public int Soluong { get; set; } 
         public string? Mota { get; set; }
         public bool TrangThai { get; set; } = false;
@@ -22,7 +23,7 @@ namespace API.Models.DTO
         public Guid? NhaCungCapId { get; set; }
         public virtual ICollection<Anh> Anhs { get; set; } = new List<Anh>();
         [NotMapped]
-        public List<Anh> DanhSachAnh { get; set; } = new();
+        public List<AnhDTO> DanhSachAnh { get; set; } = new();
         public int SoLuongDat { get; set; } = 1;
     }
 }

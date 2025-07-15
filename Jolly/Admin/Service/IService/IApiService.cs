@@ -1,4 +1,5 @@
 ﻿using API.Models;
+using Azure.Core;
 
 namespace Admin.Service.IService
 {
@@ -7,6 +8,6 @@ namespace Admin.Service.IService
         Task<T?> GetAsync<T>(string url);
         Task<TResponse?> PostAsync<TRequest, TResponse>(string url, TRequest data);
         Task<bool> PutAsync<TRequest>(string url, TRequest data);
-        Task<bool> DeleteAsync(string url);
+        Task<bool> DeleteAsync<Tkey>(string url, Tkey tkey);
     }
 }

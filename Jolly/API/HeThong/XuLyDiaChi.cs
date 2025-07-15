@@ -1,6 +1,6 @@
 ﻿
 using API.HeThong.IHeThong;
-using API.Models.DTO.BanHang;
+using API.Models.ViewModels.BanHang;
 
 namespace API.HeThong
 {

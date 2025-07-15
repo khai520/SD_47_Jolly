@@ -1,4 +1,4 @@
-﻿namespace API.Models.DTO.BanHang
+﻿namespace API.Models.ViewModels.BanHang
 {
     public class ThongTinHoaDon
     {
@@ -10,7 +10,7 @@
         public string XaPhuongThiTran { get; set; }
         public string DiaChiCuThe { get; set; }
         public string? GhiChu { get; set; }
-        public string GiamGiaId { get; set; }
+        public string? GiamGiaId { get; set; }
         public bool IsDelivery { get; set; } = false;
         
     }

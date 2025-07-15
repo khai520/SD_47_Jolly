@@ -14,11 +14,12 @@ namespace API.Models
         public int? Soluong { get; set; }
         public float? SoTienKhuyenMai { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Phần trăm khuyến mãi phải lớn hơn 0")]
-        public int? PhanTranKhuyenMai { get; set; }
+        public int? PhanTramKhuyenMai { get; set; }
         public float? SoTienToiThieu { get; set; }
         [NotFutureDate(ErrorMessage = "Ngày bắt đầu không được lớn hơn ngày hôm nay")]
         public DateTime? NgayBatDau { get; set; } = DateTime.Now;
         public DateTime? NgayKetThuc { get; set; }
+        public string? MoTa { get; set; }
         public bool ApDungSanPham { get; set; }
         public bool TrangThai { get; set; } = false;
         public virtual ICollection<ChiTietGiamGia> chiTietGiamGias { get; set; }

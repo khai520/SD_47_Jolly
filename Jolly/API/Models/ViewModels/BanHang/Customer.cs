@@ -1,4 +1,4 @@
-﻿namespace API.Models.DTO.BanHang
+﻿namespace API.Models.ViewModels.BanHang
 {
     public class Customer
     {

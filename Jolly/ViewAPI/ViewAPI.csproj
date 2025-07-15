@@ -15,7 +15,12 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Uploads\Images\" />
+    <None Include="wwwroot\Uploads\Images\0ll3sl2e.jpg" />
+    <None Include="wwwroot\Uploads\Images\mxiygs4h.png" />
+    <None Include="wwwroot\Uploads\Images\niuawx1h.jpg" />
+    <None Include="wwwroot\Uploads\Images\prjbd3ni.webp" />
+    <None Include="wwwroot\Uploads\Images\te10weqn.webp" />
+    <None Include="wwwroot\Uploads\Images\wcffibrh.png" />
   </ItemGroup>
 	<ItemGroup>
 		<None Update="appsettings.json">

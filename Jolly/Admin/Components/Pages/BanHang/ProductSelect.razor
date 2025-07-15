@@ -21,7 +21,7 @@
                                 <span class="old-price">@FormatMoney(product.Gia)</span>
                             </div>
                             <div class="order-size">
-                                Size:
+                                Thể loại:
                                 <select @bind="@product.TheLoai">
                                     <option value="@product.TheLoai">@product.TheLoai.ToString()</option>
                                 </select>
@@ -51,46 +51,56 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var all = await GetChiTietMonAnService.GetAll();
-        Products = all.Select(g =>
-        {
-            g.Soluong = 1;
-            g.DongGoi = g.DongGoi;
-            return g;
-        }).ToList();
+        var allproduct = await GetChiTietMonAnService.GetAll();
+        Products = allproduct?.Where(p => p.Soluong >= 1 && p.TrangThai == true).ToList() ?? new();
+        
     }
 
     private async void ChangeQty(ChiTietMonAnDTO g, int delta)
     {
-        g.SoLuongDat += delta;
-        if (g.SoLuongDat > g.Soluong)
+
+        if (delta < 0 && g.SoLuongDat <= 1)
         {
-            g.SoLuongDat = g.Soluong;
             await JS.InvokeVoidAsync("Swal.fire", new
             {
                 toast = true,
                 position = "top-end",
                 icon = "info",
-                title = "Số lượng sản phẩm tối đa",
+                title = "Không thể giảm dưới 1",
                 showConfirmButton = false,
-                timer = 3000,
-                timerProgressBar = true
+                timer = 2000
             });
+            return;
         }
-        if (g.SoLuongDat < 1) g.SoLuongDat = 1;
+
+
+        if (delta > 0 && g.SoLuongDat >= g.Soluong)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                toast = true,
+                position = "top-end",
+                icon = "info",
+                title = "Số lượng tối đa đã đạt",
+                showConfirmButton = false,
+                timer = 2000
+            });
+            return;
+        }
+
+
+        g.SoLuongDat += delta;
+
+
+        g.SoLuongDat = Math.Clamp(g.SoLuongDat, 1, g.Soluong);
 
         StateHasChanged();
     }
 
-    private async Task AddToOrder(ChiTietMonAnDTO g)
+
+
+    private async Task AddToOrder(ChiTietMonAnDTO item)
     {
-        var item = new ChiTietMonAnDTO
-        {
-            Id = g.Id,
-            Gia = (float)g.Gia,
-            Soluong = g.Soluong,
-            TrangThai = true
-        };
         await OnAddProduct.InvokeAsync(item);
         await OnClose.InvokeAsync();
     }

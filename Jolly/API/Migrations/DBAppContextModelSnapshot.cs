@@ -275,13 +275,16 @@ namespace API.Migrations
                     b.Property<bool>("ApDungSanPham")
                         .HasColumnType("bit");
 
+                    b.Property<string>("MoTa")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateTime?>("NgayBatDau")
                         .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("NgayKetThuc")
                         .HasColumnType("datetime2");
 
-                    b.Property<int?>("PhanTranKhuyenMai")
+                    b.Property<int?>("PhanTramKhuyenMai")
                         .HasColumnType("int");
 
                     b.Property<float?>("SoTienKhuyenMai")
@@ -377,6 +380,9 @@ namespace API.Migrations
 
                     b.Property<DateTime>("NgayTao")
                         .HasColumnType("datetime2");
+
+                    b.Property<string>("NguoiXacNhan")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("NhanVienId")
                         .HasColumnType("nvarchar(450)");
@@ -569,10 +575,10 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<Guid>("ChucVuId")
+                    b.Property<Guid?>("ChucVuId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<DateTime?>("NgayVaoLam")
+                    b.Property<DateTime>("NgayVaoLam")
                         .HasColumnType("datetime2");
 
                     b.Property<Guid>("NguoiDungId")
@@ -595,7 +601,7 @@ namespace API.Migrations
                         {
                             Id = "NV01",
                             ChucVuId = new Guid("11111111-1111-1111-1111-111111111111"),
-                            NgayVaoLam = new DateTime(2025, 7, 12, 23, 52, 37, 235, DateTimeKind.Local).AddTicks(2556),
+                            NgayVaoLam = new DateTime(2025, 7, 13, 20, 41, 34, 78, DateTimeKind.Local).AddTicks(800),
                             NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
                             TrangThai = true
                         });
@@ -631,8 +637,8 @@ namespace API.Migrations
                     b.HasData(
                         new
                         {
-                            Id = new Guid("ad4eb951-a875-4f64-8da0-95869d9563ec"),
-                            NgayTaoTk = new DateTime(2025, 7, 12, 23, 52, 37, 235, DateTimeKind.Local).AddTicks(2436),
+                            Id = new Guid("da50c84f-8c1e-45ad-81fe-8f360a3b0647"),
+                            NgayTaoTk = new DateTime(2025, 7, 13, 20, 41, 34, 78, DateTimeKind.Local).AddTicks(735),
                             NguoiDungId = new Guid("99999999-9999-9999-9999-999999999999"),
                             Password = "admin123",
                             UserName = "admin"
@@ -876,9 +882,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.ChucVu", "ChucVu")
                         .WithMany("NhanVien")
-                        .HasForeignKey("ChucVuId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("ChucVuId");
 
                     b.HasOne("API.Models.NguoiDung", "NguoiDung")
                         .WithOne("NhanVien")

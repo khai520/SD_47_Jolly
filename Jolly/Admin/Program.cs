@@ -3,6 +3,7 @@ using Admin.Service;
 using Admin.Service.IService;
 using API.Data;
 using API.HeThong;
+using API.HeThong.IHeThong;
 using API.Models.DTO;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
@@ -34,11 +35,14 @@ builder.Services.AddScoped<IChiTietMonAnService, ChiTietMonAnService>();
 builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 builder.Services.AddScoped<INhanVienService, NhanVienService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
-
+builder.Services.AddScoped<IXuLyDiaChi, XuLyDiaChi>();
 builder.Services.AddHttpClient();
 builder.WebHost.UseUrls("http://localhost:6005", "https://localhost:6006");
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
-
+builder.Services.AddServerSideBlazor().AddCircuitOptions(options =>
+{
+    options.DetailedErrors = true;
+});
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();

@@ -22,7 +22,7 @@ namespace ViewAPI.Controllers
             if (file == null || file.Length == 0)
                 return BadRequest("No file uploaded.");
 
-            var uploadPath = Path.Combine(_env.ContentRootPath, "Uploads", "Images");
+            var uploadPath = Path.Combine(_env.WebRootPath, "Uploads", "Images"); 
 
             if (!Directory.Exists(uploadPath))
                 Directory.CreateDirectory(uploadPath);
@@ -43,5 +43,33 @@ namespace ViewAPI.Controllers
                 Url = url
             });
         }
+
+        [HttpDelete("tamthoi")]
+        public IActionResult XoaAnhTamThoi([FromQuery] string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                return BadRequest("Thiếu tên file");
+
+            var folderPath = Path.Combine(_env.WebRootPath, "Uploads", "Images");
+
+            if (!Directory.Exists(folderPath))
+                return NotFound("Thư mục ảnh không tồn tại");
+
+            var filePath = Path.Combine(folderPath, fileName);
+
+            if (!System.IO.File.Exists(filePath))
+                return NotFound("Ảnh không tồn tại");
+
+            try
+            {
+                System.IO.File.Delete(filePath);
+                return Ok(new { message = $"Xóa ảnh `{fileName}` thành công" });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"Lỗi khi xóa ảnh: {ex.Message}");
+            }
+        }
+
     }
 }

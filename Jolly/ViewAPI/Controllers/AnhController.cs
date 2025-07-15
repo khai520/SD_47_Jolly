@@ -13,13 +13,16 @@ namespace ViewAPI.Controllers
     [Route("api/[controller]")]
     public class AnhController : BaseController<Anh , AnhDTO , Guid>
     {
+
         public AnhController(
             IRepository<Anh , Guid> anhrepository,
             DBAppContext context,
             IMapper mapper,
-            XulyId xulyId
-            ) : base(anhrepository, context, mapper, xulyId) { 
-        
+            XulyId xulyId,
+            IWebHostEnvironment env
+            ) : base(anhrepository, context, mapper, xulyId) 
+        {
+           
         }
         [HttpPost("upload-many")]
         public async Task<IActionResult> UploadMultipleImages([FromBody] List<AnhDTO> danhSachAnh)
@@ -36,5 +39,8 @@ namespace ViewAPI.Controllers
 
             return Ok(_mapper.Map<List<AnhDTO>>(danhSachModel));
         }
+
+        
+
     }
 }

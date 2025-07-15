@@ -1,7 +1,6 @@
 ﻿@page "/them-mon-an"
 @using API.Models.DTO
 @using AutoMapper
-@layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject Service.IService.IMonAnService monAnService 
@@ -58,7 +57,8 @@
                 AllowEditInTable="true"
                 OnThemChiTiet="OnChiTietAdded"
                 OnXoaChiTiet="OnChiTietRemoved"
-                OnSuaChiTiet="OnChiTietEdited" />
+                OnSuaChiTiet="OnChiTietEdited" 
+                />
 
             <div class="form-actions">
                 <button type="submit" @onclick="() => submitcheck = true" class="btn btn-primary">✅ Thêm món ăn và toàn bộ chi tiết</button>
@@ -107,10 +107,28 @@
                 foreach (var ct in model.DanhSachChiTiet)
                 {
                     ct.MonAnId = monAnResponse.Id;
-                    await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", _mapper.Map<ChiTietMonAn>(ct));
+                    var result1 = await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", _mapper.Map<ChiTietMonAn>(ct));
+                    if (ct.DanhSachAnh != null)
+                    {
+                        foreach (var item in ct.DanhSachAnh)
+                        {
+                            try
+                            {
+                                var result = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
+                                if (result == null)
+                                {
+                                    continue;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }
+
+                        }
+                    }
                     Navigation.NavigateTo("/quanlysanpham");
                 }
-
                 successMessage = "✅ Đã thêm món ăn và các chi tiết thành công.";
                 showSuccessMessage = true;
                 await ResetForm();

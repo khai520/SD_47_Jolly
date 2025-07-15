@@ -8,48 +8,75 @@
     <h3>➕ Chi tiết món ăn</h3>
 
     <div class="form-inline">
-        <div class="select-with-add row-layout">
-            <InputSelect @bind-Value="chiTietMoi.TheLoaiId">
-                <option value="@Guid.Empty">-- Thể loại --</option>
-                @foreach (var item in theLoaiList)
-                {
-                    <option value="@item.Id">@item.Ten</option>
-                }
-            </InputSelect>
-            <button type="button" class="btn-add" @onclick='() => ShowModal("TheLoai")'>+</button>
+        <div>
+            <label for="theloai">Thể loại</label>
+            <div class="select-with-add row-layout ">
+            
+                <InputSelect id="theloai" @bind-Value="chiTietMoi.TheLoaiId">
+                    <option selected value="@Guid.Empty">-- Thể loại --</option>
+                    @foreach (var item in theLoaiList)
+                    {
+                        <option value="@item.Id">@item.Ten</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("TheLoai")'>+</button>
+            </div>
         </div>
-        <div class="select-with-add row-layout">
-            <InputSelect @bind-Value="chiTietMoi.ThuongHieuId">
-                <option value="@Guid.Empty">-- Thương hiệu --</option>
-                @foreach (var item in thuongHieuList)
-                {
-                    <option value="@item.Id">@item.Ten</option>
-                }
-            </InputSelect>
-            <button type="button" class="btn-add" @onclick='() => ShowModal("ThuongHieu")'>+</button>
-        </div>
-        <div class="select-with-add row-layout">
-            <InputSelect @bind-Value="chiTietMoi.NhaCungCapId">
-                <option value="@Guid.Empty">-- Nhà cung cấp --</option>
-                @foreach (var item in nhaCungCapList)
-                {
-                    <option value="@item.Id">@item.Ten</option>
-                }
-            </InputSelect>
-            <button type="button" class="btn-add" @onclick='() => ShowModal("NhaCungCap")'>+</button>
-        </div>
-        <div class="select-with-add row-layout">
-            <InputSelect @bind-Value="chiTietMoi.DongGoiId">
-                <option value="@Guid.Empty">-- Đóng gói --</option>
-                @foreach (var item in dongGoiList)
-                {
-                    <option value="@item.Id">@item.Ten</option>
-                }
-            </InputSelect>
-            <button type="button" class="btn-add" @onclick='() => ShowModal("DongGoi")'>+</button>
-        </div>
+        <div>
+            <label for="thuonghieu">Thương hiệu</label>
+            <div class="select-with-add row-layout ">
+            
+                <InputSelect id="thuonghieu" @bind-Value="chiTietMoi.ThuongHieuId">
+                    <option selected value="@Guid.Empty">-- Thương hiệu --</option>
+                    @foreach (var item in thuongHieuList)
+                    {
+                        <option value="@item.Id">@item.Ten</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("ThuongHieu")'>+</button>
+            </div>
 
-        <InputNumber @bind-Value="chiTietMoi.Soluong" placeholder="Số lượng" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+        </div>
+        <div>
+            <label for="nhacungcap">Nhà Cung Cấp</label>
+            <div class="select-with-add row-layout ">
+            
+                <InputSelect id="nhacungcap" @bind-Value="chiTietMoi.NhaCungCapId">
+                    <option selected value="@Guid.Empty">-- Nhà cung cấp --</option>
+                    @foreach (var item in nhaCungCapList)
+                    {
+                        <option value="@item.Id">@item.Ten</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("NhaCungCap")'>+</button>
+            </div>
+
+        </div>
+        <div>
+            <label for="donggoi">Đóng gói</label>
+            <div class="select-with-add row-layout ">
+            
+                <InputSelect id="donggoi" @bind-Value="chiTietMoi.DongGoiId">
+                    <option selected value="@Guid.Empty">-- Đóng gói --</option>
+                    @foreach (var item in dongGoiList)
+                    {
+                        <option value="@item.Id">@item.Ten</option>
+                    }
+                </InputSelect>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("DongGoi")'>+</button>
+            </div>
+        </div>
+            
+        <div>
+            Số lượng
+            <br />
+            <InputNumber @bind-Value="chiTietMoi.Soluong" placeholder="Số lượng" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+        </div>
+        <div>
+            Giá
+            <br />
+            <InputNumber @bind-Value="chiTietMoi.Gia" placeholder="Giá" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+        </div>
         @if (ShowStatus)
         {
             <div class="form-group">
@@ -126,6 +153,7 @@
                     <th>Nhà CC</th>
                     <th>Đóng gói</th>
                     <th>Số lượng</th>
+                    <th>Giá</th>
                     @if (ShowDescription)
                     {
                         <th>Mô tả</th>
@@ -155,6 +183,17 @@
                             else
                             {
                                 @ct.Soluong
+                            }
+                        </td>
+                        <td>
+                            @if (AllowEditInTable)
+                            {
+                                <InputNumber @bind-Value="@ct.Gia" placeholder="Giá"
+                                             @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+                            }
+                            else
+                            {
+                                @ct.Gia
                             }
                         </td>
                         @if (ShowDescription)
@@ -235,7 +274,7 @@
     [Parameter] public EventCallback OnHuyChiTiet { get; set; }
     [Parameter] public ChiTietMonAnDTO ChiTietMonAnSua { get; set; } = new();
     // Private fields
-    private ChiTietMonAnDTO chiTietMoi = new() { DanhSachAnh = new List<Anh>(), TrangThai = true };
+    private ChiTietMonAnDTO chiTietMoi = new() { DanhSachAnh = new List<AnhDTO>(), TrangThai = true };
     private string modalType = "";
     private string newItemTen = "";
     private string newItemMota = "";
@@ -247,6 +286,7 @@
     private List<ThuongHieu> thuongHieuList = new();
     private List<NhaCungCap> nhaCungCapList = new();
     private List<DongGoi> dongGoiList = new();
+
 
 
     protected override async Task OnInitializedAsync()
@@ -275,10 +315,11 @@
                 NhaCungCapId = ChiTietMonAnSua.NhaCungCapId,
                 DongGoiId = ChiTietMonAnSua.DongGoiId,
                 Soluong = ChiTietMonAnSua.Soluong,
+                Gia = ChiTietMonAnSua.Gia,
                 TrangThai = ChiTietMonAnSua.TrangThai,
                 Mota = ChiTietMonAnSua.Mota,
                 DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new()
-                
+
             };
         }
     }
@@ -288,6 +329,11 @@
         if (string.IsNullOrEmpty(MonAnId))
         {
             await JSRuntime.InvokeVoidAsync("alert", "Vui lòng nhập thông tin món ăn trước");
+            return;
+        }
+        if (chiTietMoi.TheLoaiId == Guid.Empty && chiTietMoi.ThuongHieuId == Guid.Empty && chiTietMoi.NhaCungCapId == Guid.Empty && chiTietMoi.DongGoiId == Guid.Empty)
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Vui lòng thêm thuộc tính");
             return;
         }
 
@@ -306,6 +352,7 @@
             trung.Soluong += chiTietMoi.Soluong;
             if (chiTietMoi.DanhSachAnh != null)
                 trung.DanhSachAnh.AddRange(chiTietMoi.DanhSachAnh);
+
         }
         else
         {
@@ -313,11 +360,10 @@
             DanhSachChiTiet.Add(chiTietMoi);
         }
 
-        // Notify parent component
-        await OnThemChiTiet.InvokeAsync(chiTietMoi);
 
-        // Reset form
+        await OnThemChiTiet.InvokeAsync(chiTietMoi);
         ResetChiTietMoi();
+        StateHasChanged();
     }
 
     private async Task SuaChiTiet(ChiTietMonAnDTO chiTiet)
@@ -339,8 +385,14 @@
 
     private void ResetChiTietMoi()
     {
-        chiTietMoi = new ChiTietMonAnDTO { DanhSachAnh = new List<Anh>(), TrangThai = true };
+        chiTietMoi = new ChiTietMonAnDTO
+        {
+            DanhSachAnh = new List<AnhDTO>(),
+            TrangThai = true,
+            Soluong = 0,
+        };
     }
+
 
     private async Task OnFileSelected(InputFileChangeEventArgs e)
     {
@@ -349,20 +401,30 @@
             var result = await UploadService.UploadImageAsync(file);
             if (result != null && !string.IsNullOrEmpty(result.Url))
             {
-                chiTietMoi.DanhSachAnh.Add(new Anh
+                chiTietMoi.DanhSachAnh.Add(new AnhDTO
                 {
                     Id = Guid.NewGuid(),
                     Ten = result.FileName,
-                    DuongDan = result.Url
+                    DuongDan = result.Url,
+                    ChiTietMonAnId = chiTietMoi.Id
                 });
                 StateHasChanged();
             }
         }
     }
 
-    private void XoaAnh(Anh anh)
+    private async Task XoaAnh(AnhDTO anh)
     {
-        chiTietMoi.DanhSachAnh.Remove(anh);
+        var result = await UploadService.DeleteImageAsync(anh.Ten);
+        if (result)
+        {
+            chiTietMoi.DanhSachAnh.Remove(anh);
+        }
+        else
+        {
+            await JSRuntime.InvokeVoidAsync("alert", "Xóa ảnh thất bại");
+            return;
+        }
     }
 
     private async Task ShowImageLightbox(string imageSrc)
@@ -399,22 +461,22 @@
             case "TheLoai":
                 var newTheLoai = new TheLoai { Id = id, Ten = newItemTen, Mota = newItemMota };
                 await apiService.PostAsync<TheLoai, TheLoai>("TheLoai", newTheLoai);
-                LoadDropdownData();
+                await LoadDropdownData();
                 break;
             case "ThuongHieu":
                 var newThuongHieu = new ThuongHieu { Id = id, Ten = newItemTen, Mota = newItemMota };
                 await apiService.PostAsync<ThuongHieu, ThuongHieu>("ThuongHieu", newThuongHieu);
-                LoadDropdownData();
+                await LoadDropdownData();
                 break;
             case "NhaCungCap":
                 var newNCC = new NhaCungCap { Id = id, Ten = newItemTen, Mota = newItemMota };
                 await apiService.PostAsync<NhaCungCap, NhaCungCap>("NhaCungCap", newNCC);
-                LoadDropdownData();
+                await LoadDropdownData();
                 break;
             case "DongGoi":
                 var newDongGoi = new DongGoi { Id = id, Ten = newItemTen, Mota = newItemMota };
                 await apiService.PostAsync<DongGoi, DongGoi>("DongGoi", newDongGoi);
-                LoadDropdownData();
+                await LoadDropdownData();
                 break;
         }
 

@@ -11,7 +11,7 @@ namespace ViewAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    public class GiamGiaController : BaseController<GiamGia, GiamGiaDTO, string>
+    public class GiamGiaController : BaseController<GiamGia, Voucher, string>
     {
         public GiamGiaController(IRepository<GiamGia, string> repository, DBAppContext context, IMapper mapper, XulyId xulyId) 
             : base(repository, context, mapper, xulyId)

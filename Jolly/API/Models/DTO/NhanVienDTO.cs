@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace API.Models.DTO
 {
@@ -15,8 +16,15 @@ namespace API.Models.DTO
         public string? Gmail { get; set; }
         public string? TenChucVu { get; set; }
         public bool TrangThai { get; set; }
-        public DateTime NgayVaoLam { get; set; } = DateTime.Now;
+        public string? NgayVaoLam { get; set; } 
         public Guid? ChucVuId { get; set; }
         public Guid NguoiDungId { get; set; }
+        public DateTime GetNgayVaoLam()
+        {
+            if (DateTime.TryParseExact(NgayVaoLam, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out var date))
+                return date;
+            return DateTime.Now;
+        }
+
     }
 }

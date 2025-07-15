@@ -473,15 +473,6 @@
         grid-template-columns: 1fr;
     }
 
-
-
-    .select-with-add {
-        flex-direction: column;
-        gap: 8px;
-    }
-
-
-
         .select-with-add select {
             border-radius: 12px;
             border-right: 2px solid #e2e8f0;
