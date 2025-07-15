@@ -1,5 +1,7 @@
 ﻿using API.Models;
+using Microsoft.Data.Sql;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 namespace API.Data
 {
@@ -15,7 +17,39 @@ namespace API.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
+
             optionsBuilder.UseSqlServer(@"Data Source=.;Initial Catalog=Jolly;Trusted_Connection=True;Integrated Security=True;TrustServerCertificate=True");
+
+
+            //string dbFilePath = "dbconfig.txt";
+            //string Dbcheck = "check.txt";
+            //string Db = "";
+            //string check = ""; 
+
+
+            //if (File.Exists(Dbcheck))
+            //{
+            //    check = File.ReadAllText(dbFilePath).Trim();
+            //}
+
+
+            //if (string.IsNullOrWhiteSpace(check))
+            //{
+            //    DataTable instances = SqlDataSourceEnumerator.Instance.GetDataSources();
+            //    if (instances.Rows.Count > 0)
+            //    {
+            //        DataRow firstRow = instances.Rows[0];
+            //        Db = firstRow["InstanceName"].ToString();
+            //        File.WriteAllText(Dbcheck, Db);
+            //        File.WriteAllText(Dbcheck, "True");
+            //    }
+            //}
+
+
+            //string connectionString = $"Data Source=.\\{Db};Initial Catalog=Jolly;Trusted_Connection=True;Integrated Security=True;TrustServerCertificate=True";
+
+            //optionsBuilder.UseSqlServer($"Data Source=.\\{Db};Initial Catalog=Jolly;Integrated Security=True;TrustServerCertificate=True");
+
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -42,8 +76,7 @@ namespace API.Data
             modelBuilder.Entity<NhanVien>()
                 .HasOne(nv => nv.ChucVu)
                 .WithMany(cv => cv.NhanVien)
-                .HasForeignKey(nv => nv.ChucVuId)
-                .IsRequired();
+                .HasForeignKey(nv => nv.ChucVuId);
 
             modelBuilder.Entity<Anh>()
                 .HasOne(a => a.ChiTietMonAn)
@@ -89,7 +122,7 @@ namespace API.Data
             modelBuilder.Entity<NhanVien>()
                 .HasData(new NhanVien
                 {
-                    Id = "NV01",
+                    Id = "NV001",
                     NgayVaoLam = DateTime.Now,
                     NguoiDungId = adminTaiKhoanId,
                     TrangThai = true,

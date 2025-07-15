@@ -72,9 +72,10 @@
                             <label class="form-label">Ngày Sinh</label>
                             <InputDate @bind-Value="currentnhanvien.NgaySinh" class="form-control" />
                         </div>
+
                         <div class="mb-3">
                             <label class="form-label">Chức vụ</label>
-                            <InputSelect @bind-Value="currentnhanvien.ChucVuId">
+                            <InputSelect @bind-Value="currentnhanvien.ChucVuId" class="form-select">
                                 <option value="@Guid.Empty">-- Chức vụ --</option>
                                 @foreach (var item in chucVus)
                                 {
@@ -83,6 +84,7 @@
                             </InputSelect>
                             @* <button type="button" class="btn-add" @onclick='ThemChucVu'>+</button> *@
                         </div>
+
                         <div class="row">
                             <div class="col-md-6">
                                 <div class="mb-3">
@@ -123,30 +125,37 @@
     [Parameter] public NhanVienDTO nv { get; set; } = new();
 
     private bool showChucVu = false;
-    private NhanVienDTO currentnhanvien = new() { NgaySinh = DateTime.Now };
+    private NhanVienDTO currentnhanvien = new() { NgaySinh = DateTime.Now  };
+
+
 
     private List<ChucVu> chucVus = new();
     protected override async Task OnInitializedAsync()
     {
         chucVus = await apiService.GetAsync<List<ChucVu>>("ChucVu");
+        chucVus = (chucVus ?? new()).Where(x => x.Ten.ToLower() != "admin").ToList();
     }
+
     private async Task CloseModel()
     {
         currentnhanvien = new NhanVienDTO
         {
-            NgaySinh = DateTime.Today
+            NgaySinh = DateTime.Now
         };
         await OnLoad.InvokeAsync();
         await OnClose.InvokeAsync();
     }
+
+
+
     private void ThemChucVu()
     {
-        showChucVu = true;
+        Console.WriteLine(currentnhanvien.NgaySinh);
     }
+
     private async Task SaveNhanVien()
     {
-
-        if (string.IsNullOrWhiteSpace(currentnhanvien.Ten) && string.IsNullOrWhiteSpace(currentnhanvien.Ho))
+        if (string.IsNullOrWhiteSpace(currentnhanvien.Ten) || string.IsNullOrWhiteSpace(currentnhanvien.Ho))
         {
             string checktype = isEdit ? "Thêm" : "Sửa";
             await JS.InvokeVoidAsync("Swal.fire", new
@@ -158,8 +167,9 @@
             });
             return;
         }
-        if ((!string.IsNullOrWhiteSpace(currentnhanvien.Ten) && Regex.IsMatch(currentnhanvien.Ten, @"[\d]|[^a-zA-Z0-9\s]")) ||
-        (!string.IsNullOrWhiteSpace(currentnhanvien.Ho) && Regex.IsMatch(currentnhanvien.Ho, @"[\d]|[^a-zA-Z0-9\s]")))
+
+        if (Regex.IsMatch(currentnhanvien.Ten, @"[\d]|[^\p{L}\s]") ||
+                Regex.IsMatch(currentnhanvien.Ho, @"[\d]|[^\p{L}\s]"))
         {
             string checktype = isEdit ? "Sửa" : "Thêm";
             await JS.InvokeVoidAsync("Swal.fire", new
@@ -170,6 +180,38 @@
                 confirmButtonText = "OK"
             });
             return;
+        }
+
+        if (!string.IsNullOrWhiteSpace(currentnhanvien.Sdt))
+        {
+            if (!Regex.IsMatch(currentnhanvien.Sdt, @"^(0|\+84)[0-9]{9}$"))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = $"Số điện thoại không hợp lệ. Định dạng đúng: 10 số và bắt đầu bằng 0 hoặc +84.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+        }
+
+        if (!string.IsNullOrWhiteSpace(currentnhanvien.Gmail))
+        {
+            if (!Regex.IsMatch(currentnhanvien.Gmail, @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$"))
+            {
+                string checktype = isEdit ? "Thêm" : "Sửa";
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"{checktype} thất bại!",
+                    text = "Email không hợp lệ. Vui lòng nhập đúng định dạng (VD: example@gmail.com).",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
         }
 
         var today = DateTime.Today;
@@ -210,6 +252,7 @@
                 var result2 = await apiService.PutAsync<NhanVien>("NhanVien", _mapper.Map<NhanVien>(currentnhanvien));
                 if (result && result2)
                 {
+                    Console.WriteLine(currentnhanvien.NgaySinh);
                     await JS.InvokeVoidAsync("Swal.fire", new
                     {
                         icon = "success",

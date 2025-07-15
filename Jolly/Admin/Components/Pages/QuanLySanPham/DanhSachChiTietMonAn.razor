@@ -1,5 +1,4 @@
 ﻿@page "/mon-an/{MonAnId}"
-@layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject Service.IService.IApiService apiService
@@ -164,6 +163,10 @@
                                             <strong>Số lượng:</strong>
                                             <span class="quantity">@chiTiet.Soluong</span>
                                         </div>
+                                        <div class="info-item">
+                                            <strong>Giá:</strong>
+                                            <span class="quantity">@chiTiet.Gia</span>
+                                        </div>
                                         @if (!string.IsNullOrEmpty(chiTiet.Mota))
                                         {
                                             <div class="info-item">
@@ -179,7 +182,7 @@
                                             <div class="image-gallery">
                                                 @foreach (var anh in chiTiet.Anhs.Take(3))
                                                 {
-                                                    <img src="@anh.DuongDan" alt="@anh.Ten" @onclick="() => ShowImageLightbox(anh.DuongDan)" />
+                                                    <img src="@anh.DuongDan"  @onclick="() => ShowImageLightbox(anh.DuongDan)" />
                                                 }
                                                 @if (chiTiet.Anhs.Count > 3)
                                                 {
@@ -400,6 +403,25 @@
 
                 chiTiet.TrangThai = !chiTiet.TrangThai;
                 var success = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
+                if (chiTiet.DanhSachAnh != null)
+                {
+                    foreach (var item in chiTiet.DanhSachAnh)
+                    {
+                        try
+                        {
+                            var result = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
+                            if (result == null)
+                            {
+                                continue;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+
+                    }
+                }
                 if (success)
                 {
 
@@ -426,6 +448,25 @@
             {
                 chiTiet.Id = editingChiTiet.Id;
                 var result = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
+                if (chiTiet.DanhSachAnh != null)
+                {
+                    foreach (var item in chiTiet.DanhSachAnh)
+                    {
+                        try
+                        {
+                            var result2 = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
+                            if (result2 == null)
+                            {
+                                continue;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            continue;
+                        }
+
+                    }
+                }
                 if (result != null)
                 {
                     LoadData();
@@ -458,8 +499,26 @@
                 
                 else
                 {
-                    // Thêm chi tiết mới
                     var result = await apiService.PostAsync<ChiTietMonAn, ChiTietMonAn>("ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
+                    if (chiTiet.DanhSachAnh != null)
+                    {
+                        foreach (var item in chiTiet.DanhSachAnh)
+                        {
+                            try
+                            {
+                                var result2 = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
+                                if (result2 == null)
+                                {
+                                    continue;
+                                }
+                            }
+                            catch (Exception)
+                            {
+                                continue;
+                            }
+
+                        }
+                    }
                     if (result != null)
                     {
                         LoadDropdownData();

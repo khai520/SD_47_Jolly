@@ -64,34 +64,25 @@ namespace API.Controllers
             if (dto == null)
                 return BadRequest("Dữ liệu không hợp lệ.");
 
-            var model = _mapper.Map<TModel>(dto);
-
-            
             if (_useXulyIdGeneration && !string.IsNullOrEmpty(_idPrefix) && !string.IsNullOrEmpty(_idColumnName))
             {
-                var propertyInfo = typeof(TModel).GetProperty(_idColumnName, BindingFlags.Public | BindingFlags.Instance);
-
-                if (propertyInfo == null || propertyInfo.PropertyType != typeof(string) || !propertyInfo.CanWrite)
+                var dtoProp = typeof(TModelDTO).GetProperty(_idColumnName, BindingFlags.Public | BindingFlags.Instance);
+                if (dtoProp == null || dtoProp.PropertyType != typeof(string) || !dtoProp.CanWrite)
                 {
-                    return StatusCode(500, $"Lỗi cấu hình: Thuộc tính '{_idColumnName}' không tồn tại, không phải kiểu string, hoặc không thể ghi.");
+                    return StatusCode(500, $"Lỗi cấu hình: Thuộc tính '{_idColumnName}' không tồn tại hoặc không thể ghi trong DTO.");
                 }
 
-                var newStringId = await _xulyId.GenerateIdAsync(
-                    _idPrefix,
-                    _context.Set<TModel>(),
-                    _idColumnName
-                );
-
-                propertyInfo.SetValue(model, newStringId);
+                var newId = await _xulyId.GenerateIdAsync(_idPrefix, _context.Set<TModel>(), _idColumnName);
+                dtoProp.SetValue(dto, newId);
             }
             else if (_useXulyIdGeneration && (string.IsNullOrEmpty(_idPrefix) || string.IsNullOrEmpty(_idColumnName)))
             {
                 return BadRequest("Cấu hình tạo ID chưa đầy đủ.");
             }
 
+            var model = _mapper.Map<TModel>(dto);
             await _repository.AddAsync(model);
 
-            
             return Ok(model);
         }
 

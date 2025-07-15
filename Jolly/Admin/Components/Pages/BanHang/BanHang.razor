@@ -1,10 +1,12 @@
-﻿@* @page "/banhang"
-
-@inject IApiService apiService
+﻿@page "/banhang"
+@inject IXuLyDiaChi xuLyDiaChi
 @inject IJSRuntime JS
-@using API.Models.DTO.BanHang
-@using API.HeThong
-
+@using API.HeThong.IHeThong
+@using API.Models.ViewModels.BanHang
+@using API.Models.DTO
+@using AutoMapper
+@inject IApiService apiService
+@inject IMapper _mapper
 <link href="css/BanHang.css" rel="stylesheet" />
 <div class="sell-container">
     <!-- Tabs đơn hàng -->
@@ -15,7 +17,7 @@
                 Đơn hàng @(order.index + 1)
                 @if (order.value.Products.Count > 0)
                 {
-                    <span class="order-qty-badge">@order.value.Products.Sum(p => p.Soluong)</span>
+                    <span class="order-qty-badge">@order.value.Products.Sum(p => p.SoLuongDat)</span>
                 }
                 <span class="close" @onclick="() => RemoveOrderSafe(order.index)">×</span>
             </div>
@@ -39,15 +41,15 @@
             <div class="order-actions-buttons">
                 <button class="qr-btn" @onclick="ScanQRCode">📷 Quét QR sản phẩm</button>
                 <button class="add-btn" @onclick="() => IsProductModalVisible = true">Thêm sản phẩm</button>
-                    <ProductSelect Visible="@IsProductModalVisible"
-                                   OnAddProduct="HandleAddProduct"
-                                   OnClose="@(() => IsProductModalVisible = false)" />
+                <ProductSelect Visible="@IsProductModalVisible"
+                               OnAddProduct="HandleAddProduct"
+                               OnClose="@(() => IsProductModalVisible = false)" />
             </div>
         </div>
     }
     @if (CurrentOrder != null)
     {
-    <!-- Danh sách sản phẩm trong đơn hàng -->
+        <!-- Danh sách sản phẩm trong đơn hàng -->
         <div class="order-list @OrderListClass">
             @if (CurrentOrder?.Products.Count == 0)
             {
@@ -58,21 +60,21 @@
                 @foreach (var product in CurrentOrder.Products)
                 {
                     <div class="order-item">
-                        <img src="@product.Anhs?.FirstOrDefault()?.DuongDan" class="order-img" />
+                        <img src="" class="order-img" />
                         <div class="item-info">
                             <div class="order-name">@product.Ten</div>
                             <div class="order-price">
                                 <span class="old-price">@FormatMoney((int)product.Gia)</span>
-                                <span class="new-price">@FormatMoney((int)product.NewPrice)</span>
+                                <span class="new-price">@FormatMoney((int)product.GiaGiam)</span>
                             </div>
-                            <div class="order-size">Size: @product.Size</div>
+                            <div class="order-size">Thể loại: @product.TheLoai</div>
                         </div>
                         <div class="order-qty">
                             <button class="decrease-btn" @onclick="() => DecreaseQuantity(product)">-</button>
-                            <input class="qty-input" type="number" value="@product.Soluong" readonly />
+                            <input class="qty-input" type="number" value="@product.SoLuongDat" readonly />
                             <button class="increase-btn" @onclick="() => IncreaseQuantity(product)">+</button>
                         </div>
-                        <div class="order-total">@FormatMoney(product.Soluong * (int)product.NewPrice)</div>
+                        <div class="order-total">@FormatMoney(product.Soluong * (int)product.Gia)</div>
                         <button class="order-remove" @onclick="() => RemoveProduct(product)">×</button>
                     </div>
                 }
@@ -86,7 +88,7 @@
     {
         <div class="customer-header">
             <span class="customer-title">
-                Khách hàng: <span class="customer-name">@(CurrentOrder?.Customer?.HoTen ??  "Khách lẻ") </span>
+                Khách hàng: <span class="customer-name">@(CurrentOrder?.Customer?.HoTen ?? "Khách lẻ") </span>
                 @if (CurrentOrder?.Customer != null && CurrentOrder.ThongTinHoaDon.IsDelivery)
                 {
                     <button type="button" class="address-change-btn" @onclick="() => IsAddressModalVisible = true"
@@ -110,14 +112,14 @@
                 </button>
             }
         </div>
-        
+
     }
 
 
     <!-- Footer đặt hàng -->
     @if (CurrentOrder != null)
     {
-        
+
 
         <div class="order-footer">
             @if (CurrentOrder.ThongTinHoaDon.IsDelivery)
@@ -138,32 +140,45 @@
                         <div class="customer-info-row">
                             <div>
                                 <label for="TinhThanh">Tỉnh/Thành phố</label>
-                                <input id="TinhThanh"  @onchange="OnTinhChanged" style="cursor:pointer" list="Tinh" class="province-input">
-                                <datalist id="Tinh" class="dropdown-address">
+                                <input id="TinhThanh" @onchange="OnTinhChanged"
+                                       list="Tinh"
+                                       value="@Tinh"
+                                       class="province-input" />
+                                <datalist id="Tinh">
                                     @foreach (var t in TinhThanh)
                                     {
-                                        <option value="@t.Ten"></option>
+                                        <option value="@t.Ten" />
                                     }
                                 </datalist>
 
                             </div>
                             <div>
                                 <label for="QuanHuyen">Quận/Huyện</label>
-                                <input id="QuanHuyen" @onchange="OnHuyenChanged" disabled="@(!HuyenXa.Any())" style="cursor:pointer" list="Quan" class="province-input" />
-                                <datalist id="Quan" class="dropdown-address">
+                                <input id="QuanHuyen"
+                                       @onchange="OnHuyenChanged"
+                                       list="Quan"
+                                       value="@Huyen"
+                                       disabled="@string.IsNullOrEmpty(Tinh)"
+                                       class="province-input" />
+                                <datalist id="Quan">
                                     @foreach (var h in HuyenXa)
                                     {
-                                        <option value="@h.Ten">@h.Ten</option>
+                                        <option value="@h.Ten" />
                                     }
                                 </datalist>
                             </div>
                             <div>
                                 <label for="XaPhuongThiTran">Xã/Phường/Thị trấn</label>
-                                <input id="XaPhuongThiTran" @onchange="OnXaPhuongChanged" disabled="@(!XaPhuong.Any())" style="cursor:pointer" list="XaPhuong" />
-                                <datalist id="XaPhuong" class="dropdown-address">
+                                <input id="XaPhuongThiTran"
+                                       @onchange="OnXaPhuongChanged"
+                                       list="XaPhuong"
+                                       value="@Phuong"
+                                       disabled="@string.IsNullOrEmpty(Huyen)"
+                                       class="province-input" />
+                                <datalist id="XaPhuong">
                                     @foreach (var x in XaPhuong)
                                     {
-                                        <option>@x.Ten</option>
+                                        <option value="@x.Ten" />
                                     }
                                 </datalist>
                             </div>
@@ -199,7 +214,7 @@
                     </datalist>
                     <label style="display: none;visibility: hidden;" for="discount" class="sr-only">Phần trăm giảm</label>
                     <input disabled type="text" value="@($"{DiscountPercent} %")" class="discount-input" />
-                    
+
                 </div>
 
                 <div class="order-summary">
@@ -225,7 +240,7 @@
                     </div>
                     <div class="order-row deficit">
                         <span>Tiền thiếu</span>
-                        <span>@FormatMoney(DeficitAmount)</span>
+                        <span>@DeficitAmount</span>
                     </div>
                     <button class="confirm-btn" @onclick="ConfirmOrder">XÁC NHẬN ĐẶT HÀNG</button>
                 </div>
@@ -239,7 +254,7 @@
     private string OrderListClass => CurrentOrder?.Products?.Count == 0 ? "empty" : "";
 
     // 📦 Dữ liệu đơn hàng
-    private List<Order> Orders = new(); 
+    private List<Order> Orders = new();
     private int CurrentOrderIndex = 0;
     private Order? CurrentOrder =>
     Orders != null && Orders.Count > 0 && CurrentOrderIndex < Orders.Count
@@ -250,10 +265,19 @@
 
     // 💰 Tính toán đơn hàng
     private float DiscountPercent { get; set; } = 0;
-    private float CustomerPay { get; set; } = 0;
+    private float _CustomerPay;
+    private float CustomerPay
+    {
+        get => _CustomerPay;
+        set
+        {
+            FormatMoney(DeficitAmount);
+            _CustomerPay = value;
+        }
+    }
 
-    private float Subtotal => CurrentOrder?.Products?.Sum(p => p.Soluong * p.NewPrice) ?? 0f;
-    private float ShippingFee => CurrentOrder.ThongTinHoaDon.IsDelivery ? 0f : 0f;
+    private float Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.GiaGiam) ?? 0f;
+    private float ShippingFee => CurrentOrder.ThongTinHoaDon.IsDelivery ? 20000f : 0f;
     private float DiscountAmount => (Subtotal * DiscountPercent) / 100f;
     private float TotalAmount => Subtotal + ShippingFee - DiscountAmount;
     private float DeficitAmount => TotalAmount - CustomerPay;
@@ -261,7 +285,7 @@
     private List<DiaChiNhap> TinhThanh = new();
     private List<DiaChiNhap> HuyenXa = new();
     private List<DiaChiNhap> XaPhuong = new();
-    private List<GiamGia> vouchers = new();
+    private List<Voucher> vouchers = new();
 
 
 
@@ -339,35 +363,63 @@
     private void SwitchOrder(int index)
     {
         CurrentOrderIndex = index;
+
+
+        Tinh = CurrentOrder.ThongTinHoaDon.TinhThanhPho;
+        Huyen = CurrentOrder.ThongTinHoaDon.QuanHuyen;
+        Phuong = CurrentOrder.ThongTinHoaDon.XaPhuongThiTran;
+
+        var tinh = TinhThanh.FirstOrDefault(t => t.Ten == Tinh);
+        HuyenXa = tinh?.Con ?? new();
+
+        var huyen = HuyenXa.FirstOrDefault(h => h.Ten == Huyen);
+        XaPhuong = huyen?.Con ?? new();
     }
 
-    private async void IncreaseQuantity(ProductOrder product)
+
+    private async Task IncreaseQuantity(ChiTietMonAnDTO product)
     {
-        product.Soluong++;
-        if (product.Soluong > product.Quantity)
+
+        if (product.SoLuongDat >= product.Soluong)
         {
-            product.Soluong = product.Quantity;
             await JS.InvokeVoidAsync("Swal.fire", new
             {
                 toast = true,
                 position = "top-end",
                 icon = "info",
-                title = "Số lượng sản phẩm tối đa",
+                title = "Số lượng tối đa đã đạt",
                 showConfirmButton = false,
-                timer = 3000,
-                timerProgressBar = true
+                timer = 2000
             });
+            return;
         }
+        product.SoLuongDat++;
+        product.SoLuongDat = Math.Clamp(product.SoLuongDat, 1, product.Soluong);
+        StateHasChanged();
     }
 
-    private void DecreaseQuantity(ProductOrder product)
+    private async Task DecreaseQuantity(ChiTietMonAnDTO product)
     {
-        product.Soluong--;
-        if (product.Soluong < 1) RemoveProduct(product);
+        if (product.SoLuongDat <= 1)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                toast = true,
+                position = "top-end",
+                icon = "info",
+                title = "Không thể giảm dưới 1",
+                showConfirmButton = false,
+                timer = 2000
+            });
+            return;
+        }
+        product.SoLuongDat--;
+        product.SoLuongDat = Math.Clamp(product.SoLuongDat, 1, product.Soluong);
+        StateHasChanged();
 
     }
 
-    private void RemoveProduct(ProductOrder product)
+    private void RemoveProduct(ChiTietMonAnDTO product)
     {
         CurrentOrder.Products.Remove(product);
     }
@@ -463,26 +515,111 @@
             });
             return;
         }
+        if (CurrentOrder.Customer == null)
+        {
+            var nguoidung = new NguoiDungDTO()
+            {
+                Ten = CurrentOrder.ThongTinHoaDon.TenNguoiNhan,
+                Sdt = CurrentOrder.ThongTinHoaDon.Sdt
+            };
+            var result = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoidung));
+            if (result != null)
+            {
 
-        // ✅ Thành công
-        if (true)
-        {
-            
+                var diachi = new DiaChiDTO()
+                {
+                    NguoiDungId = result.Id,
+                    Tinh = CurrentOrder.ThongTinHoaDon.TinhThanhPho,
+                    QuanHuyen = CurrentOrder.ThongTinHoaDon.QuanHuyen,
+                    XaPhuong = CurrentOrder.ThongTinHoaDon.XaPhuongThiTran,
+                    DiaChiCuThe = CurrentOrder.ThongTinHoaDon.DiaChiCuThe
+                };
+                var result1 = await apiService.PostAsync<DiaChi, DiaChi>("DiaChi", _mapper.Map<DiaChi>(diachi)); 
+                if (result1 != null)
+                {
+                    
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = $"Thất bại",
+                        text = $"Thêm địa chỉ {CurrentOrder.ThongTinHoaDon.TenNguoiNhan} thất bại."
+                    });
+                }
+                var khachhang = new KhachHangDTO()
+                {
+                    NguoiDungId = result.Id,
+                    
+                };
+                var result3 = await apiService.PostAsync<KhachHang, KhachHang>("KhachHang", _mapper.Map<KhachHang>(khachhang));
+                if (result3 != null)
+                {
+                    
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = $"Thất bại",
+                        text = $"Thêm khách hàng {CurrentOrder.ThongTinHoaDon.TenNguoiNhan} thất bại."
+                    });
+                }
+
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "success",
+                    title = $"Thành công",
+                    text = $"Đã thêm khách hàng {CurrentOrder.ThongTinHoaDon.TenNguoiNhan}."
+                });
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = $"Thất bại",
+                    text = $"Thêm khách hàng {CurrentOrder.ThongTinHoaDon.TenNguoiNhan} thất bại."
+                });
+                return;
+            }
         }
-        var hoaDon = new HoaDon
+
+        var hoadon = new HoaDonDTO()
         {
-            GiamGiaId =  CurrentOrder.ThongTinHoaDon.GiamGiaId,
-            KhachHangId = CurrentOrder.Customer?.Id,
-            NgayTao = DateTime.Now,
+            KhachHangId = CurrentOrder.Customer.Id,
+            GiamGiaId = CurrentOrder.ThongTinHoaDon.GiamGiaId,
+            TrangThai = new List<string> { "Tạo Đơn Hàng", "Hoàn Thành" },
             TongTien = Subtotal,
             TongTienSauKhiGiam = TotalAmount,
-            TrangThai = "Chờ xác nhận",
             GhiChu = CurrentOrder.ThongTinHoaDon.GhiChu
         };
-        var result = await apiService.PostAsync<HoaDon , HoaDon>("HoaDon", hoaDon);
-
-        if (result != null)
+        var result2 = await apiService.PostAsync<HoaDon, HoaDon>("HoaDon", _mapper.Map<HoaDon>(hoadon));
+        if (result2 != null)
         {
+            foreach (var item in CurrentOrder.Products)
+            {
+                var hoadonchitiet = new HoaDonChiTietDTO()
+                {
+                    MonAnId = item.MonAnId,
+                    HoaDonId = result2.Id,
+                    Soluong = item.SoLuongDat,
+                    ThanhTien  = item.GiaGiam * item.SoLuongDat,
+                };
+                var result3 = await apiService.PostAsync<HoaDonChiTiet, HoaDonChiTiet>("HoaDon", _mapper.Map<HoaDonChiTiet>(hoadonchitiet));
+                if (result3 == null)
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = $"Thất bại",
+                        text = $"Thêm chi tiết hóa đơn thất bại."
+                    });
+                    return;
+                }
+            }
             await JS.InvokeVoidAsync("Swal.fire", new
             {
                 icon = "success",
@@ -493,13 +630,14 @@
         }
         else
         {
-            await JS.InvokeVoidAsync("Swal.fire",  new
+            await JS.InvokeVoidAsync("Swal.fire", new
             {
                 icon = "warning",
                 title = "Lỗi!",
                 text = "Có lỗi khi lưu đơn hàng."
             });
         }
+
     }
 
     private string FormatMoney(float amount)
@@ -510,26 +648,55 @@
 
     private void HandleAddProduct(ChiTietMonAnDTO item)
     {
-        if (CurrentOrder == null) return;
+        if (CurrentOrder == null || item == null) return;
 
-        CurrentOrder.Products.Add(new ChiTietMonAnDTO
+        var existing = CurrentOrder.Products.Find(x => x.Id == item.Id);
+        if (existing != null)
         {
-            Id = item.Id,
-            Ten = item.Ten ?? "Không tên",
-            Soluong = item.Soluong,
-            Gia = item.Gia,
-            SoLuongDat = item.SoLuongDat
-        });
+            existing.SoLuongDat += item.SoLuongDat;
+            if (existing.SoLuongDat > existing.Soluong)
+            {
+                existing.SoLuongDat = existing.Soluong;
+            }
+        }
+        else
+        {
+
+            var newProduct = new ChiTietMonAnDTO
+            {
+                Id = item.Id,
+                MonAnId = item.MonAnId,
+                Ten = item.Ten,
+                TheLoai = item.TheLoai,
+                TheLoaiId = item.TheLoaiId,
+                ThuongHieuId = item.ThuongHieuId,
+                NhaCungCapId = item.NhaCungCapId,
+                DongGoiId = item.DongGoiId,
+                Gia = item.Gia,
+                GiaGiam = item.GiaGiam,
+                Soluong = item.Soluong,
+                SoLuongDat = item.SoLuongDat > 0 ? item.SoLuongDat : 1,
+                DanhSachAnh = item.DanhSachAnh != null ? new List<AnhDTO>(item.DanhSachAnh) : new(),
+                Mota = item.Mota,
+                TrangThai = item.TrangThai
+            };
+
+            CurrentOrder.Products.Add(newProduct);
+        }
+
+       
+        item.SoLuongDat = 1;
     }
 
+
     private bool IsCustomerModalVisible = false;
-    private List<DiaChiKhachHang> diaChiKhachHangs = new();
-    private async Task HandleCustomerSelected(KhachHang kh)
+    private List<DiaChi> diaChiKhachHangs = new();
+    private async Task HandleCustomerSelected(KhachHangDTO kh)
     {
         CurrentOrder.Customer = kh;
 
-        CurrentOrder.ThongTinHoaDon.TenNguoiNhan = kh.HoTen;
-        CurrentOrder.ThongTinHoaDon.Sdt = kh.SoDienThoai;
+        CurrentOrder.ThongTinHoaDon.TenNguoiNhan = kh.HoTen ?? "";
+        CurrentOrder.ThongTinHoaDon.Sdt = kh.Sdt ?? "";
 
 
     }
@@ -542,7 +709,7 @@
 
     private bool IsAddressModalVisible = false;
 
-    private void HandleAddressSelected(DiaChiKhachHang diaChi)
+    private void HandleAddressSelected(DiaChiDTO diaChi)
     {
         CurrentOrder.Address = diaChi;
 
@@ -551,54 +718,66 @@
     protected override async Task OnInitializedAsync()
     {
         TinhThanh = await xuLyDiaChi.ParseDiaChiAsync("wwwroot/Files/ThanhPho.txt");
-        vouchers = await voucherService.GetAll();
+        vouchers = await apiService.GetAsync<List<Voucher>>("GiamGia");
     }
     private string Tinh = "";
     void OnTinhChanged(ChangeEventArgs e)
     {
-        if (CurrentOrder.ThongTinHoaDon.TinhThanhPho != null)
-        {
-            Tinh = CurrentOrder.ThongTinHoaDon.TinhThanhPho;
-        }
         Tinh = e.Value?.ToString();
+        CurrentOrder.ThongTinHoaDon.TinhThanhPho = Tinh;
+
         var tinh = TinhThanh.FirstOrDefault(t => t.Ten == Tinh);
         HuyenXa = tinh?.Con ?? new();
         XaPhuong = new();
+
+        Huyen = "";
+        Phuong = "";
+
+        CurrentOrder.ThongTinHoaDon.QuanHuyen = "";
+        CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = "";
     }
+
     private string Huyen = "";
     void OnHuyenChanged(ChangeEventArgs e)
     {
-        if (CurrentOrder.ThongTinHoaDon.QuanHuyen != null)
-        {
-            Huyen = CurrentOrder.ThongTinHoaDon.QuanHuyen;
-        }
         Huyen = e.Value?.ToString();
+        CurrentOrder.ThongTinHoaDon.QuanHuyen = Huyen;
+
         var huyen = HuyenXa.FirstOrDefault(h => h.Ten == Huyen);
         XaPhuong = huyen?.Con ?? new();
+
+        Phuong = "";
+        CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = "";
     }
+
     private string Phuong = "";
     void OnXaPhuongChanged(ChangeEventArgs e)
     {
-        if (CurrentOrder.ThongTinHoaDon.XaPhuongThiTran != null)
-        {
-            Phuong = CurrentOrder.ThongTinHoaDon.XaPhuongThiTran;
-        }
         Phuong = e.Value?.ToString();
+        CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = Phuong;
     }
     void OnVoucherChange(ChangeEventArgs e)
     {
         string selectedVoucher = e.Value?.ToString()?.Trim();
 
-        var voucher = vouchers.FirstOrDefault(v => v.TenVoucher == selectedVoucher);
+        var voucher = vouchers.FirstOrDefault(v => v.Ten == selectedVoucher);
 
         if (voucher != null)
         {
-            DiscountPercent = voucher.PhanTram;
+            if (voucher.PhanTramKhuyenMai != null || voucher.PhanTramKhuyenMai != 0)
+            {
+                DiscountPercent = (float)(voucher.PhanTramKhuyenMai ?? 0) * 0.1f;
+            }
+            else if (voucher.SoTienKhuyenMai != null || voucher.SoTienKhuyenMai != 0)
+            {
+                DiscountPercent = voucher.SoTienKhuyenMai ?? 0;
+            }
+
         }
         else
         {
-            DiscountPercent = 0; 
+            DiscountPercent = 0;
         }
     }
 
-} *@
+}

@@ -1,4 +1,4 @@
-﻿namespace API.Models
+﻿namespace API.Models.ViewModels.Thongke
 {
     public class DanhSachSanPhamBanChay
     {

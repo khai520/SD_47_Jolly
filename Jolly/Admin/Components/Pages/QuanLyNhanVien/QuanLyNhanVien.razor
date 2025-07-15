@@ -1,8 +1,11 @@
 ﻿@page "/quanlynhanvien"
 @using API.Models.DTO
+@using AutoMapper
 @using Microsoft.AspNetCore.Components.Forms
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JS
 @inject INhanVienService NhanVienService
+@inject IApiService apiService
+@inject IMapper _mapper
 
 <link href="css/QuanLyKhachHang.css" rel="stylesheet" />
 <PageTitle>Quản lý Nhân Viên</PageTitle>
@@ -37,11 +40,12 @@
             </div>
         </div>
         <div class="col-md-3">
-            <select class="form-select" @bind="statusFilter">
+            <select class="form-select" @bind="StatusFilter">
                 <option value="">Tất cả trạng thái</option>
                 <option value="true">Hoạt động</option>
                 <option value="false">Không hoạt động</option>
             </select>
+
         </div>
         <div class="col-md-3">
             <button class="btn btn-outline-secondary w-100" @onclick="ResetFilter">
@@ -51,7 +55,7 @@
         </div>
     </div>
 
-    <!-- Bảng danh sách khách hàng -->
+
     <div class="card">
         <div class="card-body">
             <div class="table-responsive">
@@ -100,7 +104,7 @@
                                     </td>
                                     <td>
                                         <span class="text-muted">
-                                            @nhanvien.NgayVaoLam.ToString("dd/MM/yyyy")
+                                            @nhanvien.GetNgayVaoLam().ToString("dd/MM/yyyy")
                                         </span>
                                     </td>
                                     <td>
@@ -123,7 +127,7 @@
                                                 <i class="fas fa-eye"></i>
                                                 Xem
                                             </button>
-                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DeleteKhachHang(nhanvien)">
+                                            <button class="btn btn-sm btn-outline-danger" @onclick="() => DoiTrangThai(nhanvien)">
                                                 <i class="fas fa-trash"></i>
                                                 Đổi trạng thái
                                             </button>
@@ -150,7 +154,7 @@
     <!-- Phân trang -->
     <div class="d-flex justify-content-between align-items-center mt-4">
         <div class="text-muted">
-            Hiển thị @Math.Min(currentPage * pageSize, filteredKhachHangs.Count) / @filteredKhachHangs.Count khách hàng
+            Hiển thị @Math.Min(currentPage * pageSize, filteredKhachHangs.Count) / @filteredKhachHangs.Count nhân viên
         </div>
         <nav>
             <ul class="pagination pagination-sm">
@@ -193,7 +197,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title">
-                        <i class="fas fa-user me-2"></i>Chi tiết khách hàng
+                        <i class="fas fa-user me-2"></i>Chi tiết Nhân Viên
                     </h5>
                     <button type="button" class="btn-close" @onclick="CloseDetailModal"></button>
                 </div>
@@ -244,7 +248,7 @@
                                 <div class="mb-3">
                                     <label class="form-label fw-bold">Ngày vào làm:</label>
                                 <p class="form-control-plaintext">
-                                    @selectednhanvien.NgayVaoLam.ToString("dd/MM/yyyy")
+                                    @selectednhanvien.GetNgayVaoLam().ToString("dd/MM/yyyy")
                                 </p>
                                 </div>
                             </div>
@@ -274,6 +278,16 @@
 
     private string searchTerm = "";
     private string statusFilter = "";
+    private string StatusFilter
+    {
+        get => statusFilter;
+        set
+        {
+            statusFilter = value;
+            ApplyFilter();
+        }
+    }
+
 
     private int currentPage = 1;
     private int pageSize = 10;
@@ -287,27 +301,39 @@
     private async Task LoadData()
     {
         nhanViens = await NhanVienService.GetAll();
-
+        nhanViens = (nhanViens ?? new()).Where(x => x.TenChucVu != "Admin").ToList();
+        ApplyFilter();
+    }
+    private void OnStatusFilterChanged(ChangeEventArgs e)
+    {
+        statusFilter = e.Value?.ToString() ?? "";
         ApplyFilter();
     }
 
     private void ApplyFilter()
     {
-        filteredKhachHangs = nhanViens.Where(nv =>
-            (string.IsNullOrEmpty(searchTerm) ||
-             nv.HoTen.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-             nv.Sdt.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
-             nv.Gmail.Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
-            (string.IsNullOrEmpty(statusFilter) || nv.TrangThai.ToString() == statusFilter)
-        ).ToList();
-        currentPage = 1;
+        var filtered = nhanViens
+            .Where(nv =>
+                (string.IsNullOrEmpty(searchTerm) ||
+                 (nv.HoTen ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                 (nv.Sdt ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
+                 (nv.Gmail ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase)) &&
+                (string.IsNullOrEmpty(statusFilter) ||
+                 (statusFilter == "true" && nv.TrangThai) ||
+                 (statusFilter == "false" && !nv.TrangThai))
+            ).ToList();
+
+
+        if (currentPage > totalPages)
+            currentPage = 1;
+
+        filteredKhachHangs = filtered
+            .Skip((currentPage - 1) * pageSize)
+            .Take(pageSize)
+            .ToList();
     }
 
-    private void OnSearchChanged(ChangeEventArgs e)
-    {
-        searchTerm = e.Value?.ToString() ?? "";
-        ApplyFilter();
-    }
+
 
     private void ResetFilter()
     {
@@ -355,16 +381,81 @@
         selectednhanvien = new();
     }
 
-   
-
-    private async Task DeleteKhachHang(NhanVienDTO nhanvien)
+    private void OnSearchChanged(ChangeEventArgs e)
     {
-        bool confirmed = await JSRuntime.InvokeAsync<bool>("confirm", $"Bạn có chắc chắn muốn xóa khách hàng {nhanvien.HoTen}?");
-        if (confirmed)
+        searchTerm = e.Value?.ToString() ?? "";
+        ApplyFilter();
+    }
+
+
+    private async Task DoiTrangThai(NhanVienDTO nhanVien)
+{
+    try
+    {
+        var result = await JS.InvokeAsync<SwalResult>("Swal.fire", new
         {
-            nhanViens.Remove(nhanvien);
-            ApplyFilter();
-            await JSRuntime.InvokeVoidAsync("alert", "Xóa khách hàng thành công!");
+            title = "Xác nhận đổi trạng thái",
+            text = "Bạn có chắc muốn đổi trạng thái nhân viên này?",
+            icon = "question",
+            showCancelButton = true,
+            confirmButtonText = "Xác nhận",
+            cancelButtonText = "Huỷ"
+        });
+
+        if (result.IsConfirmed)
+        {
+            nhanVien.TrangThai = !nhanVien.TrangThai;
+            var response = await apiService.PutAsync<NhanVien>("NhanVien", _mapper.Map<NhanVien>(nhanVien));
+
+            if (response)
+            {
+                
+                var original = nhanViens.FirstOrDefault(n => n.Id == nhanVien.Id);
+                if (original != null)
+                {
+                    original.TrangThai = nhanVien.TrangThai;
+                }
+
+                ApplyFilter(); 
+
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "success",
+                    title = "Thành công",
+                    text = "Đổi trạng thái nhân viên thành công."
+                });
+            }
+            else
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "error",
+                    title = "Thất bại",
+                    text = "Có lỗi khi đổi trạng thái nhân viên."
+                });
+            }
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "info",
+                title = "Đã huỷ",
+                text = "Không có thay đổi nào được thực hiện."
+            });
         }
     }
+    catch (Exception)
+    {
+        await JS.InvokeVoidAsync("Swal.fire", new
+        {
+            icon = "warning",
+            title = $"Lỗi hệ thống!",
+            text = $"Nhân viên không tồn tại",
+            confirmButtonText = "OK"
+        });
+        throw;
+    }
+}
+
 }

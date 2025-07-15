@@ -393,7 +393,7 @@ h2 {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
-/* Stats Cards (Small) */
+
 .stats-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -551,7 +551,7 @@ h2 {
     animation: fadeIn 0.6s ease forwards;
 }
 
-/* Scrollbar Styling */
+
 ::-webkit-scrollbar {
     width: 8px;
 }

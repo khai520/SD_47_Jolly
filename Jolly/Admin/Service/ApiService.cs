@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using Azure.Core;
+using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace Admin.Service
@@ -71,16 +72,19 @@ namespace Admin.Service
             }
         }
 
-        public async Task<bool> DeleteAsync(string url)
+        public async Task<bool> DeleteAsync<Tkey>(string baseUrl, Tkey id)
         {
             try
             {
-                var response = await _httpClient.DeleteAsync(url);
+                var fullUrl = $"{baseUrl}/{id}";
+                var response = await _httpClient.DeleteAsync(fullUrl);
+
                 if (!response.IsSuccessStatusCode)
                 {
                     var content = await response.Content.ReadAsStringAsync();
-                    Console.WriteLine($"[DELETE] Failed: {url} => {content}");
+                    Console.WriteLine($"[DELETE] Failed: {fullUrl} => {content}");
                 }
+
                 return response.IsSuccessStatusCode;
             }
             catch (Exception ex)
@@ -89,5 +93,6 @@ namespace Admin.Service
                 return false;
             }
         }
+
     }
 }

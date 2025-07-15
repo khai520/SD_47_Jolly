@@ -11,8 +11,9 @@ namespace API.Models
         public float TongTien { get; set; }
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public float TongTienSauKhiGiam { get; set; }
-        public required string TrangThai { get; set; } = "Tạo đơn hàng"; 
+        public List<string> TrangThai { get; set; } = new List<string>() { "Tạo đơn hàng" }; 
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
+        public List<string>? NguoiXacNhan { get; set; }
         public string? GhiChu { get; set; }
         public string? GiamGiaId { get; set; }
         public string? NhanVienId { get; set; }

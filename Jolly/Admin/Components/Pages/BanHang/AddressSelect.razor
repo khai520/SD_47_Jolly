@@ -39,14 +39,14 @@
     [Parameter] public bool Visible { get; set; }
 
     // Danh sách địa chỉ đầu vào
-    [Parameter] public List<DiaChi> Addresses { get; set; } = new();
+    [Parameter] public List<DiaChiDTO> Addresses { get; set; } = new();
 
     // Sự kiện chọn địa chỉ
-    [Parameter] public EventCallback<DiaChi> OnAddressSelected { get; set; }
+    [Parameter] public EventCallback<DiaChiDTO> OnAddressSelected { get; set; }
 
     [Parameter] public EventCallback OnClose { get; set; }
 
-    private async Task SelectAddress(DiaChi diaChi)
+    private async Task SelectAddress(DiaChiDTO diaChi)
     {
         await OnAddressSelected.InvokeAsync(diaChi);
         await OnClose.InvokeAsync();

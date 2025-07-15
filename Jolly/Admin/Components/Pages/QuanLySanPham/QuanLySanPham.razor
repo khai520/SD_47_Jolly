@@ -1,5 +1,4 @@
 ﻿@page "/quanlysanpham"
-@layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject IApiService apiService
 @inject NavigationManager nav
@@ -70,10 +69,6 @@
                             <div class="detail-item">
                                 <i class="fas fa-calendar"></i>
                                 <span>@(product.HanSuDung?.ToString("dd/MM/yyyy") ?? "Không có")</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-boxes"></i>
-                                <span>SL: @(chiTiet?.Soluong ?? 0)</span>
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-star"></i>

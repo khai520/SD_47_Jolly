@@ -246,7 +246,6 @@
     }
 }
 
-/* CSS cho button xóa ảnh */
 .btn-delete-image {
     background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
     color: white;
@@ -316,7 +315,6 @@
 
 
 
-/* Responsive cho mobile */
 @media (max-width: 768px) {
     .btn-delete-image {
         padding: 4px 8px;
@@ -326,7 +324,6 @@
     }
 }
 
-/* Variant cho button xóa ảnh nhỏ hơn trong image preview */
 .btn-delete-image-small {
     background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
     color: white;
@@ -375,7 +372,7 @@
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease;
     border: 3px solid white;
-    margin: 5px; /* Thêm margin để button xóa không bị cắt */
+    margin: 5px; 
 }
 
 
@@ -395,7 +392,7 @@
 
 
 
-/* Animation cho button xóa ảnh */
+
 @keyframes deleteShake {
     0%, 100% {
         transform: translateX(0);
@@ -408,7 +405,7 @@
 
 
 
-/* Tooltip cho button xóa ảnh */
+
 .btn-delete-image[title]:hover::after {
     content: attr(title);
     position: absolute;
@@ -439,7 +436,7 @@
 }
 
 
-/* CSS cho danh sách ảnh - Image Gallery */
+
 .image-preview {
     margin-top: 25px;
     padding: 25px;
@@ -542,7 +539,6 @@
 
 
 
-    /* Overlay hiệu ứng khi hover */
     .image-item::after {
         content: '';
         position: absolute;
@@ -563,7 +559,7 @@
 
 
 
-/* Button xóa ảnh */
+
 .btn-delete-image {
     position: absolute;
     top: -10px;
@@ -617,7 +613,7 @@
     }
 }
 
-/* Thông tin ảnh */
+
 .image-info {
     position: absolute;
     bottom: 0;
@@ -641,7 +637,7 @@
 
 
 
-/* Loading placeholder khi ảnh đang tải */
+
 .image-item.loading {
     background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
     background-size: 200% 100%;
@@ -656,7 +652,7 @@
     }
 }
 
-/* Empty state khi không có ảnh */
+
 .image-preview-empty {
     text-align: center;
     padding: 40px;
@@ -677,7 +673,7 @@
 
 
 
-/* Lightbox effect khi click vào ảnh */
+
 .image-lightbox {
     position: fixed;
     top: 0;
@@ -739,12 +735,9 @@
 
 
 
-/* Responsive Design */
+
 @media (max-width: 1024px) {
-    .image-gallery {
-        grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-        gap: 15px;
-    }
+
 
 
 
@@ -821,7 +814,6 @@
     }
 }
 
-/* Animation cho việc thêm/xóa ảnh */
 .image-item-enter {
     animation: slideInUp 0.5s ease;
 }
@@ -848,7 +840,6 @@
     }
 }
 
-/* Hiệu ứng cho drag and drop */
 .image-gallery.drag-over {
     border: 2px dashed #667eea;
     background: linear-gradient(135deg, rgba(102, 126, 234, 0.1) 0%, rgba(255, 107, 107, 0.1) 100%);
@@ -863,7 +854,6 @@
 
 
 
-/* Badge hiển thị số lượng ảnh */
 .image-count-badge {
     position: absolute;
     top: 10px;
@@ -879,7 +869,7 @@
 
 
 
-/* Tooltip cho tên ảnh */
+
 .image-item[data-title]:hover::before {
     content: attr(data-title);
     position: absolute;
@@ -1014,4 +1004,74 @@
         resize: vertical;
         min-height: 120px;
         font-family: inherit;
+    }
+
+label[for="theloai"] {
+    color: #805ad5;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: none;
+    position: relative;
+    padding-left: 24px;
+}
+
+    label[for="theloai"]::before {
+        content: '🏷️';
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 1rem;
+    }
+
+
+label[for="thuonghieu"] {
+    color: #dd6b20;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: none;
+    position: relative;
+    padding-left: 24px;
+}
+
+    label[for="thuonghieu"]::before {
+        content: '🏢';
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 1rem;
+    }
+
+label[for="nhacungcap"] {
+    color: #2b6cb0;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: none;
+    position: relative;
+    padding-left: 24px;
+}
+
+    label[for="nhacungcap"]::before {
+        content: '📦';
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 1rem;
+    }
+
+
+label[for="donggoi"] {
+    color: #38a169;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: none;
+    position: relative;
+    padding-left: 24px;
+}
+
+    label[for="donggoi"]::before {
+        content: '📤';
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 1rem;
     }

@@ -9,6 +9,7 @@ namespace API.HeThong
         public MappingProfile()
         {
             CreateMap<Anh, AnhDTO>().ReverseMap();
+            CreateMap<AnhDTO, Anh>().ReverseMap();
             CreateMap<Combo, ComboDTO>().ReverseMap();
             CreateMap<ChiTietCombo, ChiTietComboDTO>().ReverseMap();
             CreateMap<ChiTietGiamGia, ChiTietGiamGiaDTO>().ReverseMap();
@@ -36,7 +37,7 @@ namespace API.HeThong
             CreateMap<ChucVu, ChucVuDTO>().ReverseMap();
             CreateMap<DiaChi, DiaChiDTO>().ReverseMap();
             CreateMap<DongGoi, DongGoiDTO>().ReverseMap();
-            CreateMap<GiamGia, GiamGiaDTO>().ReverseMap();
+            CreateMap<GiamGia, Voucher>().ReverseMap();
             CreateMap<GioHang, GioHangDTO>().ReverseMap();
             CreateMap<HinhThucThanhToan, HinhThucThanhToanDTO>().ReverseMap();
             CreateMap<HoaDonChiTiet, HoaDonChiTietDTO>().ReverseMap();
@@ -56,6 +57,8 @@ namespace API.HeThong
             .ForMember(dest => dest.Gmail, opt => opt.MapFrom(src =>
                 src.NguoiDung != null && !string.IsNullOrWhiteSpace(src.NguoiDung.Gmail)
                 ? src.NguoiDung.Gmail : ""))
+            .ForMember(dest => dest.NgaySinh, opt => opt.MapFrom(src =>
+                src.NguoiDung != null ? src.NguoiDung.NgaySinh : DateTime.Now))
             .ReverseMap();
 
             CreateMap<KhachHangDTO, KhachHang>()
@@ -82,6 +85,8 @@ namespace API.HeThong
             .ForMember(dest => dest.TenChucVu, opt => opt.MapFrom(src =>
                 src.ChucVu != null && !string.IsNullOrWhiteSpace(src.ChucVu.Ten)
                 ? src.ChucVu.Ten : ""))
+            .ForMember(dest => dest.NgaySinh, opt => opt.MapFrom(src =>
+                src.NguoiDung != null ? src.NguoiDung.NgaySinh : DateTime.Now))
             .ReverseMap(); 
 
             CreateMap<NhanVienDTO,NhanVien>()

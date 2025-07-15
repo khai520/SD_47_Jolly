@@ -3,9 +3,11 @@
     public class AnhDTO
     {
         public Guid Id { get; set; }
-        public string Url { get; set; }
-        public string? MoTa { get; set; }
-        public string? ChiTietMonAnId { get; set; }
+        public string? Ten { get; set; }
+        public string? DuongDan { get; set; }
+        public bool? TrangThai { get; set; }
+        public Guid? NguoiDungId { get; set; }
+        public Guid? ChiTietMonAnId { get; set; }
 
 
     }

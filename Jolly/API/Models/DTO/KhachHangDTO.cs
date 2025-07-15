@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 
 namespace API.Models.DTO
 {
@@ -8,14 +9,13 @@ namespace API.Models.DTO
         public string? Ho { get; set; }
         public string? Ten { get; set; }
         public string? HoTen => $"{Ho ?? ""} {Ten ?? ""}".Trim();
-        public DateTime NgaySinh { get; set; } = DateTime.Now;
-        [Phone(ErrorMessage = "Lỗi định dạng số điện thoại!")]
+        public DateTime NgaySinh { get; set; } 
         public string? Sdt { get; set; }
-        [EmailAddress(ErrorMessage = "Lỗi định dạng Gmail!")]
         public string? Gmail { get; set; }
         public bool TrangThai { get; set; } = true;
         public string? GhiChu { get; set; }
         public Guid NguoiDungId { get; set; }
         public virtual ICollection<DiaChiDTO>? DiaChis { get; set; }
+
     }
 }
