@@ -21,9 +21,7 @@ namespace API.Models.DTO
         public Guid? DongGoiId { get; set; }
         public Guid? ThuongHieuId { get; set; }
         public Guid? NhaCungCapId { get; set; }
-        public virtual ICollection<Anh> Anhs { get; set; } = new List<Anh>();
-        [NotMapped]
-        public List<AnhDTO> DanhSachAnh { get; set; } = new();
+        public List<AnhDTO>? DanhSachAnh { get; set; }
         public int SoLuongDat { get; set; } = 1;
     }
 }

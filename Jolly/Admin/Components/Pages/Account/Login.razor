@@ -103,12 +103,12 @@
         {
             var user = await taiKhoanService.Login(Input);
 
-            if (user == null || user.Password != Input.MatKhau)
+            if (user == null )
             {
                 ErrorMessage = "Tài khoản hoặc mật khẩu không đúng!";
                 return;
             }
-
+            await JS.InvokeVoidAsync("localStorage.setItem", "currentId", user.Id);
             await JS.InvokeVoidAsync("localStorage.setItem", "currentRole", user.Quyen);
             await JS.InvokeVoidAsync("localStorage.setItem", "currentUserName", user.UserName);
 

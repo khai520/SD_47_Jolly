@@ -272,7 +272,9 @@
     [Parameter] public EventCallback<ChiTietMonAnDTO> OnSuaChiTiet { get; set; }
     [Parameter] public EventCallback<ChiTietMonAnDTO> OnXoaChiTiet { get; set; }
     [Parameter] public EventCallback OnHuyChiTiet { get; set; }
+    [Parameter] public EventCallback<List<AnhDTO>> AnhXoa { get; set; } 
     [Parameter] public ChiTietMonAnDTO ChiTietMonAnSua { get; set; } = new();
+
     // Private fields
     private ChiTietMonAnDTO chiTietMoi = new() { DanhSachAnh = new List<AnhDTO>(), TrangThai = true };
     private string modalType = "";
@@ -286,6 +288,8 @@
     private List<ThuongHieu> thuongHieuList = new();
     private List<NhaCungCap> nhaCungCapList = new();
     private List<DongGoi> dongGoiList = new();
+    private List<AnhDTO> listAnh = new();
+    private List<AnhDTO> listAnhThem = new();
 
 
 
@@ -321,6 +325,7 @@
                 DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new()
 
             };
+
         }
     }
 
@@ -360,8 +365,18 @@
             DanhSachChiTiet.Add(chiTietMoi);
         }
 
+        if (ButtonText == "Thêm" || ButtonText == "+ Tạm thêm")
+        {
+            await OnThemChiTiet.InvokeAsync(chiTietMoi);
+        }
+        else
+        {
+            await AnhXoa.InvokeAsync(listAnh);
+            chiTietMoi.DanhSachAnh = listAnhThem;
+            await OnSuaChiTiet.InvokeAsync(chiTietMoi);
 
-        await OnThemChiTiet.InvokeAsync(chiTietMoi);
+        }
+
         ResetChiTietMoi();
         StateHasChanged();
     }
@@ -401,13 +416,15 @@
             var result = await UploadService.UploadImageAsync(file);
             if (result != null && !string.IsNullOrEmpty(result.Url))
             {
-                chiTietMoi.DanhSachAnh.Add(new AnhDTO
+                var anh = new AnhDTO ()
                 {
                     Id = Guid.NewGuid(),
                     Ten = result.FileName,
                     DuongDan = result.Url,
                     ChiTietMonAnId = chiTietMoi.Id
-                });
+                };
+                chiTietMoi.DanhSachAnh.Add(anh);
+                listAnhThem.Add(anh);
                 StateHasChanged();
             }
         }
@@ -415,15 +432,25 @@
 
     private async Task XoaAnh(AnhDTO anh)
     {
-        var result = await UploadService.DeleteImageAsync(anh.Ten);
-        if (result)
+
+        if (ChiTietMonAnSua != null)
         {
             chiTietMoi.DanhSachAnh.Remove(anh);
+            listAnh.Add(anh);
         }
         else
         {
-            await JSRuntime.InvokeVoidAsync("alert", "Xóa ảnh thất bại");
-            return;
+            var result = await UploadService.DeleteImageAsync(anh.Ten);
+            if (result)
+            {
+                chiTietMoi.DanhSachAnh.Remove(anh);
+                
+            }
+            else
+            {
+                await JSRuntime.InvokeVoidAsync("alert", "Xóa ảnh thất bại");
+                return;
+            }
         }
     }
 
