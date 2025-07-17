@@ -537,7 +537,7 @@
                 var result1 = await apiService.PostAsync<DiaChi, DiaChi>("DiaChi", _mapper.Map<DiaChi>(diachi)); 
                 if (result1 != null)
                 {
-                    
+
                 }
                 else
                 {
@@ -551,12 +551,12 @@
                 var khachhang = new KhachHangDTO()
                 {
                     NguoiDungId = result.Id,
-                    
+
                 };
                 var result3 = await apiService.PostAsync<KhachHang, KhachHang>("KhachHang", _mapper.Map<KhachHang>(khachhang));
                 if (result3 != null)
                 {
-                    
+                    CurrentOrder.Customer = _mapper.Map<KhachHangDTO>(result3);
                 }
                 else
                 {
@@ -586,10 +586,11 @@
                 return;
             }
         }
-
+        var nhanVienId = await JS.InvokeAsync<string>("localStorage.getItem", "currentId");
         var hoadon = new HoaDonDTO()
         {
-            KhachHangId = CurrentOrder.Customer.Id,
+            NhanVienId   =  nhanVienId,
+            KhachHangId = CurrentOrder.Customer.Id ,
             GiamGiaId = CurrentOrder.ThongTinHoaDon.GiamGiaId,
             TrangThai = new List<string> { "Tạo Đơn Hàng", "Hoàn Thành" },
             TongTien = Subtotal,
@@ -603,6 +604,7 @@
             {
                 var hoadonchitiet = new HoaDonChiTietDTO()
                 {
+                    
                     MonAnId = item.MonAnId,
                     HoaDonId = result2.Id,
                     Soluong = item.SoLuongDat,

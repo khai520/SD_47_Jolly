@@ -439,7 +439,7 @@
 			var first = group.First();
 			return new DanhSachSanPhamBanChay
 				{
-					Anh = first.Anhs?.FirstOrDefault()?.DuongDan ?? "",
+					Anh = first.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
 					TheLoai = first.TheLoai ?? "Không rõ",
 					TenSanPham = first.Ten ?? "Chưa rõ tên",
 					SoLuong = group.Sum(x => x.Soluong),
@@ -640,7 +640,7 @@
 									select new
 									{
 										TenGiay = ma.Ten,
-										DuongDanAnh = ma.Anhs.FirstOrDefault()?.DuongDan ?? "",
+										DuongDanAnh = ma.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
 										Gia = hdct.ThanhTien,
 										kc = ma.TheLoai,
 										SoLuong = hdct.Soluong

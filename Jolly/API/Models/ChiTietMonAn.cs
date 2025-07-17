@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace API.Models
 {
@@ -22,6 +23,7 @@ namespace API.Models
         public virtual ThuongHieu? ThuongHieu { get; set; }
         public virtual DongGoi? DongGoi { get; set; }
         public virtual TheLoai? TheLoai { get; set; }
+        [JsonIgnore]
         public virtual ICollection<Anh> Anhs { get; set; } = new List<Anh>();
         
     }

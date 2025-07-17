@@ -14,7 +14,7 @@
                 @foreach (var product in Products)
                 {
                     <div class="product-select-item">
-                        <img src="@product.Anhs?.FirstOrDefault()?.DuongDan" class="order-img" alt="@product.Ten" />
+                        <img src="@( product.DanhSachAnh?.FirstOrDefault()?.DuongDan)" class="order-img" alt="@product.Ten" />
                         <div class="item-info">
                             <div class="order-name">@product.Ten</div>
                             <div class="order-price">

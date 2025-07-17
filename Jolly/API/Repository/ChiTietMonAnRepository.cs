@@ -22,6 +22,7 @@ namespace API.Repository
                 .Include(c => c.DongGoi)
                 .Include(c => c.ThuongHieu)
                 .Include(c => c.NhaCungCap)
+                .Include(c => c.Anhs)
                 .AsNoTracking()
                 .ToListAsync();
         }

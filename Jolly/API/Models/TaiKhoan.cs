@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace API.Models
 {
@@ -11,6 +13,7 @@ namespace API.Models
         public string UserName { get; set; }
         [Required]
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
+        [JsonIgnore]
         public string Password { get; set; }
         public DateTime NgayTaoTk { get; set; } = DateTime.Now;
         public Guid NguoiDungId { get; set; }
