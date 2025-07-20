@@ -58,10 +58,6 @@
 
                             <div class="product-meta">
                                 <div class="meta-item">
-                                    <i class="fas fa-calendar"></i>
-                                    <span>HSD: <InputDate @bind-Value="monAn.HanSuDung" class="form-input-date" /></span>
-                                </div>
-                                <div class="meta-item">
                                     <i class="fas fa-toggle-on"></i>
                                     <span>Trạng thái: <InputCheckbox @bind-Value="monAn.TrangThai" /> Đang bán</span>
                                 </div>
@@ -78,10 +74,6 @@
                         </div>
 
                         <div class="product-meta">
-                            <div class="meta-item">
-                                <i class="fas fa-calendar"></i>
-                                <span>HSD: <span>@monAn.HanSuDung?.ToString("dd/MM/yyyy")</span></span>
-                            </div>
                             <div class="meta-item">
                                 <i class="fas fa-toggle-on"></i>
                                 <span>Trạng thái: <span class="@(monAn.TrangThai ? "text-success" : "text-danger")">@(monAn.TrangThai ? "Đang bán" : "Ngừng bán")</span></span>
@@ -180,7 +172,7 @@
                                             <div class="image-gallery">
                                                 @foreach (var anh in chiTiet.DanhSachAnh.Take(3))
                                                 {
-                                                    <img src="@anh.DuongDan"  @onclick="() => ShowImageLightbox(anh.DuongDan)" />
+                                                    <img src="@anh.DuongDan" style="width:50px" @onclick="() => ShowImageLightbox(anh.DuongDan)" />
                                                 }
                                                 @if (chiTiet.DanhSachAnh.Count > 3)
                                                 {
@@ -283,8 +275,9 @@
                     Id = monAn.Id,
                     Ten = monAn.Ten,
                     Mota = monAn.Mota,
-                    HanSuDung = monAn.HanSuDung,
                     TrangThai = monAn.TrangThai
+                    
+                    
                 };
             }
 
@@ -339,7 +332,6 @@
                         Id = monAn.Id,
                         Ten = monAn.Ten,
                         Mota = monAn.Mota,
-                        HanSuDung = monAn.HanSuDung,
                         TrangThai = monAn.TrangThai
                     };
                     ShowMessage("Cập nhật món ăn thành công!", true);
@@ -362,7 +354,6 @@
         {
             monAn.Ten = originalMonAn.Ten;
             monAn.Mota = originalMonAn.Mota;
-            monAn.HanSuDung = originalMonAn.HanSuDung;
             monAn.TrangThai = originalMonAn.TrangThai;
         }
         isEditMode = false;
@@ -402,7 +393,7 @@
 
                 chiTiet.TrangThai = !chiTiet.TrangThai;
                 var success = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
-               
+
                 if (success)
                 {
 
@@ -470,15 +461,16 @@
                     {
                         try
                         {
+                            item.ChiTietMonAnId = result.Id;
                             var result2 = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
                             if (result2 == null)
                             {
-                                continue;
+                                ShowMessage("Lỗi khi thêm chi tiết!", false);
                             }
                         }
                         catch (Exception)
                         {
-                            continue;
+                            throw;
                         }
 
                     }
@@ -486,9 +478,9 @@
                 if (result != null)
                 {
                     LoadDropdownData();
-                    danhSachChiTiet.Add(_mapper.Map<ChiTietMonAnDTO>(result));
                     ShowMessage("Thêm chi tiết thành công!", true);
                     CloseDetailModal();
+                    LoadData();
                 }
                 else
                 {

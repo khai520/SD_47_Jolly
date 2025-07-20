@@ -20,7 +20,6 @@ namespace API.Data
 
             optionsBuilder.UseSqlServer(@"Data Source=.;Initial Catalog=Jolly;Trusted_Connection=True;Integrated Security=True;TrustServerCertificate=True");
 
-
             //string dbFilePath = "dbconfig.txt";
             //string Dbcheck = "check.txt";
             //string Db = "";

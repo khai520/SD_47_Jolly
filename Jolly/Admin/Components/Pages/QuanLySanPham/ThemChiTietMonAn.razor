@@ -77,6 +77,12 @@
             <br />
             <InputNumber @bind-Value="chiTietMoi.Gia" placeholder="Giá" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
         </div>
+        <div>
+            Giá
+            <br />
+            <InputNumber @bind-Value="chiTietMoi.Gia" placeholder="Giá" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+        </div>
+
         @if (ShowStatus)
         {
             <div class="form-group">
@@ -421,7 +427,6 @@
                     Id = Guid.NewGuid(),
                     Ten = result.FileName,
                     DuongDan = result.Url,
-                    ChiTietMonAnId = chiTietMoi.Id
                 };
                 chiTietMoi.DanhSachAnh.Add(anh);
                 listAnhThem.Add(anh);

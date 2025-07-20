@@ -37,11 +37,6 @@
             <h3>@inactiveCount</h3>
             <p>Không hoạt động</p>
         </div>
-        <div class="stat-card expired" @onclick='() => statusFilter = "expired"'>
-            <i class="fas fa-exclamation-triangle"></i>
-            <h3>@expiredCount</h3>
-            <p>Hết hạn</p>
-        </div>
     </div>
 
     <div class="products-grid">
@@ -65,10 +60,6 @@
                             <div class="detail-item">
                                 <i class="fas fa-tag"></i>
                                 <span>@product.Id</span>
-                            </div>
-                            <div class="detail-item">
-                                <i class="fas fa-calendar"></i>
-                                <span>@(product.HanSuDung?.ToString("dd/MM/yyyy") ?? "Không có")</span>
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-star"></i>
@@ -186,7 +177,6 @@
 
         activeCount = allProducts.Count(p => GetProductStatus(p) == "active");
         inactiveCount = allProducts.Count(p => GetProductStatus(p) == "inactive");
-        expiredCount = allProducts.Count(p => GetProductStatus(p) == "expired");
 
         currentPage = 1;
         UpdatePagination();
@@ -226,7 +216,6 @@
     private string GetProductStatus(MonAn product)
     {
         if (!product.TrangThai) return "inactive";
-        if (product.HanSuDung.HasValue && product.HanSuDung.Value < DateTime.Now) return "expired";
         return "active";
 
     }
@@ -237,7 +226,6 @@
         {
             "active" => "Đang bán",
             "inactive" => "Ngừng bán",
-            "expired" => "Hết hạn",
             _ => "Không xác định"
         };
     }
