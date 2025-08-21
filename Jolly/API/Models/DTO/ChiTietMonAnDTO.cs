@@ -7,19 +7,20 @@ namespace API.Models.DTO
     {
         public Guid Id { get; set; }
         public string Ten { get; set; }
-        public string? TheLoai { get; set; }
-        public string? DongGoi { get; set; }
-        public string? ThuongHieu { get; set; }
+        public string? NguyenLieu { get; set; }
         public string? NhaCungCap { get; set; }
+        public string? LoaiVi { get; set; }
+        public string? KichCo { get; set; }
         public string MonAnId { get; set; }
         public float Gia { get; set; }
         public float GiaGiam { get; set; }
-        public int Soluong { get; set; } 
+        public int Soluong { get; set; }
+        public int SoNgayHSD { get; set; }
         public string? Mota { get; set; }
         public bool TrangThai { get; set; } = false;
-        public Guid? TheLoaiId { get; set; }
-        public Guid? DongGoiId { get; set; }
-        public Guid? ThuongHieuId { get; set; }
+        public Guid? KichCoId { get; set; }
+        public Guid? LoaiViId { get; set; }
+        public Guid? NguyenLieuId { get; set; }
         public Guid? NhaCungCapId { get; set; }
         public List<AnhDTO>? DanhSachAnh { get; set; }
         public int SoLuongDat { get; set; } = 1;

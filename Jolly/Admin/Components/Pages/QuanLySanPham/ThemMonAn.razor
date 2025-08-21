@@ -1,4 +1,5 @@
 ﻿@page "/them-mon-an"
+@layout Layout.MainLayout
 @using API.Models.DTO
 @using AutoMapper
 @inject IJSRuntime JSRuntime
@@ -36,8 +37,35 @@
                     <InputText @bind-Value="model.MonAn.Ten" @oninput="OnTenChanged" />
                 </div>
                 <div class="form-group">
-                    <label>Hạn sử dụng</label>
-                    <InputNumber @bind-Value="hanSuDung" />
+                    <div>
+                        <label for="theloai">Thể loại</label>
+                        <div class="select-with-add row-layout ">
+
+                            <InputSelect id="loaivi" @bind-Value="model.MonAn.TheLoaiId">
+                                <option selected value="@Guid.Empty">-- Thương Hiệu --</option>
+                                @foreach (var item in theLoaisList)
+                                {
+                                    <option value="@item.Id">@item.Ten</option>
+                                }
+                            </InputSelect>
+                            <button type="button" class="btn-add" @onclick='() => ShowModal("TheLoai")'>+</button>
+                        </div>
+                    </div>
+                    <div>
+                        <label for="thuonghieu">Kích Cỡ</label>
+                        <div class="select-with-add row-layout ">
+
+                            <InputSelect id="thuonghieu" @bind-Value="model.MonAn.ThuongHieuId">
+                                <option selected value="@Guid.Empty">-- Thương Hiệu --</option>
+                                @foreach (var item in thuongHieusList)
+                                {
+                                    <option value="@item.Id">@item.Ten</option>
+                                }
+                            </InputSelect>
+                            <button type="button" class="btn-add" @onclick='() => ShowModal("ThuongHieu")'>+</button>
+                        </div>
+
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Mô tả</label>
@@ -67,13 +95,40 @@
         </EditForm>
     </div>
 </div>
-
+@if (showModal)
+{
+    <div class="modal-overlay">
+        <div class="modal-box">
+            <h4>Thêm mới @modalType</h4>
+            @if (showSuccessMessage)
+            {
+                <div class="success-message">@successMessage</div>
+            }
+            <div class="form-group">
+                <label>Tên</label>
+                <InputText @bind-Value="newItemTen" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label>Mô tả</label>
+                <InputTextArea @bind-Value="newItemMota" class="form-control" rows="3" />
+            </div>
+            <div class="text-end">
+                <button class="btn btn-secondary" @onclick="CloseModal">Hủy</button>
+                <button class="btn btn-primary" @onclick="ConfirmAddNewItem">Thêm</button>
+            </div>
+        </div>
+    </div>
+}
 @code {
     private MonAnFormModel model = new();
     private bool showSuccessMessage = false;
     private string successMessage = "";
     private bool submitcheck = false;
     private int hanSuDung = 0;
+    private string modalType = "";
+    private string newItemTen = "";
+    private string newItemMota = "";
+    private bool showModal = false;
 
     public class MonAnFormModel
     {
@@ -85,8 +140,15 @@
     protected override async Task OnInitializedAsync()
     {
         model.MonAn.Id = await monAnService.GetIdMonAn();
+        await LoadDropdownData();
     }
-
+    private void ShowModal(string type)
+    {
+        modalType = type;
+        newItemTen = "";
+        newItemMota = "";
+        showModal = true;
+    }
     private async Task HandleValidSubmit()
     {
         try
@@ -116,6 +178,7 @@
                         {
                             try
                             {
+                                item.Id = result1.Id;
                                 var result = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
                                 if (result == null)
                                 {
@@ -142,7 +205,45 @@
             showSuccessMessage = true;
         }
     }
+    private void CloseModal()
+    {
+        showModal = false;
+        modalType = "";
+    }
+    private List<TheLoai> theLoaisList = new();
+    private List<ThuongHieu> thuongHieusList = new();
+    private async Task LoadDropdownData()
+    {
+        theLoaisList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
+        thuongHieusList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
+        StateHasChanged();
+    }
+    private async Task ConfirmAddNewItem()
+    {
+        if (string.IsNullOrWhiteSpace(newItemTen))
+        {
+            successMessage = $"❌ Lỗi khi thêm {modalType}";
+            showSuccessMessage = true;
+            return;
+        }
+        var id = Guid.NewGuid();
 
+        switch (modalType)
+        {
+            case "TheLoai":
+                var newLoaiVi = new TheLoai { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<TheLoai, TheLoai>("TheLoai", newLoaiVi);
+                await LoadDropdownData();
+                break;
+            case "ThuongHieu":
+                var newKichCo = new ThuongHieu { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<ThuongHieu, ThuongHieu>("ThuongHieu", newKichCo);
+                await LoadDropdownData();
+                break;
+        }
+
+        CloseModal();
+    }
     private async Task ResetForm()
     {
         model = new MonAnFormModel();

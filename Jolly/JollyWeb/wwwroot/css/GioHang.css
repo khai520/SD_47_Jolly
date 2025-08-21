@@ -1,0 +1,108 @@
+﻿
+.container2 {
+    max-width: 1000px;
+    margin: auto;
+    padding: 40px 20px;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 20px;
+    margin-top: 60px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+    margin-bottom:60px;
+}
+
+h1 {
+    text-align: center;
+    font-size: 3rem;
+    margin-bottom: 30px;
+    color: #333;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 16px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+th {
+    background: linear-gradient(45deg, #ff6b6b, #ffd93d);
+    color: white;
+    font-size: 1.1rem;
+}
+
+td img {
+    width: 60px;
+    height: 60px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.quantity {
+    width: 60px;
+    padding: 6px;
+    text-align: center;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+}
+
+.remove-btn {
+    background: #ff6b6b;
+    border: none;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+
+    .remove-btn:hover {
+        background: #e63946;
+    }
+
+.total {
+    text-align: right;
+    font-size: 1.5rem;
+    margin-top: 20px;
+    font-weight: bold;
+    color: #ff6b6b;
+}
+
+.checkout-btn {
+    display: block;
+    margin: 30px auto 0;
+    background: linear-gradient(45deg, #6bcf7f, #4ecdc4);
+    color: white;
+    border: none;
+    padding: 16px 40px;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+    .checkout-btn:hover {
+        transform: translateY(-3px) scale(1.05);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+    }
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+}
+
+@@media (max-width: 768px) {
+    th, td {
+        font-size: 0.9rem;
+        padding: 10px;
+    }
+
+    .checkout-btn {
+        width: 100%;
+    }
+}

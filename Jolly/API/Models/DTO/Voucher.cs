@@ -14,8 +14,10 @@ namespace API.Models.DTO
         public DateTime NgayKetThuc { get; set; }
         public int? DaSuDung { get; set; }
         public string? MoTa { get; set; }
-        public bool ApDungSanPham { get; set; }
+        public bool ApDungSanPham { get; set; } = false;
+        public bool Kieu { get; set; } = false;  
         public bool TrangThai { get; set; }
+        public bool DotGiamGia { get; set; } = false;
 
     }
 }

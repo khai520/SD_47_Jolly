@@ -1,4 +1,5 @@
 ﻿@page "/quanlydanhmuc"
+@layout Layout.MainLayout
 @inject IApiService apiService
 @inject IJSRuntime JSRuntime
 @inject IConfiguration Configuration
@@ -13,11 +14,11 @@
     </div>
 
     <div class="tabs">
-        <button class="tab @(currentTab == "theloai" ? "active" : "")" @onclick='() => SwitchTab("theloai")'>
-            🏷️ Thể loại
+        <button class="tab @(currentTab == "loaivi" ? "active" : "")" @onclick='() => SwitchTab("loaivi")'>
+            🏷️ Vị
         </button>
-        <button class="tab @(currentTab == "thuonghieu" ? "active" : "")" @onclick='() => SwitchTab("thuonghieu")'>
-            🏢 Thương hiệu
+        <button class="tab @(currentTab == "kichco" ? "active" : "")" @onclick='() => SwitchTab("kichco")'>
+            🏢 Kích cỡ
         </button>
         <button class="tab @(currentTab == "nhacungcap" ? "active" : "")" @onclick='() => SwitchTab("nhacungcap")'>
             🏭 Nhà cung cấp
@@ -42,20 +43,20 @@
     }
 
     <!-- Tab Thể loại -->
-    <div class="tab-content @(currentTab == "theloai" ? "active" : "")">
+    <div class="tab-content @(currentTab == "loaivi" ? "active" : "")">
         <div class="stats-cards">
             <div class="stat-card">
-                <div class="stat-number">@theLoaiList.Count</div>
+                <div class="stat-number">@LoaiViList.Count</div>
                 <div class="stat-label">Tổng thể loại</div>
             </div>
         </div>
 
         <div class="management-header">
             <div class="search-box">
-                <input type="text" @bind="searchTheLoai" @bind:event="oninput" placeholder="Tìm kiếm thể loại..." />
-                <button class="btn btn-primary" @onclick='() => SearchData("theloai")'>🔍 Tìm</button>
+                <input type="text" @bind="searchLoaiVi" @bind:event="oninput" placeholder="Tìm kiếm thể loại..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("loaivi")'>🔍 Tìm</button>
             </div>
-            <button class="btn btn-success" @onclick='() => Them("theloai", "add")'>
+            <button class="btn btn-success" @onclick='() => Them("loaivi", "add")'>
                 ➕ Thêm thể loại
             </button>
         </div>
@@ -65,17 +66,17 @@
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Tên thể loại</th>
+                        <th>Tên vị</th>
                         <th>Mô tả</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (filteredTheLoai.Any())
+                    @if (filteredLoaiVi.Any())
                     {
-                        @for (int i = 0; i < filteredTheLoai.Count; i++)
+                        @for (int i = 0; i < filteredLoaiVi.Count; i++)
                         {
-                            var item = filteredTheLoai[i];
+                            var item = filteredLoaiVi[i];
                             var index = i;
                             <tr>
                                 <td>@(index + 1)</td>
@@ -83,7 +84,7 @@
                                 <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("theloai", "sua", item.Id , item.Ten , item.Mota )'>
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("loaivi", "sua", item.Id, item.Ten, item.Mota)'>
                                             ✏️ Sửa
                                         </button>
                                     </div>
@@ -96,8 +97,8 @@
                         <tr>
                             <td colspan="4" class="empty-state">
                                 <div class="empty-state-icon">📄</div>
-                                <h3>@(string.IsNullOrEmpty(searchTheLoai) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
-                                <p>@(string.IsNullOrEmpty(searchTheLoai) ? "Nhấn nút \"Thêm\" để tạo thể loại mới" : "Thử lại với từ khóa khác")</p>
+                                <h3>@(string.IsNullOrEmpty(searchLoaiVi) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchLoaiVi) ? "Nhấn nút \"Thêm\" để tạo thể loại mới" : "Thử lại với từ khóa khác")</p>
                             </td>
                         </tr>
                     }
@@ -107,20 +108,20 @@
     </div>
 
     <!-- Tab Thương hiệu -->
-    <div class="tab-content @(currentTab == "thuonghieu" ? "active" : "")">
+    <div class="tab-content @(currentTab == "kichco" ? "active" : "")">
         <div class="stats-cards">
             <div class="stat-card">
-                <div class="stat-number">@thuongHieuList.Count</div>
+                <div class="stat-number">@kichCoList.Count</div>
                 <div class="stat-label">Tổng thương hiệu</div>
             </div>
         </div>
 
         <div class="management-header">
             <div class="search-box">
-                <input type="text" @bind="searchThuongHieu" @bind:event="oninput" placeholder="Tìm kiếm thương hiệu..." />
-                <button class="btn btn-primary" @onclick='() => SearchData("thuonghieu")'>🔍 Tìm</button>
+                <input type="text" @bind="searchKichCo" @bind:event="oninput" placeholder="Tìm kiếm thương hiệu..." />
+                <button class="btn btn-primary" @onclick='() => SearchData("kichco")'>🔍 Tìm</button>
             </div>
-            <button class="btn btn-success" @onclick='() => Them("thuonghieu", "add")'>
+            <button class="btn btn-success" @onclick='() => Them("kichco", "add")'>
                 ➕ Thêm thương hiệu
             </button>
         </div>
@@ -130,17 +131,17 @@
                 <thead>
                     <tr>
                         <th>STT</th>
-                        <th>Tên thương hiệu</th>
+                        <th>Tên kích cỡ</th>
                         <th>Mô tả</th>
                         <th>Thao tác</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @if (filteredThuongHieu.Any())
+                    @if (filteredKichCo.Any())
                     {
-                        @for (int i = 0; i < filteredThuongHieu.Count; i++)
+                        @for (int i = 0; i < filteredKichCo.Count; i++)
                         {
-                            var item = filteredThuongHieu[i];
+                            var item = filteredKichCo[i];
                             var index = i;
                             <tr>
                                 <td>@(index + 1)</td>
@@ -148,7 +149,7 @@
                                 <td>@(string.IsNullOrWhiteSpace(item.Mota) ? "Chưa có mô tả" : item.Mota)</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("thuonghieu", "sua", item.Id, item.Ten, item.Mota)'>
+                                        <button class="btn btn-warning btn-sm" @onclick='() => EditItem("kichco", "sua", item.Id, item.Ten, item.Mota)'>
                                             ✏️ Sửa
                                         </button>
                                     </div>
@@ -161,8 +162,8 @@
                         <tr>
                             <td colspan="4" class="empty-state">
                                 <div class="empty-state-icon">📄</div>
-                                <h3>@(string.IsNullOrEmpty(searchThuongHieu) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
-                                <p>@(string.IsNullOrEmpty(searchThuongHieu) ? "Nhấn nút \"Thêm\" để tạo thương hiệu mới" : "Thử lại với từ khóa khác")</p>
+                                <h3>@(string.IsNullOrEmpty(searchKichCo) ? "Chưa có dữ liệu" : "Không tìm thấy kết quả")</h3>
+                                <p>@(string.IsNullOrEmpty(searchKichCo) ? "Nhấn nút \"Thêm\" để tạo thương hiệu mới" : "Thử lại với từ khóa khác")</p>
                             </td>
                         </tr>
                     }
@@ -330,19 +331,19 @@
 
 
 @code {
-    private List<TheLoai> theLoaiList = new();
-    private List<ThuongHieu> thuongHieuList = new();
+    private List<LoaiVi> LoaiViList = new();
+    private List<KichCo> kichCoList = new();
     private List<NhaCungCap> nhaCungCapList = new();
-    private List<DongGoi> dongGoiList = new();
+    private List<NguyenLieu> dongGoiList = new();
 
-    private List<TheLoai> filteredTheLoai = new();
-    private List<ThuongHieu> filteredThuongHieu = new();
+    private List<LoaiVi> filteredLoaiVi = new();
+    private List<KichCo> filteredKichCo = new();
     private List<NhaCungCap> filteredNhaCungCap = new();
-    private List<DongGoi> filteredDongGoi = new();
+    private List<NguyenLieu> filteredDongGoi = new();
 
-    private string currentTab = "theloai";
-    private string searchTheLoai = string.Empty;
-    private string searchThuongHieu = string.Empty;
+    private string currentTab = "loaivi";
+    private string searchLoaiVi = string.Empty;
+    private string searchKichCo = string.Empty;
     private string searchNhaCungCap = string.Empty;
     private string searchDongGoi = string.Empty;
 
@@ -375,19 +376,19 @@
             switch (tab)
             {
                 case "theloai":
-                    theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai");
-                    filteredTheLoai = theLoaiList;
+                    LoaiViList = await apiService.GetAsync<List<LoaiVi>>("LoaiVi") ?? new();
+                    filteredLoaiVi = LoaiViList;
                     break;
-                case "thuonghieu":
-                    thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu");
-                    filteredThuongHieu = thuongHieuList;
+                case "kichco":
+                    kichCoList = await apiService.GetAsync<List<KichCo>>("KichCo") ?? new();
+                    filteredKichCo = kichCoList;
                     break;
                 case "nhacungcap":
-                    nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap");
+                    nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
                     filteredNhaCungCap = nhaCungCapList;
                     break;
                 case "donggoi":
-                    dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi");
+                    dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("DongGoi") ?? new();
                     filteredDongGoi = dongGoiList;
                     break;
             }
@@ -404,10 +405,10 @@
         switch (tab)
         {
             case "theloai":
-                filteredTheLoai = theLoaiList.Where(x => x.Ten.Contains(searchTheLoai, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredLoaiVi = LoaiViList.Where(x => x.Ten.Contains(searchLoaiVi, StringComparison.OrdinalIgnoreCase)).ToList();
                 break;
             case "thuonghieu":
-                filteredThuongHieu = thuongHieuList.Where(x => x.Ten.Contains(searchThuongHieu, StringComparison.OrdinalIgnoreCase)).ToList();
+                filteredKichCo = kichCoList.Where(x => x.Ten.Contains(searchKichCo, StringComparison.OrdinalIgnoreCase)).ToList();
                 break;
             case "nhacungcap":
                 filteredNhaCungCap = nhaCungCapList.Where(x => x.Ten.Contains(searchNhaCungCap, StringComparison.OrdinalIgnoreCase)).ToList();

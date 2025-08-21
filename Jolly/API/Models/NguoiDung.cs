@@ -21,6 +21,7 @@ namespace API.Models
         public virtual ICollection<DiaChi>? DiaChis { get; set; }
         [JsonIgnore]
         public virtual NhanVien? NhanVien { get; set; } 
+        public virtual KhachHang? KhachHang { get; set; }
     }
     
 }

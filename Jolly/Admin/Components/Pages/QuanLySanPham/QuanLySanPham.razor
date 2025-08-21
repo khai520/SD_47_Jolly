@@ -1,4 +1,5 @@
 ﻿@page "/quanlysanpham"
+@layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject IApiService apiService
 @inject NavigationManager nav
@@ -46,10 +47,9 @@
             {
                 var status = GetProductStatus(product);
                 var statusClass = $"status-{status}";
-                var chiTiet = product.ChiTietMonAns?.FirstOrDefault();
                 
                 <div class="product-card">
-                    <div class="product-image">
+                    <div class="product-image" style="background:url('@product.AnhDaTai') no-repeat center center fixed">
                         <div class="product-status @statusClass">
                             @GetStatusText(status)
                         </div>
@@ -63,7 +63,7 @@
                             </div>
                             <div class="detail-item">
                                 <i class="fas fa-star"></i>
-                                <span>@(chiTiet?.ThuongHieu?.Ten ?? "Chưa có")</span>
+                                <span>@(product?.ThuongHieu ?? "Chưa có")</span>
                             </div>
                         </div>
                         <p class="product-description">@(product.Mota ?? "Không có mô tả")</p>
@@ -113,9 +113,9 @@
 
 
 @code {
-    private List<MonAn> allProducts = new();
-    private List<MonAn> filteredProducts = new();
-    private List<MonAn> paginatedProducts = new();
+    private List<MonAnDTO> allProducts = new();
+    private List<MonAnDTO> filteredProducts = new();
+    private List<MonAnDTO> paginatedProducts = new();
 
     private string searchTerm = "";
     private string statusFilter
@@ -150,7 +150,7 @@
     private async Task LoadProducts()
     {
 
-        allProducts = await apiService.GetAsync<List<MonAn>>("MonAn") ?? new();
+        allProducts = await apiService.GetAsync<List<MonAnDTO>>("MonAn") ?? new();
     }
 
     private void FilterProducts()
@@ -213,7 +213,7 @@
         StateHasChanged();
     }
 
-    private string GetProductStatus(MonAn product)
+    private string GetProductStatus(MonAnDTO product)
     {
         if (!product.TrangThai) return "inactive";
         return "active";

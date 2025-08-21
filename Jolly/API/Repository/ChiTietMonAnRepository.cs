@@ -18,9 +18,9 @@ namespace API.Repository
             return await _context.chiTietMonAns
                 .Where(x => x.MonAnId == id)
                 .Include(c => c.MonAn)
-                .Include(c => c.TheLoai)
+                .Include(c => c.LoaiVi)
                 .Include(c => c.DongGoi)
-                .Include(c => c.ThuongHieu)
+                .Include(c => c.KichCo)
                 .Include(c => c.NhaCungCap)
                 .Include(c => c.Anhs)
                 .AsNoTracking()
@@ -31,9 +31,9 @@ namespace API.Repository
         {
             return await _context.chiTietMonAns
                 .Include(c => c.MonAn)
-                .Include(c => c.TheLoai)
+                .Include(c => c.LoaiVi)
                 .Include(c => c.DongGoi)
-                .Include(c => c.ThuongHieu)
+                .Include(c => c.KichCo)
                 .Include(c => c.NhaCungCap)
                 .Include(c => c.Anhs)
                 .AsNoTracking()

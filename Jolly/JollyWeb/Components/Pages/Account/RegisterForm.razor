@@ -1,0 +1,27 @@
+﻿@using System.ComponentModel.DataAnnotations
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+
+<EditForm Model="@registerModel" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator  />
+    <ValidationMessage For="() => registerModel.Username" class="text-danger" />
+    <InputText class="form-input" @bind-Value="registerModel.Username" placeholder="Tên đăng nhập" />
+    <ValidationMessage For="() => registerModel.Password" class="text-danger" />
+    <InputText class="form-input" @bind-Value="registerModel.Password" placeholder="Mật khẩu" type="password" />
+    <ValidationMessage For="() => registerModel.RePassword" class="text-danger" />
+    <InputText class="form-input" @bind-Value="registerModel.RePassword" placeholder="Mật khẩu" type="password" />
+    <button class="form-submit" type="submit">Đăng ký</button>
+</EditForm>
+
+@code {
+    [Parameter] public RegisterModel registerModel { get; set; } = new();
+
+    private async Task HandleRegister()
+    {
+        await LocalStorage.SetItemAsync("DangKyIndex", registerModel);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        registerModel = await LocalStorage.GetItemAsync<RegisterModel>("DangKyIndex") ?? new();
+    }
+
+}

@@ -9,31 +9,31 @@
 
     <div class="form-inline">
         <div>
-            <label for="theloai">Thể loại</label>
+            <label for="loaivi">Loại Vị</label>
             <div class="select-with-add row-layout ">
             
-                <InputSelect id="theloai" @bind-Value="chiTietMoi.TheLoaiId">
-                    <option selected value="@Guid.Empty">-- Thể loại --</option>
-                    @foreach (var item in theLoaiList)
+                <InputSelect id="loaivi" @bind-Value="chiTietMoi.LoaiViId">
+                    <option selected value="@Guid.Empty">-- Loại Vị --</option>
+                    @foreach (var item in loaiViList)
                     {
                         <option value="@item.Id">@item.Ten</option>
                     }
                 </InputSelect>
-                <button type="button" class="btn-add" @onclick='() => ShowModal("TheLoai")'>+</button>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("LoaiVi")'>+</button>
             </div>
         </div>
         <div>
-            <label for="thuonghieu">Thương hiệu</label>
+            <label for="kichco">Kích Cỡ</label>
             <div class="select-with-add row-layout ">
             
-                <InputSelect id="thuonghieu" @bind-Value="chiTietMoi.ThuongHieuId">
-                    <option selected value="@Guid.Empty">-- Thương hiệu --</option>
-                    @foreach (var item in thuongHieuList)
+                <InputSelect id="kichco" @bind-Value="chiTietMoi.KichCoId">
+                    <option selected value="@Guid.Empty">-- Kích Cỡ --</option>
+                    @foreach (var item in kichCoList)
                     {
                         <option value="@item.Id">@item.Ten</option>
                     }
                 </InputSelect>
-                <button type="button" class="btn-add" @onclick='() => ShowModal("ThuongHieu")'>+</button>
+                <button type="button" class="btn-add" @onclick='() => ShowModal("KichCo")'>+</button>
             </div>
 
         </div>
@@ -53,12 +53,12 @@
 
         </div>
         <div>
-            <label for="donggoi">Đóng gói</label>
+            <label for="donggoi">Nguyên Liệu</label>
             <div class="select-with-add row-layout ">
             
-                <InputSelect id="donggoi" @bind-Value="chiTietMoi.DongGoiId">
-                    <option selected value="@Guid.Empty">-- Đóng gói --</option>
-                    @foreach (var item in dongGoiList)
+                <InputSelect id="donggoi" @bind-Value="chiTietMoi.NguyenLieuId">
+                    <option selected value="@Guid.Empty">-- Nguyên Liệu --</option>
+                    @foreach (var item in nguyenLieuList)
                     {
                         <option value="@item.Id">@item.Ten</option>
                     }
@@ -78,9 +78,9 @@
             <InputNumber @bind-Value="chiTietMoi.Gia" placeholder="Giá" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
         </div>
         <div>
-            Giá
+            Số ngày sử dụng
             <br />
-            <InputNumber @bind-Value="chiTietMoi.Gia" placeholder="Giá" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+            <InputNumber @bind-Value="chiTietMoi.SoNgayHSD" placeholder="Số ngày sử dụng" @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
         </div>
 
         @if (ShowStatus)
@@ -154,12 +154,13 @@
         <table class="table">
             <thead>
                 <tr>
-                    <th>Thể loại</th>
-                    <th>Thương hiệu</th>
+                    <th>Loại Vị</th>
+                    <th>Kích Cỡ</th>
                     <th>Nhà CC</th>
-                    <th>Đóng gói</th>
+                    <th>Nguyên Liệu</th>
                     <th>Số lượng</th>
                     <th>Giá</th>
+                    <th>Số ngày sử dụng</th>
                     @if (ShowDescription)
                     {
                         <th>Mô tả</th>
@@ -176,10 +177,10 @@
                 @foreach (var ct in DanhSachChiTiet)
                 {
                     <tr>
-                        <td>@theLoaiList.FirstOrDefault(x => x.Id == ct.TheLoaiId)?.Ten</td>
-                        <td>@thuongHieuList.FirstOrDefault(x => x.Id == ct.ThuongHieuId)?.Ten</td>
+                        <td>@loaiViList.FirstOrDefault(x => x.Id == ct.LoaiViId)?.Ten</td>
+                        <td>@kichCoList.FirstOrDefault(x => x.Id == ct.KichCoId)?.Ten</td>
                         <td>@nhaCungCapList.FirstOrDefault(x => x.Id == ct.NhaCungCapId)?.Ten</td>
-                        <td>@dongGoiList.FirstOrDefault(x => x.Id == ct.DongGoiId)?.Ten</td>
+                        <td>@nguyenLieuList.FirstOrDefault(x => x.Id == ct.NguyenLieuId)?.Ten</td>
                         <td>
                             @if (AllowEditInTable)
                             {
@@ -200,6 +201,17 @@
                             else
                             {
                                 @ct.Gia
+                            }
+                        </td>
+                        <td>
+                            @if (AllowEditInTable)
+                            {
+                                <InputNumber @bind-Value="@ct.SoNgayHSD" placeholder="Số ngày sử dụng"
+                                             @attributes="@(new Dictionary<string, object> { { "min", "0" } })" />
+                            }
+                            else
+                            {
+                                @ct.SoNgayHSD
                             }
                         </td>
                         @if (ShowDescription)
@@ -245,7 +257,7 @@
             <h4>Thêm mới @modalType</h4>
             @if (showSuccessMessage)
             {
-                <div class="success-message">@successMessage</div>
+                <div class="success-message">@successMessage</div> 
             }
             <div class="form-group">
                 <label>Tên</label>
@@ -290,10 +302,10 @@
     private string successMessage = "";
     private bool showSuccessMessage = false;
     // Dropdown lists
-    private List<TheLoai> theLoaiList = new();
-    private List<ThuongHieu> thuongHieuList = new();
+    private List<LoaiVi> loaiViList = new();
+    private List<KichCo> kichCoList = new();
     private List<NhaCungCap> nhaCungCapList = new();
-    private List<DongGoi> dongGoiList = new();
+    private List<NguyenLieu> nguyenLieuList = new();
     private List<AnhDTO> listAnh = new();
     private List<AnhDTO> listAnhThem = new();
 
@@ -306,10 +318,10 @@
 
     private async Task LoadDropdownData()
     {
-        theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
-        thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
+        loaiViList = await apiService.GetAsync<List<LoaiVi>>("LoaiVi") ?? new();
+        kichCoList = await apiService.GetAsync<List<KichCo>>("KichCo") ?? new();
         nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
-        dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi") ?? new();
+        nguyenLieuList = await apiService.GetAsync<List<NguyenLieu>>("NguyenLieu") ?? new();
         StateHasChanged();
     }
     protected override async Task OnParametersSetAsync()
@@ -320,16 +332,16 @@
             {
                 Id = ChiTietMonAnSua.Id,
                 MonAnId = ChiTietMonAnSua.MonAnId,
-                TheLoaiId = ChiTietMonAnSua.TheLoaiId,
-                ThuongHieuId = ChiTietMonAnSua.ThuongHieuId,
+                LoaiViId = ChiTietMonAnSua.LoaiViId,
+                KichCoId = ChiTietMonAnSua.KichCoId,
                 NhaCungCapId = ChiTietMonAnSua.NhaCungCapId,
-                DongGoiId = ChiTietMonAnSua.DongGoiId,
+                NguyenLieuId = ChiTietMonAnSua.NguyenLieuId,
                 Soluong = ChiTietMonAnSua.Soluong,
                 Gia = ChiTietMonAnSua.Gia,
                 TrangThai = ChiTietMonAnSua.TrangThai,
                 Mota = ChiTietMonAnSua.Mota,
-                DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new()
-
+                DanhSachAnh = ChiTietMonAnSua.DanhSachAnh?.ToList() ?? new(),
+                SoNgayHSD = ChiTietMonAnSua.SoNgayHSD
             };
 
         }
@@ -342,7 +354,7 @@
             await JSRuntime.InvokeVoidAsync("alert", "Vui lòng nhập thông tin món ăn trước");
             return;
         }
-        if (chiTietMoi.TheLoaiId == Guid.Empty && chiTietMoi.ThuongHieuId == Guid.Empty && chiTietMoi.NhaCungCapId == Guid.Empty && chiTietMoi.DongGoiId == Guid.Empty)
+        if (chiTietMoi.LoaiViId == null && chiTietMoi.KichCoId == null && chiTietMoi.NhaCungCapId == null && chiTietMoi.NguyenLieuId == null)
         {
             await JSRuntime.InvokeVoidAsync("alert", "Vui lòng thêm thuộc tính");
             return;
@@ -353,10 +365,10 @@
 
 
         var trung = DanhSachChiTiet.FirstOrDefault(x =>
-            x.TheLoaiId == chiTietMoi.TheLoaiId &&
-            x.ThuongHieuId == chiTietMoi.ThuongHieuId &&
+            x.LoaiViId == chiTietMoi.LoaiViId &&
+            x.KichCoId == chiTietMoi.KichCoId &&
             x.NhaCungCapId == chiTietMoi.NhaCungCapId &&
-            x.DongGoiId == chiTietMoi.DongGoiId);
+            x.NguyenLieuId == chiTietMoi.NguyenLieuId);
 
         if (trung != null)
         {
@@ -490,14 +502,14 @@
 
         switch (modalType)
         {
-            case "TheLoai":
-                var newTheLoai = new TheLoai { Id = id, Ten = newItemTen, Mota = newItemMota };
-                await apiService.PostAsync<TheLoai, TheLoai>("TheLoai", newTheLoai);
+            case "LoaiVi":
+                var newLoaiVi = new LoaiVi { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<LoaiVi, LoaiVi>("LoaiVi", newLoaiVi);
                 await LoadDropdownData();
                 break;
-            case "ThuongHieu":
-                var newThuongHieu = new ThuongHieu { Id = id, Ten = newItemTen, Mota = newItemMota };
-                await apiService.PostAsync<ThuongHieu, ThuongHieu>("ThuongHieu", newThuongHieu);
+            case "KichCo":
+                var newKichCo = new KichCo { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<KichCo, KichCo>("KichCo", newKichCo);
                 await LoadDropdownData();
                 break;
             case "NhaCungCap":
@@ -506,8 +518,8 @@
                 await LoadDropdownData();
                 break;
             case "DongGoi":
-                var newDongGoi = new DongGoi { Id = id, Ten = newItemTen, Mota = newItemMota };
-                await apiService.PostAsync<DongGoi, DongGoi>("DongGoi", newDongGoi);
+                var newNL = new NguyenLieu { Id = id, Ten = newItemTen, Mota = newItemMota };
+                await apiService.PostAsync<NguyenLieu, NguyenLieu>("NguyenLieu", newNL);
                 await LoadDropdownData();
                 break;
         }

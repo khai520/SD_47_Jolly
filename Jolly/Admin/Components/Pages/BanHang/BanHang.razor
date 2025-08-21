@@ -1,12 +1,16 @@
 ﻿@page "/banhang"
-@inject IXuLyDiaChi xuLyDiaChi
-@inject IJSRuntime JS
+@layout Layout.MainLayout
 @using API.HeThong.IHeThong
 @using API.Models.ViewModels.BanHang
 @using API.Models.DTO
 @using AutoMapper
+@implements IDisposable
+@inject IXuLyDiaChi xuLyDiaChi
+@inject IJSRuntime JS
 @inject IApiService apiService
 @inject IMapper _mapper
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IHoaDonService HoaDonService
 <link href="css/BanHang.css" rel="stylesheet" />
 <div class="sell-container">
     <!-- Tabs đơn hàng -->
@@ -60,21 +64,21 @@
                 @foreach (var product in CurrentOrder.Products)
                 {
                     <div class="order-item">
-                        <img src="" class="order-img" />
+                        <img src="@(product.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "")" class="order-img" />
                         <div class="item-info">
                             <div class="order-name">@product.Ten</div>
                             <div class="order-price">
                                 <span class="old-price">@FormatMoney((int)product.Gia)</span>
-                                <span class="new-price">@FormatMoney((int)product.GiaGiam)</span>
+                                <span class="new-price">@FormatMoney((int)product.Gia)</span>
                             </div>
-                            <div class="order-size">Thể loại: @product.TheLoai</div>
+                            <div class="order-size">Nguyên liệu: @product.NguyenLieu</div>
                         </div>
                         <div class="order-qty">
                             <button class="decrease-btn" @onclick="() => DecreaseQuantity(product)">-</button>
                             <input class="qty-input" type="number" value="@product.SoLuongDat" readonly />
                             <button class="increase-btn" @onclick="() => IncreaseQuantity(product)">+</button>
                         </div>
-                        <div class="order-total">@FormatMoney(product.Soluong * (int)product.Gia)</div>
+                        <div class="order-total">@FormatMoney(product.SoLuongDat * (int)product.Gia)</div>
                         <button class="order-remove" @onclick="() => RemoveProduct(product)">×</button>
                     </div>
                 }
@@ -276,7 +280,7 @@
         }
     }
 
-    private float Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.GiaGiam) ?? 0f;
+    private float Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.Gia) ?? 0f;
     private float ShippingFee => CurrentOrder.ThongTinHoaDon.IsDelivery ? 20000f : 0f;
     private float DiscountAmount => (Subtotal * DiscountPercent) / 100f;
     private float TotalAmount => Subtotal + ShippingFee - DiscountAmount;
@@ -307,17 +311,22 @@
             });
             return;
         }
-        Orders.Add(new Order());
+        Orders.Add(new Order()
+        {
+            ThoiGianTao = DateTime.Now 
+        });
         CurrentOrderIndex = Orders.Count - 1;
         StateHasChanged();
+        await SaveOrdersToStorage();
     }
 
-    private void RemoveOrder(int index)
+    private async Task RemoveOrder(int index)
     {
         if (Orders.Count < 1)
         {
             Orders = new() { new Order() };
             CurrentOrderIndex = 0;
+            await SaveOrdersToStorage();
             return;
         }
 
@@ -332,6 +341,7 @@
         {
             CurrentOrderIndex = Orders.Count - 1;
         }
+        await SaveOrdersToStorage();
     }
 
     private bool IsRemovingOrder = false;
@@ -360,7 +370,7 @@
     }
 
 
-    private void SwitchOrder(int index)
+    private async Task SwitchOrder(int index)
     {
         CurrentOrderIndex = index;
 
@@ -374,6 +384,7 @@
 
         var huyen = HuyenXa.FirstOrDefault(h => h.Ten == Huyen);
         XaPhuong = huyen?.Con ?? new();
+        await SaveOrdersToStorage();
     }
 
 
@@ -396,6 +407,7 @@
         product.SoLuongDat++;
         product.SoLuongDat = Math.Clamp(product.SoLuongDat, 1, product.Soluong);
         StateHasChanged();
+        await SaveOrdersToStorage();
     }
 
     private async Task DecreaseQuantity(ChiTietMonAnDTO product)
@@ -416,19 +428,40 @@
         product.SoLuongDat--;
         product.SoLuongDat = Math.Clamp(product.SoLuongDat, 1, product.Soluong);
         StateHasChanged();
-
+        await SaveOrdersToStorage();
     }
 
-    private void RemoveProduct(ChiTietMonAnDTO product)
+    private async Task RemoveProduct(ChiTietMonAnDTO product)
     {
         CurrentOrder.Products.Remove(product);
+        await SaveOrdersToStorage();
     }
+
+    private System.Threading.Timer? OrderCleanupTimer;
 
     protected override void OnInitialized()
     {
         Orders ??= new();
+        OrderCleanupTimer = new System.Threading.Timer(_ =>
+        {
+            InvokeAsync(() =>
+            {
+                var now = DateTime.Now;
+                Orders.RemoveAll(o => (now - o.ThoiGianTao).TotalMinutes >= 10); 
+                if (CurrentOrderIndex >= Orders.Count)
+                {
+                    CurrentOrderIndex = Orders.Count - 1;
+                }
+                StateHasChanged();
+            });
+        }, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1)); 
     }
 
+
+    public void Dispose()
+    {
+        OrderCleanupTimer?.Dispose();
+    }
 
 
     private void ScanQRCode()
@@ -515,7 +548,7 @@
             });
             return;
         }
-        if (CurrentOrder.Customer == null)
+        if (CurrentOrder.Customer != null && CurrentOrder.ThongTinHoaDon.IsDelivery)
         {
             var nguoidung = new NguoiDungDTO()
             {
@@ -590,9 +623,10 @@
         var hoadon = new HoaDonDTO()
         {
             NhanVienId   =  nhanVienId,
-            KhachHangId = CurrentOrder.Customer.Id ,
+            KhachHangId = CurrentOrder.Customer?.Id ,
+            LoaiHoaDon = "Tại quầy",
             GiamGiaId = CurrentOrder.ThongTinHoaDon.GiamGiaId,
-            TrangThai = new List<string> { "Tạo Đơn Hàng", "Hoàn Thành" },
+            TrangThai = "hoàn thành",
             TongTien = Subtotal,
             TongTienSauKhiGiam = TotalAmount,
             GhiChu = CurrentOrder.ThongTinHoaDon.GhiChu
@@ -600,17 +634,32 @@
         var result2 = await apiService.PostAsync<HoaDon, HoaDon>("HoaDon", _mapper.Map<HoaDon>(hoadon));
         if (result2 != null)
         {
+            await HoaDonService.LichSuTrangThai(result2.Id, result2.TrangThai,"Hóa Đơn bán hàng tại quầy" );
             foreach (var item in CurrentOrder.Products)
             {
+                var monanchitiet = await apiService.GetbyId<ChiTietMonAn, Guid>(item.Id, "ChiTietMonAn");
+                if (monanchitiet != null)
+                {
+                    monanchitiet.Soluong -= item.SoLuongDat;
+                    var result4 = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(monanchitiet));
+                    if (result4)
+                    {
+
+                    }
+                    else
+                    {
+                        return;
+                    }
+                }
                 var hoadonchitiet = new HoaDonChiTietDTO()
                 {
-                    
-                    MonAnId = item.MonAnId,
+
+                    ChiTietMonAnId = item.Id,
                     HoaDonId = result2.Id,
                     Soluong = item.SoLuongDat,
-                    ThanhTien  = item.GiaGiam * item.SoLuongDat,
+                    ThanhTien  = item.Gia * item.SoLuongDat,
                 };
-                var result3 = await apiService.PostAsync<HoaDonChiTiet, HoaDonChiTiet>("HoaDon", _mapper.Map<HoaDonChiTiet>(hoadonchitiet));
+                var result3 = await apiService.PostAsync<HoaDonChiTiet, HoaDonChiTiet>("HoaDonChiTiet", _mapper.Map<HoaDonChiTiet>(hoadonchitiet));
                 if (result3 == null)
                 {
                     await JS.InvokeVoidAsync("Swal.fire", new
@@ -621,14 +670,20 @@
                     });
                     return;
                 }
+                
+
             }
+
             await JS.InvokeVoidAsync("Swal.fire", new
             {
                 icon = "success",
                 title = "Thành công",
                 text = "Đơn hàng đã được ghi nhận."
             });
-            RemoveOrder(CurrentOrderIndex);
+            await RemoveOrder(CurrentOrderIndex);
+            await LocalStorage.RemoveItemAsync("banhang_orders");
+            await LocalStorage.RemoveItemAsync("banhang_currentIndex");
+            StateHasChanged();
         }
         else
         {
@@ -648,7 +703,7 @@
     }
     private bool IsProductModalVisible = false;
 
-    private void HandleAddProduct(ChiTietMonAnDTO item)
+    private async Task HandleAddProduct(ChiTietMonAnDTO item)
     {
         if (CurrentOrder == null || item == null) return;
 
@@ -669,11 +724,10 @@
                 Id = item.Id,
                 MonAnId = item.MonAnId,
                 Ten = item.Ten,
-                TheLoai = item.TheLoai,
-                TheLoaiId = item.TheLoaiId,
-                ThuongHieuId = item.ThuongHieuId,
+                LoaiViId = item.LoaiViId,
+                KichCoId = item.KichCoId,
                 NhaCungCapId = item.NhaCungCapId,
-                DongGoiId = item.DongGoiId,
+                NguyenLieuId = item.NguyenLieuId,
                 Gia = item.Gia,
                 GiaGiam = item.GiaGiam,
                 Soluong = item.Soluong,
@@ -686,8 +740,9 @@
             CurrentOrder.Products.Add(newProduct);
         }
 
-       
+
         item.SoLuongDat = 1;
+        await SaveOrdersToStorage();
     }
 
 
@@ -721,7 +776,24 @@
     {
         TinhThanh = await xuLyDiaChi.ParseDiaChiAsync("wwwroot/Files/ThanhPho.txt");
         vouchers = await apiService.GetAsync<List<Voucher>>("GiamGia");
+
+        var savedOrders = await LocalStorage.GetItemAsync<List<Order>>("banhang_orders");
+        var savedIndex = await LocalStorage.GetItemAsync<int>("banhang_currentIndex");
+
+        if (savedOrders != null && savedOrders.Count > 0)
+        {
+            Orders = savedOrders;
+            CurrentOrderIndex = savedIndex;
+        }
+        else
+        {
+            Orders = new();
+            CurrentOrderIndex = 0;
+        }
+
+        SwitchOrder(CurrentOrderIndex); 
     }
+
     private string Tinh = "";
     void OnTinhChanged(ChangeEventArgs e)
     {
@@ -780,6 +852,11 @@
         {
             DiscountPercent = 0;
         }
+    }
+    private async Task SaveOrdersToStorage()
+    {
+        await LocalStorage.SetItemAsync("banhang_orders", Orders);
+        await LocalStorage.SetItemAsync("banhang_currentIndex", CurrentOrderIndex);
     }
 
 }

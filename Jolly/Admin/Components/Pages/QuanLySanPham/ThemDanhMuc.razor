@@ -74,8 +74,8 @@
                     await apiService.PostAsync<NhaCungCap, NhaCungCap>("NhaCungCap", newNCC);
                     break;
                 case "donggoi":
-                    var newDongGoi = new DongGoi { Ten = newItemTen, Mota = newItemMota };
-                    await apiService.PostAsync<DongGoi, DongGoi>("DongGoi", newDongGoi);
+                    var newDongGoi = new NguyenLieu { Ten = newItemTen, Mota = newItemMota };
+                    await apiService.PostAsync<NguyenLieu, NguyenLieu>("DongGoi", newDongGoi);
                     break;
             }
         } 
@@ -107,8 +107,8 @@
                         await apiService.PutAsync<NhaCungCap>("NhaCungCap", newNCC);
                         break;
                     case "donggoi":
-                        var newDongGoi = new DongGoi { Id = id, Ten = newItemTen, Mota = newItemMota };
-                        await apiService.PutAsync<DongGoi>("DongGoi", newDongGoi);
+                        var newDongGoi = new NguyenLieu { Id = id, Ten = newItemTen, Mota = newItemMota };
+                        await apiService.PutAsync<NguyenLieu>("DongGoi", newDongGoi);
                         break;
                 }
             }

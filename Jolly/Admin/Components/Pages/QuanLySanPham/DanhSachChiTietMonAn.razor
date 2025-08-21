@@ -1,4 +1,5 @@
 ﻿@page "/mon-an/{MonAnId}"
+@layout Layout.MainLayout
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Navigation
 @inject Service.IService.IApiService apiService
@@ -32,7 +33,7 @@
         <div class="content">
             <div class="product-overview">
                 <div class="product-image-section">
-                    <div class="product-image-placeholder">
+                    <div class="product-image-placeholder" style="background:url('@monAn.AnhDaTai') no-repeat center ">
                         <div class="product-status @(monAn.TrangThai ? "status-active" : "status-inactive")">
                             <i class="fas @(monAn.TrangThai ? "fa-check-circle" : "fa-times-circle")"></i>
                             @(monAn.TrangThai ? "Đang bán" : "Ngừng bán")
@@ -50,6 +51,37 @@
                                 <InputText @bind-Value="monAn.Ten" class="form-input product-title-input" placeholder="Tên món ăn" />
                             </div>
 
+                            <div class="form-group">
+                                <div>
+                                    <label for="theloai">Thể loại</label>
+                                    <div class="select-with-add row-layout ">
+
+                                        <InputSelect id="theloai" @bind-Value="monAn.TheLoaiId">
+                                            <option selected value="@Guid.Empty">-- Thể Loại --</option>
+                                            @foreach (var item in theLoaisList)
+                                            {
+                                                <option value="@item.Id">@item.Ten</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div>
+                                    <label for="thuonghieu">Kích Cỡ</label>
+                                    <div class="select-with-add row-layout ">
+
+                                        <InputSelect id="thuonghieu" @bind-Value="monAn.ThuongHieuId">
+                                            <option selected value="@Guid.Empty">-- Thương Hiệu --</option>
+                                            @foreach (var item in thuongHieusList)
+                                            {
+                                                <option value="@item.Id">@item.Ten</option>
+                                            }
+                                        </InputSelect>
+                                    </div>
+
+                                </div>
+                            </div>
                             <div class="product-id">ID: <span>@monAn.Id</span></div>
 
                             <div class="form-group">
@@ -68,7 +100,12 @@
                     {
                         <div class="product-title">@monAn.Ten</div>
                         <div class="product-id">ID: <span>@monAn.Id</span></div>
-
+                        <div class="product-title">
+                            @monAn.TheLoai
+                        </div>
+                        <div class="product-title">
+                            @monAn.ThuongHieu
+                        </div>
                         <div class="product-description">
                             @monAn.Mota
                         </div>
@@ -134,12 +171,12 @@
                                 <div class="detail-content">
                                     <div class="detail-info">
                                         <div class="info-item">
-                                            <strong>Thể loại:</strong>
-                                            <span>@(theLoaiList.FirstOrDefault(x => x.Id == chiTiet.TheLoaiId)?.Ten ?? "N/A")</span>
+                                            <strong>Loại Vị:</strong>
+                                            <span>@(loaiViList.FirstOrDefault(x => x.Id == chiTiet.LoaiViId)?.Ten ?? "N/A")</span>
                                         </div>
                                         <div class="info-item">
-                                            <strong>Thương hiệu:</strong>
-                                            <span>@(thuongHieuList.FirstOrDefault(x => x.Id == chiTiet.ThuongHieuId)?.Ten ?? "N/A")</span>
+                                            <strong>Kích Cỡ:</strong>
+                                            <span>@(kichCoList.FirstOrDefault(x => x.Id == chiTiet.KichCoId)?.Ten ?? "N/A")</span>
                                         </div>
                                         <div class="info-item">
                                             <strong>Nhà cung cấp:</strong>
@@ -147,7 +184,7 @@
                                         </div>
                                         <div class="info-item">
                                             <strong>Đóng gói:</strong>
-                                            <span>@(dongGoiList.FirstOrDefault(x => x.Id == chiTiet.DongGoiId)?.Ten ?? "N/A")</span>
+                                            <span>@(dongGoiList.FirstOrDefault(x => x.Id == chiTiet.NguyenLieuId)?.Ten ?? "N/A")</span>
                                         </div>
                                         <div class="info-item">
                                             <strong>Số lượng:</strong>
@@ -156,6 +193,10 @@
                                         <div class="info-item">
                                             <strong>Giá:</strong>
                                             <span class="quantity">@chiTiet.Gia</span>
+                                        </div>
+                                        <div class="info-item">
+                                            <strong>Số ngày sử dụng:</strong>
+                                            <span class="quantity">@chiTiet.SoNgayHSD ngày</span>
                                         </div>
                                         @if (!string.IsNullOrEmpty(chiTiet.Mota))
                                         {
@@ -237,8 +278,8 @@
 @code {
     [Parameter] public string MonAnId { get; set; } = "";
 
-    private MonAn? monAn;
-    private MonAn? originalMonAn; 
+    private MonAnDTO? monAn;
+    private MonAnDTO? originalMonAn;
     private List<ChiTietMonAnDTO> danhSachChiTiet = new();
     private List<ChiTietMonAnDTO> tempChiTietList = new();
     private bool isEditMode = false;
@@ -247,10 +288,10 @@
     private ChiTietMonAnDTO? editingChiTiet = new();
 
 
-    private List<TheLoai> theLoaiList = new();
-    private List<ThuongHieu> thuongHieuList = new();
+    private List<LoaiVi> loaiViList = new();
+    private List<KichCo> kichCoList = new();
     private List<NhaCungCap> nhaCungCapList = new();
-    private List<DongGoi> dongGoiList = new();
+    private List<NguyenLieu> dongGoiList = new();
 
     private bool showMessage = false;
     private bool isSuccess = false;
@@ -267,17 +308,15 @@
         try
         {
 
-            monAn = await apiService.GetAsync<MonAn>($"MonAn/{MonAnId}");
+            monAn = await apiService.GetAsync<MonAnDTO>($"MonAn/{MonAnId}");
             if (monAn != null)
             {
-                originalMonAn = new MonAn
+                originalMonAn = new MonAnDTO
                 {
                     Id = monAn.Id,
                     Ten = monAn.Ten,
                     Mota = monAn.Mota,
                     TrangThai = monAn.TrangThai
-                    
-                    
                 };
             }
 
@@ -290,13 +329,17 @@
             ShowMessage($"Lỗi khi tải dữ liệu: {ex.Message}", false);
         }
     }
+    private List<TheLoai> theLoaisList = new();
+    private List<ThuongHieu> thuongHieusList = new();
 
     private async Task LoadDropdownData()
     {
-        theLoaiList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
-        thuongHieuList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
+        loaiViList = await apiService.GetAsync<List<LoaiVi>>("LoaiVi") ?? new();
+        kichCoList = await apiService.GetAsync<List<KichCo>>("KichCo") ?? new();
         nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
-        dongGoiList = await apiService.GetAsync<List<DongGoi>>("DongGoi") ?? new();
+        dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("DongGoi") ?? new();
+        theLoaisList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
+        thuongHieusList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
     }
 
 
@@ -323,11 +366,11 @@
         {
             if (monAn != null)
             {
-                var result = await apiService.PutAsync<MonAn>($"MonAn", monAn);
-                if (result != null)
+                var result = await apiService.PutAsync<MonAnDTO>($"MonAn", monAn);
+                if (result)
                 {
                     isEditMode = false;
-                    originalMonAn = new MonAn
+                    originalMonAn = new MonAnDTO
                     {
                         Id = monAn.Id,
                         Ten = monAn.Ten,
@@ -416,17 +459,18 @@
     {
         try
         {
-            var check = danhSachChiTiet.Find(x => x.TheLoaiId == chiTiet.TheLoaiId && x.DongGoiId == chiTiet.DongGoiId && x.NhaCungCapId == chiTiet.NhaCungCapId && x.ThuongHieuId == chiTiet.ThuongHieuId);
+            var check = danhSachChiTiet.Find(x => x.LoaiViId == chiTiet.LoaiViId && x.NguyenLieuId == chiTiet.NguyenLieuId && x.NhaCungCapId == chiTiet.NhaCungCapId && x.KichCoId == chiTiet.KichCoId);
             if (check != null)
             {
                 chiTiet.Id = check.Id; 
                 var result2 = await apiService.PutAsync<ChiTietMonAn>($"ChiTietMonAn", _mapper.Map<ChiTietMonAn>(chiTiet));
-                if (result2 != null)
+                if (result2)
                 {
                     if (chiTiet.DanhSachAnh != null)
                     {
                         foreach (var item in chiTiet.DanhSachAnh)
                         {
+                            item.ChiTietMonAnId = chiTiet.Id;
                             try
                             {
                                 var result = await apiService.PostAsync<Anh, Anh>("Anh", _mapper.Map<Anh>(item));
@@ -510,6 +554,7 @@
             {
                 try
                 {
+                    item.ChiTietMonAnId = chiTiet.Id;
                     var result2 = await apiService.PostAsync<Anh,Anh>("Anh", _mapper.Map<Anh>(item));
                     if (result2 != null)
                     {
@@ -568,7 +613,7 @@
         
         _ = Task.Run(async () =>
         {
-            await Task.Delay(2000);
+            await Task.Delay(100);
             showMessage = false;
             await InvokeAsync(StateHasChanged);
         });

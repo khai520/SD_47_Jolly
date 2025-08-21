@@ -25,8 +25,19 @@ namespace API.Repository
                 return null;
             }
             return check;
+        }
 
-            
+        public async Task<TaiKhoan> GetKhByTaiKhoan(string tk)
+        {
+            var check = await _context.taiKhoans
+            .Include(t => t.NguoiDung)
+                .ThenInclude(nd => nd.KhachHang)
+            .FirstOrDefaultAsync(t => t.UserName == tk);
+            if (check == null)
+            {
+                return null;
+            }
+            return check;
         }
     }
 }

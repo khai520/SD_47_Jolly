@@ -1,0 +1,276 @@
+﻿@page "/SanPham"
+@using API.Models.DTO
+@inject IJSRuntime JSRuntime
+@inject NavigationManager Nav
+<PageTitle>Jolly - Đồ Ăn Vặt Ngon</PageTitle>
+
+<link href="css/DanhSachSanPham.css" rel="stylesheet" />
+
+<main>
+    <section class="products-with-filter" id="products">
+        <div class="container">
+            <div class="product-layout">
+                <!-- Cột trái: Bộ lọc -->
+                <aside class="product-filters">
+                    <h3>Bộ lọc</h3>
+                    <div class="filter-group">
+                        <label>🔍 Tìm kiếm</label>
+                        <input type="text" placeholder="Tìm món..." @bind="searchKeyword" @oninput="OnSearchInput" />
+                    </div>
+
+                    <div class="filter-group">
+                        <label>🏷️ Thể loại</label>
+                        <select @bind="selectedCategoryValue">
+                            <option value="">Tất cả</option>
+                            @foreach (var category in categories)
+                            {
+                                <option value="@category">@category</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>🏢 Thương hiệu</label>
+                        <select @bind="selectedBrandValue">
+                            <option value="">Tất cả</option>
+                            @foreach (var brand in brands)
+                            {
+                                <option value="@brand">@brand</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>💰 Mức giá</label>
+                        <input type="range" min="@minPrice" max="@maxPrice" step="5000" @bind="priceFilter" @oninput="OnPriceChange" />
+                        <span id="priceLabel">Tối đa: @(priceFilter.ToString("N0"))₫</span>
+                    </div>
+                </aside>
+
+                <!-- Cột phải: Danh sách sản phẩm -->
+                <div class="product-grid">
+                    @if (filteredProducts?.Any() == true)
+                    {
+                        @foreach (var product in filteredProducts)
+                        {
+
+                            <div class="product-card" @onclick='() => Info(product)'>
+                                <div class="product-img">
+                                    @if (!string.IsNullOrWhiteSpace(product.AnhDaTai))
+                                    {
+                                        <img src="@product.AnhDaTai" alt="@product.Ten" style="width: 80px; height: 80px; object-fit: cover; border-radius: 10px;" />
+                                    }
+                                    else
+                                    {
+                                        @GetProductEmoji(product.TheLoai)
+                                    }
+                                </div>
+                                <h3>@product.Ten</h3>
+                                <p>@product.ThuongHieu</p>
+                                <p>@(string.IsNullOrEmpty(product.Mota) ? "Món ăn ngon đặc biệt" : product.Mota)</p>
+                            </div> 
+                            
+                        }
+                    }
+                    else
+                    {
+                        <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+                            <p style="font-size: 1.5rem; color: #666;">Không tìm thấy sản phẩm nào phù hợp</p>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+@code {
+    private List<MonAnDTO> products = new();
+    private List<MonAnDTO> filteredProducts = new();
+
+    // Filter properties
+    private string searchKeyword = "";
+    private string selectedCategory = "";
+    private string selectedBrand = "";
+    private string selectedSupplier = "";
+    private string selectedPackaging = "";
+    private float priceFilter = 100000;
+    private float minPrice = 10000;
+    private float maxPrice = 100000;
+
+    // Filter options
+    private List<string> categories = new();
+    private List<string> brands = new();
+    private List<string> packagings = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadProducts();
+        InitializeFilterOptions();
+        ApplyFilters();
+    }
+
+    private async Task LoadProducts()
+    {
+
+        products = new List<MonAnDTO>
+        {
+            new MonAnDTO
+            {
+                Id = "MA001",
+                Ten = "Bánh Tráng Nướng",
+                TheLoai = "Đồ ăn vặt",
+                ThuongHieu = "Tây Ninh",
+                Mota = "Bánh tráng nướng giòn rụm, ăn kèm tương ớt đặc biệt",
+                TrangThai = true,
+            },
+            new MonAnDTO
+            {
+                Id = "MA002",
+                Ten = "Trà Sữa Trân Châu",
+                TheLoai = "Thức uống",
+                ThuongHieu = "Gong Cha",
+                Mota = "Trà sữa thơm ngon với trân châu đen dai giòn",
+                TrangThai = true,
+            },
+            new MonAnDTO
+            {
+                Id = "MA003",
+                Ten = "Kẹo Dẻo Haribo",
+                TheLoai = "Đồ ngọt",
+                ThuongHieu = "Haribo",
+                Mota = "Kẹo dẻo nhiều hương vị thơm ngon từ Đức",
+                TrangThai = true,
+            },
+            new MonAnDTO 
+            {
+                Id = "MA004",
+                Ten = "Mì Tôm Hảo Hảo",
+                TheLoai = "Đồ ăn vặt",
+                ThuongHieu = "Acecook",
+                Mota = "Mì tôm chua cay đặc trưng Việt Nam",
+                TrangThai = true,
+            },
+            new MonAnDTO
+            {
+                Id = "MA005",
+                Ten = "Coca Cola",
+                TheLoai = "Thức uống",
+                ThuongHieu = "Coca Cola",
+                Mota = "Nước ngọt có ga thương hiệu nổi tiếng thế giới",
+                TrangThai = true
+            }
+        }.Where(x => x.TrangThai == true).ToList();
+
+    }
+
+    private void InitializeFilterOptions()
+    {
+        categories = products.Where(p => !string.IsNullOrEmpty(p.TheLoai))
+                           .Select(p => p.TheLoai!)
+                           .Distinct()
+                           .OrderBy(c => c)
+                           .ToList();
+
+        brands = products.Where(p => !string.IsNullOrEmpty(p.ThuongHieu))
+                        .Select(p => p.ThuongHieu!)
+                        .Distinct()
+                        .OrderBy(b => b)
+                        .ToList();
+    }
+
+    private void ApplyFilters()
+    {
+        filteredProducts = products.Where(product =>
+        {
+            // Search filter
+            if (!string.IsNullOrEmpty(searchKeyword) &&
+                !product.Ten.Contains(searchKeyword, StringComparison.OrdinalIgnoreCase))
+                return false;
+
+            // Category filter
+            if (!string.IsNullOrEmpty(selectedCategory) &&
+                product.TheLoai != selectedCategory)
+                return false;
+
+            // Brand filter
+            if (!string.IsNullOrEmpty(selectedBrand) &&
+                product.ThuongHieu != selectedBrand)
+                return false;
+
+            return true;
+        }).ToList();
+
+        StateHasChanged();
+    }
+
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        searchKeyword = e.Value?.ToString() ?? "";
+        ApplyFilters();
+    }
+
+    private async Task OnPriceChange(ChangeEventArgs e)
+    {
+        if (float.TryParse(e.Value?.ToString(), out float newPrice)) 
+        {
+            priceFilter = newPrice;
+            ApplyFilters();
+        }
+    }
+
+
+
+    private async Task Info(MonAnDTO product)
+    {
+        Nav.NavigateTo($"/ChiTietSanPham/{product.Id}");
+    }
+
+    private string GetProductEmoji(string? category)
+    {
+        return category switch
+        {
+            "Đồ ăn vặt" => "🍕",
+            "Thức uống" => "🥤",
+            "Đồ ngọt" => "🍭",
+            _ => "🍴"
+        };
+    }
+
+    // Reactive property handlers for filter changes
+    private string _selectedCategory = "";
+    private string selectedCategoryValue
+    {
+        get => _selectedCategory;
+        set
+        {
+            _selectedCategory = value;
+            selectedCategory = value;
+            ApplyFilters();
+        }
+    }
+
+    private string _selectedBrand = "";
+    private string selectedBrandValue
+    {
+        get => _selectedBrand;
+        set
+        {
+            _selectedBrand = value;
+            selectedBrand = value;
+            ApplyFilters();
+        }
+    }
+
+    private string _selectedPackaging = "";
+    private string selectedPackagingValue
+    {
+        get => _selectedPackaging;
+        set
+        {
+            _selectedPackaging = value;
+            selectedPackaging = value;
+            ApplyFilters();
+        }
+    }
+}

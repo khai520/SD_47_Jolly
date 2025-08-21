@@ -1,0 +1,97 @@
+﻿@page "/"
+@layout Layout.MainLayout
+
+@inject IJSRuntime JS
+@inject IMonAnService monAnService
+
+<PageTitle>Jolly - Đồ Ăn Vặt Ngon</PageTitle>
+<link href="css/Home.css" rel="stylesheet" />
+
+
+<section class="hero" id="home">
+    <div class="container">
+        <h1>🎉 Chào mừng đến với Jolly! 🎉</h1>
+        <p>Đồ ăn vặt ngon nhất, tươi ngon mỗi ngày</p>
+        <button class="cta-btn" @onclick="ScrollToProducts">Khám phá ngay! ✨</button>
+    </div>
+</section>
+
+<section class="products" id="products">
+    <div class="container">
+        <h2 class="section-title">🍭 Sản phẩm nổi bật 🍭</h2>
+        <div class="product-grid">
+            @foreach (var item in MonAns)
+            {
+                <div class="product-card">
+                    <div class="product-emoji">@item.AnhDaTai</div>
+                    <h3>@item.Ten</h3>
+                    <p>@item.Mota</p>
+                    <div class="price">@FormatMoney(item.Gia)</div>
+                    <button class="add-to-cart" @onclick="() => AddToCart(item)">Thêm vào giỏ 🛒</button>
+                </div>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="features">
+    <div class="container">
+        <h2 class="section-title">✨ Tại sao chọn Jolly? ✨</h2>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <h3>Giao hàng nhanh</h3>
+                <p>Giao hàng trong 30 phút tại nội thành, đảm bảo độ tươi ngon</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌟</div>
+                <h3>Chất lượng cao</h3>
+                <p>Nguyên liệu tươi ngon, quy trình sản xuất hiện đại và an toàn</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">💝</div>
+                <h3>Giá cả hợp lý</h3>
+                <p>Giá cả phải chăng với chất lượng tuyệt vời, nhiều ưu đãi hấp dẫn</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎯</div>
+                <h3>Phục vụ 24/7</h3>
+                <p>Luôn sẵn sàng phục vụ bạn mọi lúc, mọi nơi với tinh thần nhiệt tình</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+
+@code {
+    [Inject] NavigationManager Navigation { get; set; }
+    public List<MonAnDTO> MonAns = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        var monAns = await monAnService.GetAll();
+        MonAns = monAns.Where(x => x.TrangThai == true).ToList();
+    }
+
+    private void AddToCart(MonAnDTO item)
+    {
+        
+        JS.InvokeVoidAsync("alert", $"✅ Đã thêm '{item.Ten}' vào giỏ hàng!");
+    }
+
+    private void ToggleCart()
+    {
+        
+    }
+
+    private async Task ScrollToProducts()
+    {
+        Console.WriteLine("Test");
+        await JS.InvokeVoidAsync("document.getElementById", "products");
+    }
+    private string FormatMoney(float amount)
+    {
+        return string.Format("{0:N0} VND", amount);
+    }
+}

@@ -94,5 +94,17 @@ namespace Admin.Service
             }
         }
 
+        public async Task<T?> GetbyId<T, Tkey>(Tkey tkey, string url)
+        {
+            try
+            {
+                return await _httpClient.GetFromJsonAsync<T>(url + "/" + tkey);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GET] Error calling {url}: {ex.Message}");
+                return default;
+            }
+        }
     }
 }

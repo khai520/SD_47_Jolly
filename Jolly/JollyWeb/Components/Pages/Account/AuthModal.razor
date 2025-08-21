@@ -1,0 +1,41 @@
+﻿<link href="css/Account.css" rel="stylesheet" />
+@code {
+    [Parameter] public bool Visible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+
+    [Parameter] public string InitialTab { get; set; } = "login";
+
+    private string activeTab;
+
+    protected override void OnParametersSet()
+    {
+        if (Visible)
+        {
+            activeTab = InitialTab;
+        }
+    }
+
+    void Close() => OnClose.InvokeAsync();
+}
+@if (Visible)
+{
+    <div class="auth-modal-overlay" @onclick="Close"></div>
+    <div class="auth-modal">
+        <div class="auth-modal-header">
+            <button class="@((activeTab == "login" ? "active-tab" : ""))" @onclick='() => activeTab = "login"'>Đăng nhập</button>
+            <button class="@((activeTab == "register" ? "active-tab" : ""))" @onclick='() => activeTab = "register"'>Đăng ký</button>
+            <button class="close-btn" @onclick="Close">×</button>
+        </div>
+        <div class="auth-modal-body">
+            @if (activeTab == "login")
+            {
+                <LoginForm />
+            }
+            else
+            {
+                <RegisterForm />
+            }
+        </div>
+    </div>
+}
+

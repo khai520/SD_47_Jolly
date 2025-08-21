@@ -1,4 +1,5 @@
 ﻿@page "/quanlynhanvien"
+@layout Layout.MainLayout
 @using API.Models.DTO
 @using AutoMapper
 @using Microsoft.AspNetCore.Components.Forms
@@ -154,7 +155,7 @@
     <!-- Phân trang -->
     <div class="d-flex justify-content-between align-items-center mt-4">
         <div class="text-muted">
-            Hiển thị @Math.Min(currentPage * pageSize, filteredKhachHangs.Count) / @filteredKhachHangs.Count nhân viên
+            Hiển thị @Math.Min(currentPage * pageSize, allFiltered.Count) / @allFiltered.Count nhân viên
         </div>
         <nav>
             <ul class="pagination pagination-sm">
@@ -291,7 +292,7 @@
 
     private int currentPage = 1;
     private int pageSize = 10;
-    private int totalPages => (int)Math.Ceiling(filteredKhachHangs.Count / (double)pageSize);
+    private int totalPages ;
 
     protected override async Task OnInitializedAsync()
     {
@@ -310,9 +311,11 @@
         ApplyFilter();
     }
 
+    private List<NhanVienDTO> allFiltered = new();
+
     private void ApplyFilter()
     {
-        var filtered = nhanViens
+        allFiltered = nhanViens
             .Where(nv =>
                 (string.IsNullOrEmpty(searchTerm) ||
                  (nv.HoTen ?? "").Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ||
@@ -323,11 +326,14 @@
                  (statusFilter == "false" && !nv.TrangThai))
             ).ToList();
 
-
-        if (currentPage > totalPages)
+        totalPages = (int)Math.Ceiling(allFiltered.Count / (double)pageSize);
+        if (totalPages == 0)
             currentPage = 1;
+        else if (currentPage > totalPages)
+            currentPage = totalPages;
 
-        filteredKhachHangs = filtered
+
+        filteredKhachHangs = allFiltered
             .Skip((currentPage - 1) * pageSize)
             .Take(pageSize)
             .ToList();
@@ -347,6 +353,7 @@
         if (page >= 1 && page <= totalPages)
         {
             currentPage = page;
+            ApplyFilter();
         }
     }
 
