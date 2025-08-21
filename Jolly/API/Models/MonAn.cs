@@ -1,5 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-
+using System.Text.Json.Serialization;
 namespace API.Models
 {
     public class MonAn
@@ -15,10 +15,11 @@ namespace API.Models
         public bool TrangThai { get; set; } = false;
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string? Mota { get; set; }
-        public virtual ICollection<ChiTietCombo> ChiTietCombos { get; set; }
-        public virtual ICollection<GioHang> GioHangs { get; set; }
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
-        public virtual ICollection<ChiTietGiamGia> ChiTietGiamGias { get; set; }
-        public virtual ICollection<ChiTietMonAn> ChiTietMonAns { get; set; }
+        public Guid? TheLoaiId { get; set; }
+        public Guid? ThuongHieuId { get; set; }
+        [JsonIgnore]
+        public virtual ThuongHieu? ThuongHieu { get; set; }
+        public virtual TheLoai? TheLoai { get; set; }
+        public virtual ICollection<ChiTietMonAn>? ChiTietMonAns { get; set; }
     }
 }

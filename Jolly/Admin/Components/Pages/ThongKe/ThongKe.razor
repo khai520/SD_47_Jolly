@@ -1,4 +1,5 @@
 ﻿@page "/thongke"
+@layout Layout.MainLayout
 @inject IApiService apiService 
 @inject IChiTietMonAnService ChiTietMonAnService
 @inject NavigationManager manager
@@ -86,7 +87,7 @@
 					<th>Tên sản phẩm</th>
 					<th>Số lượng</th>
 					<th>Giá tiền</th>
-					<th>Thể loại</th>
+					<th>Kích Cỡ</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -99,7 +100,7 @@
 							<td>@sp.TenSanPham</td>
 							<td>@sp.SoLuong</td>
 							<td>@sp.GiaTien.ToString("N0") ₫</td>
-							<td>@sp.TheLoai</td>
+							<td>@sp.KichCo</td>
 						</tr>
 					}
 				}
@@ -157,7 +158,7 @@
 					<th>Tên sản phẩm</th>
 					<th>Số lượng</th>
 					<th>Giá tiền</th>
-					<th>Thể loại</th>
+					<th>Kích Cỡ</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -170,7 +171,7 @@
 							<td>@sp.TenSanPham</td>
 							<td>@sp.SoLuong</td>
 							<td>@sp.GiaTien.ToString("N0") ₫</td>
-							<td>@sp.TheLoai</td>
+							<td>@sp.KichCo</td>
 						</tr>
 					}
 				}
@@ -412,8 +413,8 @@
 		try
 		{
 
-			hoaDons = await apiService.GetAsync<List<HoaDon>>("HoaDon");
-			hoaDonChiTiets = await apiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet");
+			hoaDons = await apiService.GetAsync<List<HoaDon>>("HoaDon") ?? new();
+			hoaDonChiTiets = await apiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet") ?? new();
 			chitietmonAns = await ChiTietMonAnService.GetAll();
 			Data = new()
 			{
@@ -430,9 +431,7 @@
 			Console.WriteLine($"Loaded {hoaDons?.Count} HoaDon records.");
 			Console.WriteLine($"Loaded {hoaDonChiTiets?.Count} HoaDonChiTiet records.");
 			Console.WriteLine($"Loaded {chitietmonAns.Count} GiayChiTiet records.");
-
 			monans2 = chitietmonAns
-		
 		.GroupBy(x => x.MonAnId)
 		.Select(group =>
 		{
@@ -440,7 +439,7 @@
 			return new DanhSachSanPhamBanChay
 				{
 					Anh = first.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
-					TheLoai = first.TheLoai ?? "Không rõ",
+					KichCo = first.KichCo ?? "Không rõ",
 					TenSanPham = first.Ten ?? "Chưa rõ tên",
 					SoLuong = group.Sum(x => x.Soluong),
 					GiaTien = group.Min(x => x.Gia)
@@ -542,10 +541,10 @@
 	{
 		totalMoney = (hoaDons ?? new List<HoaDon>())
 								.Where(hd => hd.NgayTao.Date >= startDate && hd.NgayTao.Date <= endDate &&
-									(hd.TrangThai?.Any(t => t.Equals("đã giao", StringComparison.OrdinalIgnoreCase)) == true ||
-									 hd.TrangThai?.Any(t => t.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase)) == true ||
-									 hd.TrangThai?.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)) == true ||
-									 hd.TrangThai?.LastOrDefault()?.Equals("trả hàng", StringComparison.OrdinalIgnoreCase) == false))
+									(hd.TrangThai?.Equals("đã giao", StringComparison.OrdinalIgnoreCase) == true ||
+									 hd.TrangThai?.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase) == true ||
+									 hd.TrangThai?.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) == true ||
+									 hd.TrangThai?.Equals("trả hàng", StringComparison.OrdinalIgnoreCase) == false))
 								.Sum(hd => (decimal?)hd.TongTienSauKhiGiam) ?? 0;
 
 
@@ -563,19 +562,19 @@
 				})
 			.Where(x => x.NgayTao.Date >= startDate &&
 						x.NgayTao.Date <= endDate &&
-						x.TrangThai.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)) &&
+						x.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) &&
 						x.TTHoaDonct == true)
 			.Sum(x => (int?)x.Soluong) ?? 0;
 
 
 		successfulOrders = (hoaDons ?? new List<HoaDon>()).Count(hd => hd.NgayTao.Date >= startDate &&
 												hd.NgayTao.Date <= endDate &&
-												hd.TrangThai.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)));
+												hd.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase));
 
 
 		cancelledOrders = (hoaDons ?? new List<HoaDon>()).Count(hd => hd.NgayTao.Date >= startDate &&
 												hd.NgayTao.Date <= endDate &&
-												hd.TrangThai.Any(t => t.Equals("đã hủy", StringComparison.OrdinalIgnoreCase)));
+												hd.TrangThai.Equals("đã hủy", StringComparison.OrdinalIgnoreCase));
 
 
 		returnedOrders = (hoaDons ?? new List<HoaDon>())
@@ -590,7 +589,7 @@
 				})
 			.Where(x => x.NgayTao.Date >= startDate &&
 						x.NgayTao.Date <= endDate &&
-						x.TrangThai.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)) &&
+						x.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) &&
 						x.TTHoaDonct == false)
 			.Count();
 	}
@@ -608,6 +607,7 @@
 				endDateFilter = DateTime.Now.Date;
 				break;
 			case "TUẦN":
+				
 				startDateFilter = GetStartOfWeek(DateTime.Now);
 				endDateFilter = startDateFilter.AddDays(6);
 				break;
@@ -632,31 +632,30 @@
 
 		sanPhamBanChays = (from hd in (hoaDons ?? new List<HoaDon>())
 									join hdct in hoaDonChiTiets on hd.Id equals hdct.HoaDonId
-									join ma in chitietmonAns on hdct.MonAnId equals ma.MonAnId
+									join ma in chitietmonAns on hdct.ChiTietMonAnId equals ma.Id
 									where hd.NgayTao.Date >= startDateFilter &&
 									hd.NgayTao.Date <= endDateFilter &&
-									hd.TrangThai.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)) &&
+									hd.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) &&
 									hdct.TrangThai == true
 									select new
 									{
-										TenGiay = ma.Ten,
+										TenMonAn = ma.Ten,
 										DuongDanAnh = ma.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
 										Gia = hdct.ThanhTien,
-										kc = ma.TheLoai,
+										kc = ma.KichCo,
 										SoLuong = hdct.Soluong
 									})
-									.GroupBy(x => x.TenGiay)
+									.GroupBy(x => x.TenMonAn)
 									.Select(g => new DanhSachSanPhamBanChay
 							   {
 								   TenSanPham = g.Key,
 								   Anh = g.First().DuongDanAnh,
-								   GiaTien = g.Sum(x => x.Gia * x.SoLuong),
-								   TheLoai = string.Join(", ", g.Select(x => x.kc).Distinct()),
+								   GiaTien = g.Sum(x => x.Gia),
+								   KichCo = string.Join(", ", g.Select(x => x.kc).Distinct()),
 								   SoLuong = g.Sum(x => x.SoLuong)
 							   })
 									.OrderByDescending(x => x.SoLuong)
 									.ToList();
-		
 		UpdatePaging1(); 
 	}
 
@@ -734,18 +733,18 @@
 		}
 
 
-		int countDaHuy = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("đã hủy", StringComparison.OrdinalIgnoreCase)));
-		int countChoXacNhan = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("chờ xác nhận", StringComparison.OrdinalIgnoreCase)));
-		int countChoGiaoHang = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("chờ giao hàng", StringComparison.OrdinalIgnoreCase)));
-		int countDangVanChuyen = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("đang vận chuyển", StringComparison.OrdinalIgnoreCase)));
-		int countDaGiaoHang = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("đã giao", StringComparison.OrdinalIgnoreCase)));
-		int countDaThanhToan = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase)));
-		int countChoThanhToan = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("chờ thanh toán", StringComparison.OrdinalIgnoreCase)));
-		int countHoanThanh = filteredOrders.Count(hd => hd.TrangThai.Any(t => t.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase)));
+		int countDaHuy = filteredOrders.Count(hd => hd.TrangThai.Equals("đã hủy", StringComparison.OrdinalIgnoreCase));
+		int countChoXacNhan = filteredOrders.Count(hd => hd.TrangThai.Equals("chờ xác nhận", StringComparison.OrdinalIgnoreCase));
+		int countChoGiaoHang = filteredOrders.Count(hd => hd.TrangThai.Equals("chờ giao hàng", StringComparison.OrdinalIgnoreCase));
+		int countDangVanChuyen = filteredOrders.Count(hd => hd.TrangThai.Equals("đang vận chuyển", StringComparison.OrdinalIgnoreCase));
+		int countDaGiaoHang = filteredOrders.Count(hd => hd.TrangThai.Equals("đã giao", StringComparison.OrdinalIgnoreCase));
+		int countDaThanhToan = filteredOrders.Count(hd => hd.TrangThai.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase));
+		int countChoThanhToan = filteredOrders.Count(hd => hd.TrangThai.Equals("chờ thanh toán", StringComparison.OrdinalIgnoreCase));
+		int countHoanThanh = filteredOrders.Count(hd => hd.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase));
 
 		
 		int countTraHang = filteredOrders
-			.Where(hd => hd.TrangThai.Any(t => t.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase)) &&
+			.Where(hd => hd.TrangThai.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase) &&
 							hoaDonChiTiets.Any(hdct => hdct.HoaDonId == hd.Id && hdct.TrangThai == false))
 			.Count();
 

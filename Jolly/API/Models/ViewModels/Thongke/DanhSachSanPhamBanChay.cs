@@ -6,6 +6,6 @@
         public string TenSanPham { get; set; }
         public int SoLuong { get; set; }
         public float GiaTien { get; set; }
-        public string TheLoai { get; set; }
+        public string KichCo { get; set; }
     }
 }

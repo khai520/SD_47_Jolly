@@ -11,7 +11,7 @@ namespace API.Models
         public string? GhiChu { get; set; }
         public Guid NguoiDungId { get; set; }
         public virtual NguoiDung? NguoiDung { get; set; }
-        public virtual ICollection<GioHang> GioHangs { get; set; }
-        public virtual ICollection<HoaDon> HoaDons { get; set; }
+        public virtual ICollection<GioHang>? GioHangs { get; set; }
+        public virtual ICollection<HoaDon>? HoaDons { get; set; }
     }
 }

@@ -1,0 +1,60 @@
+﻿@using System.ComponentModel.DataAnnotations
+
+<EditForm Model="@nguoiDung" OnValidSubmit="HandleRegister">
+    <DataAnnotationsValidator />
+    <label>Họ</label>
+    <InputText class="form-input" @bind-Value="nguoiDung.Ho" />
+    <ValidationMessage For="() => nguoiDung.Ho" />
+    <label>Tên</label>
+    <InputText class="form-input" @bind-Value="nguoiDung.Ten" />
+    <ValidationMessage For="() => nguoiDung.Ten" />
+    <label>Ngày sinh</label>
+    <InputDate class="form-input" @bind-Value="nguoiDung.NgaySinh" />
+    <ValidationMessage For="() => nguoiDung.NgaySinh" />
+    <label>Giới tính</label>
+    <InputSelect class="form-input" @bind-Value="nguoiDung.GioiTinh">
+        <option value="">-- Chọn --</option>
+        <option value="Nam">Nam</option>
+        <option value="Nữ">Nữ</option>
+        <option value="Khác">Khác</option>
+    </InputSelect>
+    <ValidationMessage For="() => nguoiDung.GioiTinh" />
+    <label>Email</label>
+    <InputText class="form-input" @bind-Value="nguoiDung.Gmail" type="email" />
+    <ValidationMessage For="() => nguoiDung.Gmail" />
+    <label>Số điện thoại</label>
+    <InputText class="form-input" @bind-Value="nguoiDung.Sdt" />
+    <ValidationMessage For="() => nguoiDung.Sdt" />
+    <button class="form-submit" type="submit">Đăng ký</button>
+</EditForm>
+
+@code {
+    private RegisterModel nguoiDung = new();
+
+    private async Task HandleRegister()
+    {
+        
+    }
+
+    public class RegisterModel
+    {
+        [Required(ErrorMessage = "Vui lòng nhập họ")]
+        public string Ho { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng nhập tên")]
+        public string Ten { get; set; } = string.Empty;
+
+        [Required(ErrorMessage = "Vui lòng chọn ngày sinh")]
+        public DateTime NgaySinh { get; set; } = DateTime.Today;
+
+        public string? GioiTinh { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập email")]
+        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
+        public string? Gmail { get; set; }
+
+        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
+        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
+        public string? Sdt { get; set; }
+    }
+}

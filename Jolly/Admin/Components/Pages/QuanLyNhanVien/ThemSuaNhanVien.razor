@@ -234,6 +234,18 @@
             return;
         }
 
+        if (age > 70)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = "Tuổi không hợp lệ!",
+                text = "Nhân viên có tuổi không hợp lệ.",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+
         if (isEdit)
         {
             if (nv != null)

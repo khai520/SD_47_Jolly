@@ -16,29 +16,32 @@ namespace API.HeThong
             CreateMap<ChiTietMonAn, ChiTietMonAnDTO>()
                 .ForMember(t => t.Ten, opt => opt.MapFrom(src =>
                     src.MonAn != null && !string.IsNullOrWhiteSpace(src.MonAn.Ten)
-                    ? src.MonAn.Ten : ""))
-                .ForMember(tl => tl.TheLoai, opt => opt.MapFrom(src =>
-                    src.TheLoai != null && !string.IsNullOrWhiteSpace(src.TheLoai.Ten)
-                    ? src.TheLoai.Ten : ""))
-                .ForMember(dg => dg.DongGoi, opt => opt.MapFrom(src =>
+                    ? src.MonAn.Ten : "")) 
+                .ForMember(dg => dg.NguyenLieu, opt => opt.MapFrom(src =>
                     src.DongGoi != null && !string.IsNullOrWhiteSpace(src.DongGoi.Ten)
                     ? src.DongGoi.Ten : ""))
-                .ForMember(th => th.ThuongHieu, opt => opt.MapFrom(src =>
-                    src.ThuongHieu != null && !string.IsNullOrWhiteSpace(src.ThuongHieu.Ten)
-                    ? src.ThuongHieu.Ten : ""))
                 .ForMember(ncc => ncc.NhaCungCap, opt => opt.MapFrom(src =>
                     src.NhaCungCap != null && !string.IsNullOrWhiteSpace(src.NhaCungCap.Ten)
                     ? src.NhaCungCap.Ten : ""))
                 .ForMember(anh => anh.DanhSachAnh,  opt =>  opt.MapFrom(src => 
                     src.Anhs !=  null  ? src.Anhs : new List<Anh>()))
+                .ForMember(tl => tl.LoaiVi, opt => opt.MapFrom(src =>
+                    src.LoaiVi != null && !string.IsNullOrWhiteSpace(src.LoaiVi.Ten)
+                    ? src.LoaiVi.Ten : ""))
+                .ForMember(tl => tl.KichCo, opt => opt.MapFrom(src =>
+                    src.KichCo != null && !string.IsNullOrWhiteSpace(src.KichCo.Ten)
+                    ? src.KichCo.Ten : ""))
                 .ReverseMap();
             CreateMap<ChiTietMonAnDTO, ChiTietMonAn>()
-                .ForMember(dest => dest.MonAn, opt => opt.Ignore());
-
+                .ForMember(dest => dest.MonAn, opt => opt.Ignore())
+                .ForMember(dest => dest.NhaCungCap, opt => opt.Ignore())
+                .ForMember(dest => dest.DongGoi, opt => opt.Ignore())
+                .ForMember(dest => dest.LoaiVi, opt => opt.Ignore())
+                .ForMember(dest => dest.KichCo, opt => opt.Ignore());
 
             CreateMap<ChucVu, ChucVuDTO>().ReverseMap();
             CreateMap<DiaChi, DiaChiDTO>().ReverseMap();
-            CreateMap<DongGoi, DongGoiDTO>().ReverseMap();
+            CreateMap<NguyenLieu, DongGoiDTO>().ReverseMap();
             CreateMap<GiamGia, Voucher>().ReverseMap();
             CreateMap<GioHang, GioHangDTO>().ReverseMap();
             CreateMap<HinhThucThanhToan, HinhThucThanhToanDTO>().ReverseMap();
@@ -68,7 +71,30 @@ namespace API.HeThong
 
 
             CreateMap<Loai, LoaiDTO>().ReverseMap();
-            CreateMap<MonAn, MonAnDTO>().ReverseMap();
+            CreateMap<MonAn, MonAnDTO>()
+                .ForMember(t => t.ThuongHieu, opt => opt.MapFrom(src =>
+                    src.ThuongHieu != null && !string.IsNullOrWhiteSpace(src.ThuongHieu.Ten)
+                    ? src.ThuongHieu.Ten : ""))
+                .ForMember(dg => dg.TheLoai, opt => opt.MapFrom(src =>
+                    src.TheLoai != null && !string.IsNullOrWhiteSpace(src.TheLoai.Ten)
+                    ? src.TheLoai.Ten : ""))
+                .ForMember(a => a.AnhDaTai, opt => opt.MapFrom(src =>
+                    src.ChiTietMonAns != null &&
+                    src.ChiTietMonAns.Any() &&
+                    src.ChiTietMonAns.First().Anhs != null &&
+                    src.ChiTietMonAns.First().Anhs.Any() &&
+                    !string.IsNullOrWhiteSpace(src.ChiTietMonAns.First().Anhs.First().DuongDan)
+                        ? src.ChiTietMonAns.First().Anhs.First().DuongDan
+                        : ""))
+                .ForMember(dg => dg.Gia, opt => opt.MapFrom(src =>
+                    src.ChiTietMonAns != null &&
+                    src.ChiTietMonAns.Any() &&
+                    src.ChiTietMonAns.First().TrangThai == true
+                    ? src.ChiTietMonAns.First().Gia : 0))
+                .ReverseMap();
+            CreateMap<MonAnDTO, MonAn>()
+                .ForMember(dest => dest.ThuongHieu, opt => opt.Ignore())
+                .ForMember(dest => dest.TheLoai, opt => opt.Ignore());
             CreateMap<NguoiDung, NguoiDungDTO>().ReverseMap();
             CreateMap<NhaCungCap, NhaCungCapDTO>().ReverseMap();
             CreateMap<NhanVien, NhanVienDTO>()
@@ -116,7 +142,16 @@ namespace API.HeThong
                 src.NguoiDung != null &&
                 src.NguoiDung.NhanVien != null ?
                 src.NguoiDung.NhanVien.Id : ""));
-
+            CreateMap<TaiKhoan, TaiKhoanKHDTO>()
+            .ForMember(tt => tt.TrangThai, opt => opt.MapFrom(src =>
+                src.NguoiDung != null &&
+                src.NguoiDung.KhachHang != null 
+                    ? src.NguoiDung.KhachHang.TrangThai : false
+            ))
+            .ForMember(id => id.Id, opt => opt.MapFrom(src =>
+                src.NguoiDung != null &&
+                src.NguoiDung.KhachHang != null ?
+                src.NguoiDung.KhachHang.Id : ""));
             CreateMap<TaiKhoanDTO, TaiKhoan>();
             CreateMap<TheLoai, TheLoaiDTO>().ReverseMap();
             CreateMap<ThuongHieu, ThuongHieuDTO>().ReverseMap();

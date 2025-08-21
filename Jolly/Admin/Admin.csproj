@@ -14,7 +14,6 @@
 	<ItemGroup>
 		<Folder Include=".\wwwroot\bootstrap\" />
 		<Folder Include=".\wwwroot\img\" />
-		<Folder Include="Components\Pages\DonHang\" />
 		<Folder Include="wwwroot\Files\" />
 	</ItemGroup>
 
@@ -22,6 +21,10 @@
 		<None Update="appsettings.json">
 			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 		</None>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 	</ItemGroup>
 
 </Project>

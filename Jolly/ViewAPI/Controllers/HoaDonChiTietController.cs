@@ -13,8 +13,17 @@ namespace ViewAPI.Controllers
     [Route("api/[controller]")]
     public class HoaDonChiTietController : BaseController<HoaDonChiTiet, HoaDonChiTietDTO, Guid>
     {
-        public HoaDonChiTietController(IRepository<HoaDonChiTiet, Guid> repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
+        private readonly IChiTietHoaDonRepository hoaDonRepository;
+        public HoaDonChiTietController(IChiTietHoaDonRepository repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
         {
+            hoaDonRepository = repository;
+        }
+        [HttpGet("hdct/{id}")]
+        public async Task<IActionResult> GetMonAnId(string id)
+        {
+            var result = await hoaDonRepository.GetHoaDonId(id);
+            var dto = _mapper.Map<IEnumerable<HoaDonChiTietDTO>>(result);
+            return Ok(dto);
         }
     }
 }

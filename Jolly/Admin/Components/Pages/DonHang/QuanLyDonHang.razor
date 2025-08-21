@@ -1,0 +1,204 @@
+﻿@page "/hoadon"
+@layout Layout.MainLayout
+@inject IHoaDonService HoaDonService
+@inject IHoaDonChiTietService hoaDonChiTietService
+@inject IApiService ApiService
+@inject IJSRuntime JS
+
+<link href="css/HoaDon.css" rel="stylesheet" />
+
+<h2 class="text-xl font-semibold mb-4">Quản lý đơn hàng</h2>
+
+<!-- Ô tìm kiếm và nút tải lại -->
+<div class="search-row">
+    <input @bind="TuKhoa" @bind:event="oninput" placeholder="Tìm kiếm..." />
+    <button @onclick="TaiLai">Tải lại</button>
+</div>
+
+<!-- Tabs lọc theo trạng thái -->
+<div class="tabs">
+    @foreach (var trangThaiItem in TrangThaiList)
+    {
+        <button class="@(TrangThai == trangThaiItem ? "active" : "")"
+                @onclick='() => LocTheoTrangThai(trangThaiItem)'>
+            @trangThaiItem
+        </button>
+    }
+</div>
+
+<!-- Bảng danh sách hóa đơn -->
+<table class="table-auto w-full text-sm">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="p-2">#</th>
+            <th class="p-2">Mã đơn</th>
+            <th class="p-2">Tổng SP</th>
+            <th class="p-2">Tổng tiền</th>
+            <th class="p-2">Khách hàng</th>
+            <th class="p-2">Ngày tạo</th>
+            <th class="p-2">Loại</th>
+            <th class="p-2">Trạng thái</th>
+            <th class="p-2">Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (DanhSachHoaDon?.Any() == true)
+        {
+            var stt = 1;
+            foreach (var hoaDon in DanhSachHoaDon)
+            {
+                var chiTiets = ChiTietTheoHoaDon.GetValueOrDefault(hoaDon.Id);
+                var tongSoSP = chiTiets?.Sum(c => c.Soluong) ?? 0;
+
+                <tr class="border-b">
+                    <td class="p-2">@stt</td>
+                    <td class="p-2">@hoaDon.Id</td>
+                    <td class="p-2">@tongSoSP</td>
+                    <td class="p-2">@hoaDon.TongTien.ToString("N0") đ</td>
+                    <td class="p-2">@(string.IsNullOrWhiteSpace(hoaDon.KhachHang?.NguoiDung?.Ten) ? "Khách lẻ" : hoaDon.KhachHang.NguoiDung.Ten)</td>
+                    <td class="p-2">@hoaDon.NgayTao.ToString("dd/MM/yyyy HH:mm")</td>
+                    <td class="p-2">@hoaDon.LoaiHoaDon</td>
+                    <td class="p-2">
+                        <span class="badge @(GetBadgeClass(hoaDon.TrangThai))">@hoaDon.TrangThai</span>
+                    </td>
+                    <td class="p-2 space-x-1">
+                        @if (hoaDon.TrangThai == "Chờ xác nhận")
+                        {
+                            <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Chờ giao"))" class="btn-action">Xác nhận</button>
+                            <button @onclick="@(() => HuyDon(hoaDon.Id))" class="btn-danger">Huỷ đơn</button>
+                        }
+                        else if (hoaDon.TrangThai == "Chờ giao")
+                        {
+                            <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Vận chuyển"))" class="btn-action">Giao hàng</button>
+                            <button @onclick="@(() => HuyDon(hoaDon.Id))" class="btn-danger">Huỷ đơn</button>
+                        }
+                        else if (hoaDon.TrangThai == "Vận chuyển")
+                        {
+                            <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Đã giao"))" class="btn-action">Đã giao</button>
+                        }
+                        else if (hoaDon.TrangThai == "Đã giao")
+                        {
+                            <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Đã thanh toán"))" class="btn-action">Thanh toán</button>
+                        }
+                        else if (hoaDon.TrangThai == "Đã thanh toán")
+                        {
+                            <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "hoàn thành"))" class="btn-action">Hoàn thành</button>
+                        }
+                        else if (hoaDon.TrangThai == "hoàn thành")
+                        {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
+                        }
+                        else if (hoaDon.TrangThai == "Đã huỷ")
+                        {
+                            <span class="text-red-500 italic">Đã huỷ</span>
+                        }
+                        else
+                        {
+                            <span class="text-gray-400 italic">---</span>
+                        }
+                    </td>
+
+                </tr>
+
+                stt++;
+            }
+        }
+        else
+        {
+            <tr>
+                <td colspan="9" class="text-center text-gray-500 p-4">Chưa có dữ liệu</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    private List<HoaDon> DanhSachHoaDon;
+    private List<HoaDonChiTiet> DanhSachChiTiet;
+    private Dictionary<string, List<HoaDonChiTiet>> ChiTietTheoHoaDon = new();
+    private HoaDon selectedHoaDon;
+    private List<HoaDonChiTiet> selectedChiTiet;
+
+    private string TuKhoa;
+    private string TrangThai;
+    private readonly List<string> TrangThaiList = new()
+    {
+        "TẤT CẢ", "Chờ xác nhận", "Chờ giao", "Vận chuyển", "Đã giao", "Đã thanh toán", "Đã huỷ", "hoàn thành"
+    };
+
+    protected override async Task OnInitializedAsync()
+    {
+        await TaiLai();
+    }
+
+    private async Task TaiLai()
+    {
+        var allHoaDon = await ApiService.GetAsync<List<HoaDon>>("HoaDon");
+        DanhSachChiTiet = await ApiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet") ?? new();
+
+        ChiTietTheoHoaDon = DanhSachChiTiet
+            .GroupBy(ct => ct.HoaDonId)
+            .ToDictionary(g => g.Key, g => g.ToList());
+
+        DanhSachHoaDon = allHoaDon?
+            .Where(hd => string.IsNullOrEmpty(TuKhoa) || hd.KhachHang?.NguoiDung?.Ten.Contains(TuKhoa, StringComparison.OrdinalIgnoreCase) == true)
+            .ToList();
+
+        if (!string.IsNullOrEmpty(TrangThai) && TrangThai != "TẤT CẢ")
+        {
+            DanhSachHoaDon = DanhSachHoaDon
+                .Where(hd => hd.TrangThai == TrangThai)
+                .ToList();
+        }
+    }
+
+    private async Task LocTheoTrangThai(string tt)
+    {
+        TrangThai = tt;
+        await TaiLai();
+    }
+
+    private string GetBadgeClass(string status) => status switch
+    {
+        "hoàn thành" => "badge-purple",
+        "Chờ xác nhận" => "badge-blue",
+        "Chờ giao" => "badge-orange",
+        "Vận chuyển" => "badge-blue",
+        "Đã giao" => "badge-green",
+        "Đã thanh toán" => "badge-green",
+        "Đã huỷ" => "badge-red",
+        _ => "badge-gray"
+    };
+
+    private async Task HuyDon(string hoaDonId)
+    {
+        bool xacNhan = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc muốn huỷ đơn hàng này không?");
+        if (xacNhan)
+        {
+            
+            var hoaDon = await ApiService.GetbyId<HoaDon , string>( hoaDonId , "HoaDon");
+            if (hoaDon != null)
+            {
+                hoaDon.TrangThai = "Đã huỷ";
+                
+                await TaiLai();
+            }
+        }
+    }
+
+    private async Task CapNhatTrangThai(string hoaDonId, string trangThaiMoi)
+    {
+        var hoaDon = await ApiService.GetbyId< HoaDon, string> (hoaDonId, "HoaDon");
+        if (hoaDon != null)
+        {
+            hoaDon.TrangThai = trangThaiMoi;
+            await ApiService.PutAsync<HoaDon>("HoaDon", hoaDon);
+            await TaiLai();
+        }
+    }
+
+    private void XemChiTiet(string hoaDonId)
+    {
+
+    }
+}

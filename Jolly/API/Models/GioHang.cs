@@ -9,10 +9,10 @@ namespace API.Models
         public int? Soluong { get; set; }
         public int TongGia { get; set; }
         public string? ComboId { get; set; }
-        public string? MonAnId { get; set; }
+        public Guid? ChiTietMonAnId { get; set; }
         public string KhachHangid { get; set; }
         public virtual KhachHang KhachHang { get; set; }
         public virtual Combo Combo { get; set; }
-        public virtual MonAn MonAn { get; set; }
+        public virtual ChiTietMonAn ChiTietMonAn { get; set; }
     }
 }

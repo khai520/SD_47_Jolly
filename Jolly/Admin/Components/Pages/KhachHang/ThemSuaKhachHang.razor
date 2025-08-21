@@ -113,7 +113,7 @@
     [Parameter] public bool showModal { get; set; } = false;
     [Parameter] public bool isEdit { get; set; } = false;
     [Parameter] public KhachHangDTO khach { get; set; } = new();
-    private KhachHangDTO currentKhachHang = new();
+    private KhachHangDTO currentKhachHang = new() { NgaySinh = DateTime.Now };
     private async Task CloseModel()
     {
         currentKhachHang = new KhachHangDTO
@@ -212,6 +212,19 @@
                 });
                 return;
             }
+
+            if (age > 90)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Tuổi không hợp lệ!",
+                    text = "Khách hàng có tuổi không hợp lê.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+
             if (isEdit)
             {
                 if (khach != null)

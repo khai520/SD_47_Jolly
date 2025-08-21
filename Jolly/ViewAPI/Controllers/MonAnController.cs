@@ -13,11 +13,14 @@ namespace ViewAPI.Controllers
     [Route("api/[controller]")]
     public class MonAnController : BaseController<MonAn, MonAnDTO, string>
     {
-        public MonAnController(IRepository<MonAn, string> repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
+        private readonly IMonAnRepository monAnRepository;
+        public MonAnController(IMonAnRepository repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
         {
             _useXulyIdGeneration = true;
             _idPrefix = "MA";
             _idColumnName = "Id";
+            monAnRepository = repository;
         }
+
     }
 }

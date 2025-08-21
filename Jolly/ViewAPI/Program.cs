@@ -64,8 +64,9 @@ builder.Services.AddScoped<ITaiKhoanRepository, TaiKhoanRepository>();
 builder.Services.AddScoped<INhanVienRepository, NhanVienRepository>();
 builder.Services.AddScoped<IChiTietMonAnRepository, ChiTietMonAnRepository>();
 builder.Services.AddScoped<IKhachHangRepository, KhachHangRepository>();
-
-
+builder.Services.AddScoped<IChiTietHoaDonRepository, ChiTietHoaDonRepository>();
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+builder.Services.AddScoped<IMonAnRepository, MonAnRepository>();
 builder.Services.AddAuthorization();
 builder.WebHost.UseUrls("https://localhost:7047");
 

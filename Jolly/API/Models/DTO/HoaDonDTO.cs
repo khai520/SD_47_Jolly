@@ -4,8 +4,9 @@
     {
         public string? Id { get; set; }
         public DateTime NgayTao { get; set; } = DateTime.Now;
+        public string LoaiHoaDon { get; set; }
         public float TongTien { get; set; }
-        public List<string>? TrangThai { get; set; }
+        public string TrangThai { get; set; }
         public float TongTienSauKhiGiam { get; set; }
         public string? GhiChu { get; set; }
         public string? GiamGiaId { get; set; }

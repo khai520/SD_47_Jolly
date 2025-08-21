@@ -5,6 +5,9 @@ using API.Data;
 using API.HeThong;
 using API.HeThong.IHeThong;
 using API.Models.DTO;
+using API.Repository;
+using API.Repository.IRepository;
+using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Microsoft.AspNetCore.Components.Server.ProtectedBrowserStorage;
@@ -34,6 +37,9 @@ builder.Services.AddScoped<IMonAnService, MonAnService>();
 builder.Services.AddScoped<IChiTietMonAnService, ChiTietMonAnService>();
 builder.Services.AddScoped<IKhachHangService, KhachHangService>();
 builder.Services.AddScoped<INhanVienService, NhanVienService>();
+builder.Services.AddScoped<IHoaDonService, HoaDonService>();
+builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
+builder.Services.AddScoped<IHoaDonChiTietService, HoaDonChiTietService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IXuLyDiaChi, XuLyDiaChi>();
 builder.Services.AddHttpClient();
@@ -50,6 +56,7 @@ builder.Services.AddScoped<AppStateService>();
 builder.Services.AddScoped<ProtectedLocalStorage>();
 builder.Services.AddAuthorizationCore();
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
 
@@ -57,6 +64,7 @@ using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<DBAppContext>();
     dbContext.Database.Migrate();
+    DbInitializer.SeedData(dbContext);
 }
 if (!app.Environment.IsDevelopment())
 {

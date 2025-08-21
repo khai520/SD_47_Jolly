@@ -1,11 +1,24 @@
 [
   {
-    "Name": "New Profile",
+    "Name": "Admin",
     "Projects": [
       {
         "Path": "Admin\\Admin.csproj",
         "Action": "Start",
         "DebugTarget": "https"
+      },
+      {
+        "Path": "ViewAPI\\ViewAPI.csproj",
+        "Action": "Start"
+      }
+    ]
+  },
+  {
+    "Name": "Web",
+    "Projects": [
+      {
+        "Path": "JollyWeb\\JollyWeb.csproj",
+        "Action": "Start"
       },
       {
         "Path": "ViewAPI\\ViewAPI.csproj",

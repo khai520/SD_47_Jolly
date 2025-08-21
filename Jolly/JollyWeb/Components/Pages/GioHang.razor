@@ -1,0 +1,177 @@
+﻿@page "/giohang"
+@using System.Text.Json
+@inject IJSRuntime JS
+@inject NavigationManager Navigation
+
+<PageTitle>Giỏ Hàng | Jolly</PageTitle>
+
+<link href="css/GioHang.css" rel="stylesheet" />
+
+<div class="container2">
+    <h1>🛒 Giỏ Hàng Của Bạn</h1>
+
+    @if (isLoading)
+    {
+        <div class="loading">Đang tải giỏ hàng...</div>
+    }
+    else
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Ảnh</th>
+                    <th>Sản phẩm</th>
+                    <th>Giá</th>
+                    <th>Số lượng</th>
+                    <th>Thành tiền</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (cartItems.Count == 0)
+                {
+                    <tr>
+                        <td colspan="6">Giỏ hàng của bạn đang trống.</td>
+                    </tr>
+                }
+                else
+                {
+                    @foreach (var (item, index) in cartItems.Select((item, index) => (item, index)))
+                    {
+                        <tr>
+                            <td>
+                                <img src="@(string.IsNullOrEmpty(item.Image) ? "https://via.placeholder.com/60" : item.Image)"
+                                     alt="@item.Name" />
+                            </td>
+                            <td>@item.Name</td>
+                            <td>@FormatCurrency(item.Price)</td>
+                            <td>
+                                <input type="number"
+                                       min="1"
+                                       class="quantity"
+                                       value="@item.Quantity"
+                                       @onchange="@(async (e) => await UpdateQuantity(index, e.Value?.ToString()))" />
+                            </td>
+                            <td>@FormatCurrency(item.Price * item.Quantity)</td>
+                            <td>
+                                <button class="remove-btn" @onclick="@(async () => await RemoveItem(index))">
+                                    Xóa
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+        <div class="total">
+            Tổng: @FormatCurrency(GetTotalAmount())
+        </div>
+
+        <button class="checkout-btn" @onclick="Checkout">
+            Tiến hành thanh toán
+        </button>
+    }
+</div>
+
+@code {
+    private List<CartItem> cartItems = new();
+    private bool isLoading = true;
+
+    public class CartItem
+    {
+        public string Name { get; set; } = "";
+        public decimal Price { get; set; }
+        public int Quantity { get; set; }
+        public string Image { get; set; } = "";
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await LoadCartFromLocalStorage();
+        }
+    }
+
+    private async Task LoadCartFromLocalStorage()
+    {
+        try
+        {
+            var cartJson = await JS.InvokeAsync<string>("localStorage.getItem", "cart");
+            if (!string.IsNullOrEmpty(cartJson))
+            {
+                cartItems = JsonSerializer.Deserialize<List<CartItem>>(cartJson) ?? new List<CartItem>();
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading cart: {ex.Message}");
+            cartItems = new List<CartItem>();
+        }
+        finally
+        {
+            isLoading = false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SaveCartToLocalStorage()
+    {
+        try
+        {
+            var cartJson = JsonSerializer.Serialize(cartItems);
+            await JS.InvokeVoidAsync("localStorage.setItem", "cart", cartJson);
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error saving cart: {ex.Message}");
+        }
+    }
+
+    private async Task UpdateQuantity(int index, string? quantityStr)
+    {
+        if (int.TryParse(quantityStr, out int quantity) && quantity >= 1)
+        {
+            cartItems[index].Quantity = quantity;
+            await SaveCartToLocalStorage();
+            StateHasChanged();
+        }
+    }
+
+    private async Task RemoveItem(int index)
+    {
+        if (index >= 0 && index < cartItems.Count)
+        {
+            cartItems.RemoveAt(index);
+            await SaveCartToLocalStorage();
+            StateHasChanged();
+        }
+    }
+
+    private async Task Checkout()
+    {
+        if (cartItems.Count == 0)
+        {
+            await JS.InvokeVoidAsync("alert", "Giỏ hàng trống. Vui lòng thêm sản phẩm.");
+            return;
+        }
+
+        await JS.InvokeVoidAsync("alert", "🎉 Cảm ơn bạn đã đặt hàng tại Jolly!\nChúng tôi sẽ sớm liên hệ với bạn.");
+
+        // Clear cart
+        cartItems.Clear();
+        await JS.InvokeVoidAsync("localStorage.removeItem", "cart");
+        StateHasChanged();
+    }
+
+    private string FormatCurrency(decimal amount)
+    {
+        return amount.ToString("N0", new System.Globalization.CultureInfo("vi-VN")) + "₫";
+    }
+
+    private decimal GetTotalAmount()
+    {
+        return cartItems.Sum(item => item.Price * item.Quantity);
+    }
+}

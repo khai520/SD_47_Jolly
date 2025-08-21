@@ -5,38 +5,77 @@
     <div class="customer-select-overlay"></div>
     <div class="product-select-box">
         <div class="product-select-list">
-            @if (Products.Count == 0)
+            <div class="filter-group">
+                <div class="filter-item">
+                    <label class="filter-label">Kích Cỡ:</label>
+                    <select @bind="selectedKichCo" class="filter-select">
+                        @foreach (var kc in allKichCo)
+                        {
+                            <option value="@kc">@kc</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Nguyên Liệu:</label>
+                    <select @bind="selectedNguyenLieu" class="filter-select">
+                        @foreach (var nl in allNguyenLieu)
+                        {
+                            <option value="@nl">@nl</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Loại Vị:</label>
+                    <select @bind="selectedLoaiVi" class="filter-select">
+                        @foreach (var lv in allLoaiVi)
+                        {
+                            <option value="@lv">@lv</option>
+                        }
+                    </select>
+                </div>
+
+                <div class="filter-item">
+                    <label class="filter-label">Tìm Kiếm:</label>
+                    <input type="text" placeholder="Nhập tên món ăn..." @bind="searchText" @bind:event="oninput" class="filter-input" />
+                </div>
+            </div>
+
+            @if (Products.Where(p => IsMatchAllFilters(p)).Any())
             {
-                <div class="empty-notice">Không có sản phẩm nào để hiển thị.</div>
-            }
-            else
-            {
-                @foreach (var product in Products)
+                @foreach (var monAnGroup in Products
+                        .Where(p => IsMatchAllFilters(p))
+                        .GroupBy(p => p.Ten))
                 {
-                    <div class="product-select-item">
-                        <img src="@( product.DanhSachAnh?.FirstOrDefault()?.DuongDan)" class="order-img" alt="@product.Ten" />
-                        <div class="item-info">
-                            <div class="order-name">@product.Ten</div>
-                            <div class="order-price">
-                                <span class="old-price">@FormatMoney(product.Gia)</span>
+                    <div class="product-group">
+                        <h4 class="product-title">@monAnGroup.Key</h4>
+
+                        @foreach (var product in monAnGroup)
+                        {
+                            <div class="product-select-item">
+                                <img src="@(product.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "")" class="order-img" alt="@product.Ten" />
+                                <div class="item-info">
+                                    <div class="order-size">Thể Loại: <strong>@product.LoaiVi</strong></div>
+                                    <div class="order-price">Giá: <strong>@FormatMoney(product.Gia)</strong></div>
+                                </div>
+                                <div class="order-qty">
+                                    <button @onclick="@(() => ChangeQty(product, -1))">-</button>
+                                    <input type="number" value="@product.SoLuongDat" readonly />
+                                    <button @onclick="@(() => ChangeQty(product, 1))">+</button>
+                                </div>
+                                <div class="order-total">@FormatMoney(product.Gia * product.SoLuongDat)</div>
+                                <button class="add-btn" @onclick="@(() => AddToOrder(product))">Thêm</button>
                             </div>
-                            <div class="order-size">
-                                Thể loại:
-                                <select @bind="@product.TheLoai">
-                                    <option value="@product.TheLoai">@product.TheLoai.ToString()</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class="order-qty">
-                            <button class="decrease-btn" @onclick="@(() => ChangeQty(product, -1))">-</button>
-                            <input type="number" class="qty-input" value="@product.SoLuongDat" readonly />
-                            <button class="increase-btn" @onclick="@(() => ChangeQty(product, 1))">+</button>
-                        </div>
-                        <div class="order-total">@FormatMoney(product.Gia * product.SoLuongDat)</div>
-                        <button class="add-to-order" @onclick="@(() => AddToOrder(product))">Thêm vào đơn</button>
+                        }
                     </div>
                 }
             }
+            else
+            {
+                <div class="empty-notice">Không có sản phẩm nào phù hợp.</div>
+            }
+
         </div>
         <button class="close-customer-select" @onclick="Close">Đóng</button>
     </div>
@@ -48,13 +87,31 @@
     [Parameter] public EventCallback OnClose { get; set; }
 
     private List<ChiTietMonAnDTO> Products = new();
+    private string selectedDongGoi = string.Empty;
+    private List<string> allDongGoi = new();
 
     protected override async Task OnInitializedAsync()
     {
         var allproduct = await GetChiTietMonAnService.GetAll();
         Products = allproduct?.Where(p => p.Soluong >= 1 && p.TrangThai == true).ToList() ?? new();
-        
+
+        allKichCo = Products.Select(p => p.KichCo)
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Distinct().OrderBy(s => s).ToList();
+
+        allNguyenLieu = Products.Select(p => p.NguyenLieu)
+                                .Where(s => !string.IsNullOrWhiteSpace(s))
+                                .Distinct().OrderBy(s => s).ToList();
+
+        allLoaiVi = Products.Select(p => p.LoaiVi)
+                            .Where(s => !string.IsNullOrWhiteSpace(s))
+                            .Distinct().OrderBy(s => s).ToList();
+
+        selectedKichCo = allKichCo.FirstOrDefault() ?? "";
+        selectedNguyenLieu = allNguyenLieu.FirstOrDefault() ?? "";
+        selectedLoaiVi = allLoaiVi.FirstOrDefault() ?? "";
     }
+
 
     private async void ChangeQty(ChiTietMonAnDTO g, int delta)
     {
@@ -114,4 +171,25 @@
     {
         return string.Format("{0:N0} VND", amount);
     }
+    private string selectedKichCo = string.Empty;
+    private string selectedNguyenLieu = string.Empty;
+    private string selectedLoaiVi = string.Empty;
+    private string searchText = string.Empty;
+
+    private List<string> allKichCo = new();
+    private List<string> allNguyenLieu = new();
+    private List<string> allLoaiVi = new();
+
+
+
+    private bool IsMatchAllFilters(ChiTietMonAnDTO p)
+    {
+        bool matchKichCo = string.IsNullOrWhiteSpace(selectedKichCo) || p.KichCo == selectedKichCo;
+        bool matchNguyenLieu = string.IsNullOrWhiteSpace(selectedNguyenLieu) || p.NguyenLieu == selectedNguyenLieu;
+        bool matchLoaiVi = string.IsNullOrWhiteSpace(selectedLoaiVi) || p.LoaiVi == selectedLoaiVi;
+        bool matchSearch = string.IsNullOrWhiteSpace(searchText) || (p.Ten?.Contains(searchText, StringComparison.OrdinalIgnoreCase) ?? false);
+
+        return matchKichCo && matchNguyenLieu && matchLoaiVi && matchSearch;
+    }
+
 }
