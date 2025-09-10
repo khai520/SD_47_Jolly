@@ -79,33 +79,36 @@
 
 <div class="dashboard-table-chart">
 	<div class="table-area">
-		<div class="table-title">Danh sách sản phẩm bán chạy </div>
-		<table class="product-table">
-			<thead>
-				<tr>
-					<th>Ảnh</th>
-					<th>Tên sản phẩm</th>
-					<th>Số lượng</th>
-					<th>Giá tiền</th>
-					<th>Kích Cỡ</th>
-				</tr>
-			</thead>
-			<tbody>
-				@if (PagedProducts1 != null && CurrentPage1 < PagedProducts1.Count)
-				{
-					@foreach (var sp in PagedProducts1[CurrentPage1])
+		<div>
+			<div class="table-title">Danh sách sản phẩm bán chạy </div>
+			<table class="product-table">
+				<thead>
+					<tr>
+						<th>Ảnh</th>
+						<th>Tên sản phẩm</th>
+						<th>Số lượng</th>
+						<th>Giá tiền</th>
+						<th>Kích Cỡ</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (PagedProducts1 != null && CurrentPage1 < PagedProducts1.Count)
 					{
-						<tr>
-							<td><img src="@sp.Anh" alt="@sp.TenSanPham" style="width: 50px; height: 50px; object-fit: cover;" /></td>
-							<td>@sp.TenSanPham</td>
-							<td>@sp.SoLuong</td>
-							<td>@sp.GiaTien.ToString("N0") ₫</td>
-							<td>@sp.KichCo</td>
-						</tr>
+						@foreach (var sp in PagedProducts1[CurrentPage1])
+						{
+							<tr>
+								<td><img src="@sp.Anh" alt="@sp.TenSanPham" style="width: 50px; height: 50px; object-fit: cover;" /></td>
+								<td>@sp.TenSanPham</td>
+								<td>@sp.SoLuong</td>
+								<td>@sp.GiaTien.ToString("N0") ₫</td>
+								<td>@sp.KichCo</td>
+							</tr>
+						}
 					}
-				}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
+		
 		<div class="table-pagination">
 			<span>
 				Xem
@@ -150,33 +153,35 @@
 </div>
 <div class="dashboard-table-chart">
 	<div class="table-area">
-		<div class="table-title">Danh sách sản phẩm sắp hết hàng</div>
-		<table class="product-table">
-			<thead>
-				<tr>
-					<th>Ảnh</th>
-					<th>Tên sản phẩm</th>
-					<th>Số lượng</th>
-					<th>Giá tiền</th>
-					<th>Kích Cỡ</th>
-				</tr>
-			</thead>
-			<tbody>
-				@if (PagedProducts2 != null && CurrentPage2 < PagedProducts2.Count)
-				{
-					@foreach (var sp in PagedProducts2[CurrentPage2])
+		<div>
+			<div class="table-title">Danh sách sản phẩm sắp hết hàng</div>
+			<table class="product-table">
+				<thead>
+					<tr>
+						<th>Ảnh</th>
+						<th>Tên sản phẩm</th>
+						<th>Số lượng</th>
+						<th>Giá tiền</th>
+						<th>Kích Cỡ</th>
+					</tr>
+				</thead>
+				<tbody>
+					@if (PagedProducts2 != null && CurrentPage2 < PagedProducts2.Count)
 					{
-						<tr>
-							<td><img src="@sp.Anh" alt="@sp.TenSanPham" style="width: 50px; height: 50px; object-fit: cover;" /></td>
-							<td>@sp.TenSanPham</td>
-							<td>@sp.SoLuong</td>
-							<td>@sp.GiaTien.ToString("N0") ₫</td>
-							<td>@sp.KichCo</td>
-						</tr>
+						@foreach (var sp in PagedProducts2[CurrentPage2])
+						{
+							<tr>
+								<td><img src="@sp.Anh" alt="@sp.TenSanPham" style="width: 50px; height: 50px; object-fit: cover;" /></td>
+								<td>@sp.TenSanPham</td>
+								<td>@sp.SoLuong</td>
+								<td>@sp.GiaTien.ToString("N0") ₫</td>
+								<td>@sp.KichCo</td>
+							</tr>
+						}
 					}
-				}
-			</tbody>
-		</table>
+				</tbody>
+			</table>
+		</div>
 		<div class="table-pagination">
 			<span>
 				Xem
@@ -338,15 +343,13 @@
 	{
 		public string Label { get; set; } = string.Empty;
 		public string Color { get; set; } = "#ccc";
-		public int Value { get; set; }
+		public Func<double> ValueFunc { get; set; }  
+
+		public double Value => ValueFunc();
 	}
 
 	List<ChartSegment> Data = new()
 	{
-		new ChartSegment { Label = "Hoạt động", Color = "#2ecc71", Value = 35 },
-		new ChartSegment { Label = "Tạm dừng", Color = "#f1c40f", Value = 20 },
-		new ChartSegment { Label = "Ngưng hoạt động", Color = "#e74c3c", Value = 10 },
-		new ChartSegment { Label = "Chưa rõ", Color = "#95a5a6", Value = 5 },
 	};
 
 	string BuildPieGradient()
@@ -416,36 +419,37 @@
 			hoaDons = await apiService.GetAsync<List<HoaDon>>("HoaDon") ?? new();
 			hoaDonChiTiets = await apiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet") ?? new();
 			chitietmonAns = await ChiTietMonAnService.GetAll();
-			Data = new()
-			{
-				new ChartSegment { Label = "Đã huỷ", Color = "#e74c3c", Value = PercentDaHuy },
-				new ChartSegment { Label = "Chờ xác nhận", Color = "#f1c40f", Value = PercentChoXacNhan },
-				new ChartSegment { Label = "Chờ giao hàng", Color = "#8e44ad", Value = PercentChoGiaoHang },
-				new ChartSegment { Label = "Đang vận chuyển", Color = "#3498db", Value = PercentDangVanChuyen },
-				new ChartSegment { Label = "Đã giao hàng", Color = "#1abc9c", Value = PercentDaGiaoHang },
-				new ChartSegment { Label = "Đã thanh toán", Color = "#2ecc71", Value = PercentDaThanhToan },
-				new ChartSegment { Label = "Chờ thanh toán", Color = "#95a5a6", Value = PercentChoThanhToan },
-				new ChartSegment { Label = "Hoàn thành", Color = "#27ae60", Value = PercentHoanThanh },
-				new ChartSegment { Label = "Trả hàng", Color = "#16a085", Value = PercentTraHang },
-			}; ;
+			
 			Console.WriteLine($"Loaded {hoaDons?.Count} HoaDon records.");
 			Console.WriteLine($"Loaded {hoaDonChiTiets?.Count} HoaDonChiTiet records.");
 			Console.WriteLine($"Loaded {chitietmonAns.Count} GiayChiTiet records.");
 			monans2 = chitietmonAns
-		.GroupBy(x => x.MonAnId)
-		.Select(group =>
-		{
-			var first = group.First();
-			return new DanhSachSanPhamBanChay
-				{
-					Anh = first.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
-					KichCo = first.KichCo ?? "Không rõ",
-					TenSanPham = first.Ten ?? "Chưa rõ tên",
-					SoLuong = group.Sum(x => x.Soluong),
-					GiaTien = group.Min(x => x.Gia)
-				};
-		})
-		.ToList();
+			.GroupBy(x => x.MonAnId)
+			.Select(group =>
+			{
+				var first = group.First();
+				return new DanhSachSanPhamBanChay
+					{
+						Anh = first.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "",
+						KichCo = first.KichCo ?? "Không rõ",
+						TenSanPham = first.Ten ?? "Chưa rõ tên",
+						SoLuong = group.Sum(x => x.Soluong),
+						GiaTien = group.Min(x => x.Gia)
+					};
+			})
+			.ToList();
+			Data = new()
+			{
+				new ChartSegment { Label = "Đã huỷ", Color = "#e74c3c", ValueFunc = () => PercentDaHuy },
+				new ChartSegment { Label = "Chờ xác nhận", Color = "#f1c40f", ValueFunc = () => PercentChoXacNhan },
+				new ChartSegment { Label = "Chờ giao hàng", Color = "#8e44ad", ValueFunc = () => PercentChoGiaoHang },
+				new ChartSegment { Label = "Đang vận chuyển", Color = "#3498db", ValueFunc = () => PercentDangVanChuyen },
+				new ChartSegment { Label = "Đã giao hàng", Color = "#1abc9c", ValueFunc = () => PercentDaGiaoHang },
+				new ChartSegment { Label = "Đã thanh toán", Color = "#2ecc71", ValueFunc = () => PercentDaThanhToan },
+				new ChartSegment { Label = "Chờ thanh toán", Color = "#95a5a6", ValueFunc = () => PercentChoThanhToan },
+				new ChartSegment { Label = "Hoàn thành", Color = "#27ae60", ValueFunc = () => PercentHoanThanh },
+				new ChartSegment { Label = "Trả hàng", Color = "#16a085", ValueFunc = () => PercentTraHang },
+			};
 
 
 			CalculateStatsForPeriod(DateTime.Now.Date, DateTime.Now.Date,
@@ -542,9 +546,9 @@
 		totalMoney = (hoaDons ?? new List<HoaDon>())
 								.Where(hd => hd.NgayTao.Date >= startDate && hd.NgayTao.Date <= endDate &&
 									(hd.TrangThai?.Equals("đã giao", StringComparison.OrdinalIgnoreCase) == true ||
-									 hd.TrangThai?.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase) == true ||
-									 hd.TrangThai?.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) == true ||
-									 hd.TrangThai?.Equals("trả hàng", StringComparison.OrdinalIgnoreCase) == false))
+										hd.TrangThai?.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase) == true ||
+										hd.TrangThai?.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase) == true ||
+										hd.TrangThai?.Equals("trả hàng", StringComparison.OrdinalIgnoreCase) == false))
 								.Sum(hd => (decimal?)hd.TongTienSauKhiGiam) ?? 0;
 
 
@@ -607,7 +611,7 @@
 				endDateFilter = DateTime.Now.Date;
 				break;
 			case "TUẦN":
-				
+
 				startDateFilter = GetStartOfWeek(DateTime.Now);
 				endDateFilter = startDateFilter.AddDays(6);
 				break;
@@ -656,7 +660,8 @@
 							   })
 									.OrderByDescending(x => x.SoLuong)
 									.ToList();
-		UpdatePaging1(); 
+		CalculateOrderStatusPercentages(startDateFilter, endDateFilter);
+		UpdatePaging1();
 	}
 
 	private async Task SetActiveFilter(string filter)
@@ -713,9 +718,8 @@
 
 	private void CalculateOrderStatusPercentages(DateTime startDate, DateTime endDate)
 	{
-		// Lọc hóa đơn trong khoảng thời gian đã chọn
-		var filteredOrders = (hoaDons ?? new List<HoaDon>()).Where(hd => hd.NgayTao.Date >= startDate && hd.NgayTao.Date <= endDate).ToList();
-		int totalOrdersInPeriod = filteredOrders.Count;
+		var filteredOrders = (hoaDons.Where(hd => hd.NgayTao.Date >= startDate && hd.NgayTao.Date <= endDate) ?? new List<HoaDon>()).ToList();
+		int totalOrdersInPeriod = filteredOrders.Count();
 
 		if (totalOrdersInPeriod == 0)
 		{
@@ -742,7 +746,7 @@
 		int countChoThanhToan = filteredOrders.Count(hd => hd.TrangThai.Equals("chờ thanh toán", StringComparison.OrdinalIgnoreCase));
 		int countHoanThanh = filteredOrders.Count(hd => hd.TrangThai.Equals("hoàn thành", StringComparison.OrdinalIgnoreCase));
 
-		
+
 		int countTraHang = filteredOrders
 			.Where(hd => hd.TrangThai.Equals("đã thanh toán", StringComparison.OrdinalIgnoreCase) &&
 							hoaDonChiTiets.Any(hdct => hdct.HoaDonId == hd.Id && hdct.TrangThai == false))
@@ -758,6 +762,8 @@
 		PercentChoThanhToan = countChoThanhToan / totalOrdersInPeriod * 100;
 		PercentHoanThanh = countHoanThanh / totalOrdersInPeriod * 100;
 		PercentTraHang = countTraHang / totalOrdersInPeriod * 100;
+
+		StateHasChanged();
 	}
 
 	private void UpdatePaging1()

@@ -71,7 +71,7 @@
     protected override async Task OnInitializedAsync()
     {
         var monAns = await monAnService.GetAll();
-        MonAns = monAns.Where(x => x.TrangThai == true).ToList();
+        MonAns = monAns.Where(x => x.TrangThai == true ).Take(5).ToList();
     }
 
     private void AddToCart(MonAnDTO item)
