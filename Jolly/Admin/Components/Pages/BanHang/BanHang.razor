@@ -4,6 +4,7 @@
 @using API.Models.ViewModels.BanHang
 @using API.Models.DTO
 @using AutoMapper
+@inject IChiTietMonAnService GetChiTietMonAnService
 @implements IDisposable
 @inject IXuLyDiaChi xuLyDiaChi
 @inject IJSRuntime JS
@@ -204,7 +205,7 @@
             <div class="order-info">
                 <div style="text-align: right; margin-bottom: 12px;">
                     <label for="GiaoHang">Giao hàng</label>
-                    <input id="GiaoHang" type="checkbox" class="delivery-toggle" @bind="CurrentOrder.ThongTinHoaDon.IsDelivery" />
+                    <input id="GiaoHang" type="checkbox" class="delivery-toggle" @bind="CurrentOrder.ThongTinHoaDon.IsDelivery" @bind:after ="SaveOrdersToStorage"/>
                 </div>
 
                 <div class="voucher-area">
@@ -285,7 +286,8 @@
     private float DiscountAmount => (Subtotal * DiscountPercent) / 100f;
     private float TotalAmount => Subtotal + ShippingFee - DiscountAmount;
     private float DeficitAmount => TotalAmount - CustomerPay;
-
+    private List<ChiTietMonAnDTO> Products = new();
+    private List<MonAnDTO> allProducts = new();
     private List<DiaChiNhap> TinhThanh = new();
     private List<DiaChiNhap> HuyenXa = new();
     private List<DiaChiNhap> XaPhuong = new();
@@ -439,12 +441,14 @@
 
     private System.Threading.Timer? OrderCleanupTimer;
 
-    protected override void OnInitialized()
+    protected override async void OnInitialized()
     {
+
+        
         Orders ??= new();
         OrderCleanupTimer = new System.Threading.Timer(_ =>
         {
-            InvokeAsync(() =>
+            InvokeAsync(async () =>
             {
                 var now = DateTime.Now;
                 Orders.RemoveAll(o => (now - o.ThoiGianTao).TotalMinutes >= 10); 
@@ -453,6 +457,7 @@
                     CurrentOrderIndex = Orders.Count - 1;
                 }
                 StateHasChanged();
+                await SaveOrdersToStorage();
             });
         }, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1)); 
     }
@@ -681,8 +686,7 @@
                 text = "Đơn hàng đã được ghi nhận."
             });
             await RemoveOrder(CurrentOrderIndex);
-            await LocalStorage.RemoveItemAsync("banhang_orders");
-            await LocalStorage.RemoveItemAsync("banhang_currentIndex");
+            await SaveOrdersToStorage();
             StateHasChanged();
         }
         else
@@ -754,21 +758,23 @@
 
         CurrentOrder.ThongTinHoaDon.TenNguoiNhan = kh.HoTen ?? "";
         CurrentOrder.ThongTinHoaDon.Sdt = kh.Sdt ?? "";
-
+        await SaveOrdersToStorage();
 
     }
-    private void Khachle()
+    private async void Khachle()
     {
         CurrentOrder.Customer = null;
         CurrentOrder.ThongTinHoaDon.TenNguoiNhan = "";
         CurrentOrder.ThongTinHoaDon.Sdt = "";
+        await SaveOrdersToStorage();
     }
 
     private bool IsAddressModalVisible = false;
 
-    private void HandleAddressSelected(DiaChiDTO diaChi)
+    private async void HandleAddressSelected(DiaChiDTO diaChi)
     {
         CurrentOrder.Address = diaChi;
+        await SaveOrdersToStorage();
 
     }
 
@@ -779,11 +785,24 @@
 
         var savedOrders = await LocalStorage.GetItemAsync<List<Order>>("banhang_orders");
         var savedIndex = await LocalStorage.GetItemAsync<int>("banhang_currentIndex");
-
+       
         if (savedOrders != null && savedOrders.Count > 0)
         {
             Orders = savedOrders;
             CurrentOrderIndex = savedIndex;
+            allProducts = await apiService.GetAsync<List<MonAnDTO>>("MonAn") ?? new();
+
+            var allproduct = await GetChiTietMonAnService.GetAll();
+            Products = allproduct?.Where(p => p.Soluong >= 1 && p.TrangThai == true && allProducts.FirstOrDefault(m => m.Id == p.MonAnId && m.TrangThai == true) != null).ToList() ?? new();
+            foreach (var item in Orders)
+            {
+                if (item?.Products != null)
+                {
+                    item.Products.RemoveAll(item => !Products.Any(p => p.Id == item.Id));
+                }
+            }
+            
+
         }
         else
         {
@@ -795,7 +814,7 @@
     }
 
     private string Tinh = "";
-    void OnTinhChanged(ChangeEventArgs e)
+    async void OnTinhChanged(ChangeEventArgs e)
     {
         Tinh = e.Value?.ToString();
         CurrentOrder.ThongTinHoaDon.TinhThanhPho = Tinh;
@@ -809,10 +828,12 @@
 
         CurrentOrder.ThongTinHoaDon.QuanHuyen = "";
         CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = "";
+
+        await SaveOrdersToStorage();
     }
 
     private string Huyen = "";
-    void OnHuyenChanged(ChangeEventArgs e)
+    async void OnHuyenChanged(ChangeEventArgs e)
     {
         Huyen = e.Value?.ToString();
         CurrentOrder.ThongTinHoaDon.QuanHuyen = Huyen;
@@ -822,13 +843,15 @@
 
         Phuong = "";
         CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = "";
+        await SaveOrdersToStorage();
     }
 
     private string Phuong = "";
-    void OnXaPhuongChanged(ChangeEventArgs e)
+    async void OnXaPhuongChanged(ChangeEventArgs e)
     {
         Phuong = e.Value?.ToString();
         CurrentOrder.ThongTinHoaDon.XaPhuongThiTran = Phuong;
+        await SaveOrdersToStorage();
     }
     void OnVoucherChange(ChangeEventArgs e)
     {

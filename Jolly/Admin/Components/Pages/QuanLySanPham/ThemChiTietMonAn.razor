@@ -429,22 +429,22 @@
 
     private async Task OnFileSelected(InputFileChangeEventArgs e)
     {
-        foreach (var file in e.GetMultipleFiles())
-        {
-            var result = await UploadService.UploadImageAsync(file);
-            if (result != null && !string.IsNullOrEmpty(result.Url))
-            {
-                var anh = new AnhDTO ()
-                {
-                    Id = Guid.NewGuid(),
-                    Ten = result.FileName,
-                    DuongDan = result.Url,
-                };
-                chiTietMoi.DanhSachAnh.Add(anh);
-                listAnhThem.Add(anh);
-                StateHasChanged();
-            }
-        }
+                    foreach (var file in e.GetMultipleFiles())
+                    {
+                        var result = await UploadService.UploadImageAsync(file);
+                        if (result != null && !string.IsNullOrEmpty(result.Url))
+                        {
+                            var anh = new AnhDTO ()
+                            {
+                                Id = Guid.NewGuid(),
+                                Ten = result.FileName,
+                                DuongDan = result.Url,
+                            };
+                            chiTietMoi.DanhSachAnh.Add(anh);
+                            listAnhThem.Add(anh);
+                            StateHasChanged();
+                        }
+                    }
     }
 
     private async Task XoaAnh(AnhDTO anh)

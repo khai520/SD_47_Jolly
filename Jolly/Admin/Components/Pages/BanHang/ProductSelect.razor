@@ -1,4 +1,5 @@
-﻿@inject IChiTietMonAnService GetChiTietMonAnService
+﻿@inject IApiService apiService
+@inject IChiTietMonAnService GetChiTietMonAnService
 @inject IJSRuntime JS
 @if (Visible)
 {
@@ -85,15 +86,16 @@
     [Parameter] public bool Visible { get; set; }
     [Parameter] public EventCallback<ChiTietMonAnDTO> OnAddProduct { get; set; }
     [Parameter] public EventCallback OnClose { get; set; }
-
+    private List<MonAnDTO> allProducts = new();
     private List<ChiTietMonAnDTO> Products = new();
     private string selectedDongGoi = string.Empty;
     private List<string> allDongGoi = new();
 
     protected override async Task OnInitializedAsync()
     {
+        allProducts = await apiService.GetAsync<List<MonAnDTO>>("MonAn") ?? new();
         var allproduct = await GetChiTietMonAnService.GetAll();
-        Products = allproduct?.Where(p => p.Soluong >= 1 && p.TrangThai == true).ToList() ?? new();
+        Products = allproduct?.Where(p => p.Soluong >= 1 && p.TrangThai == true && allProducts.FirstOrDefault(m => m.Id == p.MonAnId && m.TrangThai == true) != null).ToList() ?? new();
 
         allKichCo = Products.Select(p => p.KichCo)
                             .Where(s => !string.IsNullOrWhiteSpace(s))

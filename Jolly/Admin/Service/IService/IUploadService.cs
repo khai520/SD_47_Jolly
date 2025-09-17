@@ -6,7 +6,7 @@ namespace Admin.Service.IService
     public interface IUploadService
     {
         Task<UploadResult?> UploadImageAsync(IBrowserFile file);
-        Task<bool> DeleteImageAsync(string id);
+        Task<bool> DeleteImageAsync(string fileName);
     }
 
 }

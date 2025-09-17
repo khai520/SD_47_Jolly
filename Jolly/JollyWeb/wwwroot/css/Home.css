@@ -127,16 +127,7 @@
     margin-bottom: 1rem;
     animation: rotate 2s infinite linear;
 }
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-
-    to {
-        transform: rotate(360deg);
-    }
-}
+    
 
 .product-card:hover .product-emoji {
     animation-duration: 0.5s;

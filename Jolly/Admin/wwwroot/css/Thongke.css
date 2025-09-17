@@ -208,6 +208,8 @@ h2 {
 
 /* Table Area */
 .table-area {
+    display: grid;
+    gap: inherit;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
     border-radius: 15px;
@@ -264,11 +266,13 @@ h2 {
 
 /* Table Pagination */
 .table-pagination {
+    max-height: min-content;
     display: flex;
     justify-content: space-between;
     align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+    align-self: end;
 }
 
     .table-pagination select {

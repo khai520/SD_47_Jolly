@@ -24,6 +24,7 @@ namespace API.Models
         public virtual NhanVien NhanVien { get; set; }
         public virtual GiamGia GiamGia { get; set; }
         public virtual ICollection<HoaDonChiTiet> hoaDonChiTiets { get; set; }
+        public virtual ICollection<LichSuTrangThai> lichSuTrangThais { get; set; }
 
     }
 }

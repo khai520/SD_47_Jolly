@@ -7,6 +7,7 @@
         public string TrangThai { get; set; }
         public DateTime ThoiGian { get; set; } = DateTime.Now;
         public string LyDo { get; set; }
+        public virtual HoaDon HoaDon { get; set; }
     }
 
 }

@@ -42,7 +42,7 @@
                         <div class="select-with-add row-layout ">
 
                             <InputSelect id="loaivi" @bind-Value="model.MonAn.TheLoaiId">
-                                <option selected value="@Guid.Empty">-- Thương Hiệu --</option>
+                                <option selected value="@Guid.Empty">-- Thể loại --</option>
                                 @foreach (var item in theLoaisList)
                                 {
                                     <option value="@item.Id">@item.Ten</option>
@@ -52,7 +52,7 @@
                         </div>
                     </div>
                     <div>
-                        <label for="thuonghieu">Kích Cỡ</label>
+                        <label for="thuonghieu">Thương Hiệu</label>
                         <div class="select-with-add row-layout ">
 
                             <InputSelect id="thuonghieu" @bind-Value="model.MonAn.ThuongHieuId">
@@ -166,7 +166,6 @@
                     return;
 
                 }
-
                 foreach (var ct in model.DanhSachChiTiet)
                 {
                     ct.MonAnId = monAnResponse.Id;
@@ -192,8 +191,8 @@
 
                         }
                     }
-                    Navigation.NavigateTo("/quanlysanpham");
                 }
+                Navigation.NavigateTo("/quanlysanpham");
                 successMessage = "✅ Đã thêm món ăn và các chi tiết thành công.";
                 showSuccessMessage = true;
                 await ResetForm();

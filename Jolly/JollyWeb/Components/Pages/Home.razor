@@ -2,7 +2,7 @@
 @layout Layout.MainLayout
 
 @inject IJSRuntime JS
-@inject IMonAnService monAnService
+@inject IApiService monAnService
 
 <PageTitle>Jolly - Đồ Ăn Vặt Ngon</PageTitle>
 <link href="css/Home.css" rel="stylesheet" />
@@ -23,7 +23,7 @@
             @foreach (var item in MonAns)
             {
                 <div class="product-card">
-                    <div class="product-emoji">@item.AnhDaTai</div>
+                    <div class="product-emoji"><img src="@item.AnhDaTai" alt="Alternate Text" /></div>
                     <h3>@item.Ten</h3>
                     <p>@item.Mota</p>
                     <div class="price">@FormatMoney(item.Gia)</div>
@@ -70,7 +70,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var monAns = await monAnService.GetAll();
+        var monAns = await monAnService .GetAsync<List<MonAnDTO>>("MonAn") ?? new();
         MonAns = monAns.Where(x => x.TrangThai == true ).Take(5).ToList();
     }
 

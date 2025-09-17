@@ -29,7 +29,7 @@ namespace API.Models
         public virtual ICollection<Anh>? Anhs { get; set; } = new List<Anh>();
         public virtual ICollection<ChiTietCombo>? ChiTietCombos { get; set; }
         public virtual ICollection<GioHang>? GioHangs { get; set; }
-        public virtual ICollection<HoaDon>? HoaDons { get; set; }
+        public virtual ICollection<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
         public virtual ICollection<ChiTietGiamGia>? ChiTietGiamGias { get; set; }
 
     }

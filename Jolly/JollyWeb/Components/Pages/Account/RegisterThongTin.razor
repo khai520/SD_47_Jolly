@@ -1,16 +1,20 @@
 ﻿@using System.ComponentModel.DataAnnotations
 
-<EditForm Model="@nguoiDung" OnValidSubmit="HandleRegister">
+<EditForm Model="@nguoiDung" OnSubmit="HandleSubmit">
     <DataAnnotationsValidator />
+    <ValidationMessage For="() => nguoiDung.Ho" class="text-danger" />
     <label>Họ</label>
     <InputText class="form-input" @bind-Value="nguoiDung.Ho" />
-    <ValidationMessage For="() => nguoiDung.Ho" />
+
+    <ValidationMessage For="() => nguoiDung.Ten" class="text-danger" />
     <label>Tên</label>
     <InputText class="form-input" @bind-Value="nguoiDung.Ten" />
-    <ValidationMessage For="() => nguoiDung.Ten" />
+
+    <ValidationMessage For="() => nguoiDung.NgaySinh" class="text-danger" />
     <label>Ngày sinh</label>
     <InputDate class="form-input" @bind-Value="nguoiDung.NgaySinh" />
-    <ValidationMessage For="() => nguoiDung.NgaySinh" />
+
+    <ValidationMessage For="() => nguoiDung.GioiTinh" class="text-danger" />
     <label>Giới tính</label>
     <InputSelect class="form-input" @bind-Value="nguoiDung.GioiTinh">
         <option value="">-- Chọn --</option>
@@ -18,43 +22,34 @@
         <option value="Nữ">Nữ</option>
         <option value="Khác">Khác</option>
     </InputSelect>
-    <ValidationMessage For="() => nguoiDung.GioiTinh" />
+
+    <ValidationMessage For="() => nguoiDung.Gmail" class="text-danger" />
     <label>Email</label>
     <InputText class="form-input" @bind-Value="nguoiDung.Gmail" type="email" />
-    <ValidationMessage For="() => nguoiDung.Gmail" />
-    <label>Số điện thoại</label>
-    <InputText class="form-input" @bind-Value="nguoiDung.Sdt" />
-    <ValidationMessage For="() => nguoiDung.Sdt" />
+
     <button class="form-submit" type="submit">Đăng ký</button>
 </EditForm>
 
-@code {
-    private RegisterModel nguoiDung = new();
 
-    private async Task HandleRegister()
+@code {
+    [Parameter] public EventCallback OnClose { get; set; }
+    private RegisterThongtin nguoiDung = new();
+    private EditContext editContext;
+
+    protected override void OnInitialized()
     {
-        
+        editContext = new EditContext(nguoiDung);
     }
 
-    public class RegisterModel
+    private async Task HandleSubmit(EditContext context)
     {
-        [Required(ErrorMessage = "Vui lòng nhập họ")]
-        public string Ho { get; set; } = string.Empty;
+        if (context.Validate())   
+        {
+            await OnClose.InvokeAsync();
+        }
+        else
+        {
 
-        [Required(ErrorMessage = "Vui lòng nhập tên")]
-        public string Ten { get; set; } = string.Empty;
-
-        [Required(ErrorMessage = "Vui lòng chọn ngày sinh")]
-        public DateTime NgaySinh { get; set; } = DateTime.Today;
-
-        public string? GioiTinh { get; set; }
-
-        [Required(ErrorMessage = "Vui lòng nhập email")]
-        [EmailAddress(ErrorMessage = "Email không hợp lệ")]
-        public string? Gmail { get; set; }
-
-        [Required(ErrorMessage = "Vui lòng nhập số điện thoại")]
-        [Phone(ErrorMessage = "Số điện thoại không hợp lệ")]
-        public string? Sdt { get; set; }
+        }
     }
 }

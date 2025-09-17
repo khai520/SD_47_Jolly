@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DBAppContext))]
-    partial class DBAppContextModelSnapshot : ModelSnapshot
+    [Migration("20250917122204_ver2")]
+    partial class ver2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -339,6 +342,9 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<Guid?>("ChiTietMonAnId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<string>("GhiChu")
                         .HasColumnType("nvarchar(max)");
 
@@ -372,6 +378,8 @@ namespace API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ChiTietMonAnId");
 
                     b.HasIndex("GiamGiaId");
 
@@ -849,6 +857,10 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.HoaDon", b =>
                 {
+                    b.HasOne("API.Models.ChiTietMonAn", null)
+                        .WithMany("HoaDons")
+                        .HasForeignKey("ChiTietMonAnId");
+
                     b.HasOne("API.Models.GiamGia", "GiamGia")
                         .WithMany("hoaDons")
                         .HasForeignKey("GiamGiaId");
@@ -877,7 +889,7 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.HoaDonChiTiet", b =>
                 {
                     b.HasOne("API.Models.ChiTietMonAn", "ChiTietMonAn")
-                        .WithMany("HoaDonChiTiets")
+                        .WithMany()
                         .HasForeignKey("ChiTietMonAnId");
 
                     b.HasOne("API.Models.Combo", "Combo")
@@ -972,7 +984,7 @@ namespace API.Migrations
 
                     b.Navigation("GioHangs");
 
-                    b.Navigation("HoaDonChiTiets");
+                    b.Navigation("HoaDons");
                 });
 
             modelBuilder.Entity("API.Models.ChucVu", b =>
