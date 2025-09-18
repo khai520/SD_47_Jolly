@@ -74,7 +74,7 @@
                         </div>
 
                         <div class="mb-3">
-                            <label class="form-label">Chức vụ</label>
+                            <label class="form-label">Chức vụ *</label>
                             <InputSelect @bind-Value="currentnhanvien.ChucVuId" class="form-select">
                                 <option value="@Guid.Empty">-- Chức vụ --</option>
                                 @foreach (var item in chucVus)
@@ -82,7 +82,7 @@
                                     <option value="@item.Id">@item.Ten</option>
                                 }
                             </InputSelect>
-                            @* <button type="button" class="btn-add" @onclick='ThemChucVu'>+</button> *@
+                            <ValidationMessage For="() => currentnhanvien.ChucVuId" />
                         </div>
 
                         <div class="row">
@@ -241,6 +241,18 @@
                 icon = "warning",
                 title = "Tuổi không hợp lệ!",
                 text = "Nhân viên có tuổi không hợp lệ.",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+        if (currentnhanvien.ChucVuId == Guid.Empty)
+        {
+            string checktype = isEdit ? "Sửa" : "Thêm";
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = $"{checktype} thất bại!",
+                text = "Vui lòng chọn chức vụ cho nhân viên.",
                 confirmButtonText = "OK"
             });
             return;
