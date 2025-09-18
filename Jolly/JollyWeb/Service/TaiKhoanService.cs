@@ -41,5 +41,29 @@ namespace JollyWeb.Service
                 return default;
             }
         }
+        public async Task<string?> CheckTk(string username, string sdt)
+        {
+            try
+            {
+                var url = $"TaiKhoan/checktk?tk={username}&sdt={sdt}";
+
+                var response = await _httpclient.PostAsync(url, null); 
+                var content = await response.Content.ReadAsStringAsync();
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return content; 
+                }
+                else
+                {
+                    return content;
+                }
+            }
+            catch (Exception ex)
+            {
+                return $"Lỗi khi gọi API: {ex.Message}";
+            }
+        }
+
     }
 }

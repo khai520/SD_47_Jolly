@@ -18,7 +18,8 @@
     "Projects": [
       {
         "Path": "JollyWeb\\JollyWeb.csproj",
-        "Action": "Start"
+        "Action": "Start",
+        "DebugTarget": "https"
       },
       {
         "Path": "ViewAPI\\ViewAPI.csproj",

@@ -1,5 +1,10 @@
 ﻿@using System.ComponentModel.DataAnnotations
-
+@using AutoMapper
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
+@inject IApiService apiService
+@inject IMapper _mapper
+@inject IJSRuntime JS
+<link href="css/Register.css" rel="stylesheet" />
 <EditForm Model="@nguoiDung" OnSubmit="HandleSubmit">
     <DataAnnotationsValidator />
     <ValidationMessage For="() => nguoiDung.Ho" class="text-danger" />
@@ -32,20 +37,147 @@
 
 
 @code {
-    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<string> OnTabChanged { get; set; }
     private RegisterThongtin nguoiDung = new();
+    private List<NguoiDungDTO> nguoiDungDTO = new();
+    private NguoiDungDTO nguoiDungnew = new();
+    private TaiKhoan  taikhoannew = new();
     private EditContext editContext;
-
+    private RegisterModel registerModel { get; set; } = new();
+    private Guid Idnew;
     protected override void OnInitialized()
     {
         editContext = new EditContext(nguoiDung);
     }
+    protected override async Task OnInitializedAsync()
+    {
+        nguoiDungDTO = await apiService.GetAsync<List<NguoiDungDTO>>("NguoiDung") ?? new();
+        registerModel = await LocalStorage.GetItemAsync<RegisterModel>("DangKyIndex") ?? new();
+        var dto = nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT);
+        nguoiDung = dto != null ? new RegisterThongtin
+        {
+            Ho = dto.Ho,
+            Ten = dto.Ten,
+            NgaySinh = dto.NgaySinh,
+            GioiTinh = dto.GioiTinh,
+            Gmail = dto.Gmail
+        } : new RegisterThongtin();
 
+    }
     private async Task HandleSubmit(EditContext context)
     {
         if (context.Validate())   
         {
-            await OnClose.InvokeAsync();
+            if (nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT) != null)
+            {
+                Idnew = nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT).Id;
+                nguoiDungnew = new NguoiDungDTO()
+                    {
+                    Ho = nguoiDung.Ho,
+                    Ten = nguoiDung.Ten,
+                    NgaySinh = nguoiDung.NgaySinh,
+                    GioiTinh = nguoiDung.GioiTinh,
+                    Gmail = nguoiDung.Gmail
+                    };
+                var result = await apiService.PutAsync<NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
+                if (result)
+                {
+
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "success",
+                        text = "Tạo tài khoản thành công",
+                        customClass = new { popup = "swal-success" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "error",
+                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
+                        customClass = new { popup = "swal-error" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+            }
+            else
+            {
+                nguoiDungnew = new NguoiDungDTO()
+                {
+                    Ho = nguoiDung.Ho,
+                    Ten = nguoiDung.Ten,
+                    NgaySinh = nguoiDung.NgaySinh,
+                    GioiTinh = nguoiDung.GioiTinh,
+                    Gmail = nguoiDung.Gmail
+                };
+                var result2 = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
+                if (result2 != null)
+                {
+                    Idnew = result2.Id;
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "success",
+                        text = "Tạo tài khoản thành công",
+                        customClass = new { popup = "swal-success" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "error",
+                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
+                        customClass = new { popup = "swal-error" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+            }
+            taikhoannew = new TaiKhoan()
+            {
+                NguoiDungId = Idnew,
+                UserName = registerModel.Username,
+                Password = registerModel.Password
+            };
+            var result3 = await apiService.PostAsync<TaiKhoan , TaiKhoan>("TaiKhoan", _mapper.Map<TaiKhoan>(taikhoannew));
+                if (result3 != null)
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "success",
+                        text = "Tạo tài khoản thành công",
+                        customClass = new { popup = "swal-success" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+                else
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "error",
+                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
+                        customClass = new { popup = "swal-error" },
+                        timer = 2000,
+                        showConfirmButton = false,
+                        position = "top"
+                    });
+                }
+            if (OnTabChanged.HasDelegate)
+            {
+                await OnTabChanged.InvokeAsync("login");
+            }
         }
         else
         {

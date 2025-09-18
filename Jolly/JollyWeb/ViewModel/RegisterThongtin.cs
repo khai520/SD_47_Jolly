@@ -12,7 +12,7 @@ namespace JollyWeb.ViewModel
 
         [Required(ErrorMessage = "Vui lòng chọn ngày sinh")]
         [MinAge(16, 70)]
-        public DateTime? NgaySinh { get; set; }   
+        public DateTime NgaySinh { get; set; }   
 
         [Required(ErrorMessage = "Vui lòng chọn giới tính")]
         public string? GioiTinh { get; set; }

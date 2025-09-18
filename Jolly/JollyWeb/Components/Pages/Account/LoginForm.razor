@@ -8,7 +8,8 @@
     <InputText class="form-input" placeholder="Email" @bind-Value="loginModel.TaiKhoan" />
     <ValidationMessage For='() => loginModel.MatKhau' class="text-danger" />
     <InputText class="form-input" placeholder="Mật khẩu" @bind-Value="loginModel.MatKhau" type="password" />
-    
+
+
     @(ErrorMessage)
     <button class="form-submit" type="submit">Đăng nhập</button>
 </EditForm>
@@ -37,6 +38,5 @@
             ErrorMessage = "Lỗi đăng nhập: " + ex.Message;
         }
     }
-
 
 }

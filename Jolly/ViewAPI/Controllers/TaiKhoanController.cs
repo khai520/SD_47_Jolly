@@ -48,5 +48,27 @@ namespace ViewAPI.Controllers
             var dto = _mapper.Map<TaiKhoanDTO>(user);
             return Ok(dto);
         }
+        [HttpPost("checktk")]
+        public IActionResult CheckTk(string tk, string sdt)
+        {
+
+            if (_context.taiKhoans.Any(x => x.UserName == tk))
+            {
+                return BadRequest("Tên tài khoản đã tồn tại!");
+            }
+
+             
+            bool sdtDaCoTaiKhoan = _context.taiKhoans
+            .Include(t => t.NguoiDung)
+            .Any(t => t.NguoiDung != null && t.NguoiDung.Sdt == sdt);
+
+            if (sdtDaCoTaiKhoan)
+            {
+                return BadRequest("Số điện thoại này đã có tài khoản!");
+            }
+
+            return Ok();
+        }
+
     }
 }
