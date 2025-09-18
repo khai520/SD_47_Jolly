@@ -28,7 +28,7 @@ namespace Admin.Service
         public async Task<UploadResult?> UploadImageAsync(IBrowserFile file)
         {
             var content = new MultipartFormDataContent();
-            var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024); // 5MB
+            var stream = file.OpenReadStream(maxAllowedSize: 5 * 1024 * 1024); 
 
             var fileContent = new StreamContent(stream)
             {

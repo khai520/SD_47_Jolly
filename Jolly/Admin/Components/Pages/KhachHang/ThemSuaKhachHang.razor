@@ -61,7 +61,7 @@
                             </div>
                             <div class="col-md-6">
                                 <div class="mb-3">
-                                    <label class="form-label">Email *</label>
+                                    <label class="form-label">Email</label>
                                     <InputText class="form-control" @bind-Value="currentKhachHang.Gmail" placeholder="Nhập email" />
                                     <ValidationMessage For="() => currentKhachHang.Gmail" />
                                 </div>
@@ -207,7 +207,7 @@
                 {
                     icon = "warning",
                     title = "Tuổi không hợp lệ!",
-                    text = "Khách hàng phải từ 13 tuổi trở lên.",
+                    text = "Khách hàng phải từ 16 tuổi trở lên.",
                     confirmButtonText = "OK"
                 });
                 return;

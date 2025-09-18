@@ -183,7 +183,7 @@
                                             <span>@(nhaCungCapList.FirstOrDefault(x => x.Id == chiTiet.NhaCungCapId)?.Ten ?? "N/A")</span>
                                         </div>
                                         <div class="info-item">
-                                            <strong>Đóng gói:</strong>
+                                            <strong>Nguyên liệu:</strong>
                                             <span>@(dongGoiList.FirstOrDefault(x => x.Id == chiTiet.NguyenLieuId)?.Ten ?? "N/A")</span>
                                         </div>
                                         <div class="info-item">
@@ -337,7 +337,7 @@
         loaiViList = await apiService.GetAsync<List<LoaiVi>>("LoaiVi") ?? new();
         kichCoList = await apiService.GetAsync<List<KichCo>>("KichCo") ?? new();
         nhaCungCapList = await apiService.GetAsync<List<NhaCungCap>>("NhaCungCap") ?? new();
-        dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("DongGoi") ?? new();
+        dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("NguyenLieu") ?? new();
         theLoaisList = await apiService.GetAsync<List<TheLoai>>("TheLoai") ?? new();
         thuongHieusList = await apiService.GetAsync<List<ThuongHieu>>("ThuongHieu") ?? new();
     }
@@ -585,7 +585,7 @@
         {
             try
             {
-                var result = await apiService.DeleteAsync<Anh>("Anh", _mapper.Map<Anh>(item));
+                var result = await apiService.DeleteAsync<Guid>("Anh", _mapper.Map<Anh>(item).Id);
                 if (!result)
                 {
                     continue;

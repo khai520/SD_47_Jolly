@@ -18,8 +18,8 @@ namespace API.HeThong
                     src.MonAn != null && !string.IsNullOrWhiteSpace(src.MonAn.Ten)
                     ? src.MonAn.Ten : "")) 
                 .ForMember(dg => dg.NguyenLieu, opt => opt.MapFrom(src =>
-                    src.DongGoi != null && !string.IsNullOrWhiteSpace(src.DongGoi.Ten)
-                    ? src.DongGoi.Ten : ""))
+                    src.NguyenLieu != null && !string.IsNullOrWhiteSpace(src.NguyenLieu.Ten)
+                    ? src.NguyenLieu.Ten : ""))
                 .ForMember(ncc => ncc.NhaCungCap, opt => opt.MapFrom(src =>
                     src.NhaCungCap != null && !string.IsNullOrWhiteSpace(src.NhaCungCap.Ten)
                     ? src.NhaCungCap.Ten : ""))
@@ -35,7 +35,7 @@ namespace API.HeThong
             CreateMap<ChiTietMonAnDTO, ChiTietMonAn>()
                 .ForMember(dest => dest.MonAn, opt => opt.Ignore())
                 .ForMember(dest => dest.NhaCungCap, opt => opt.Ignore())
-                .ForMember(dest => dest.DongGoi, opt => opt.Ignore())
+                .ForMember(dest => dest.NguyenLieu, opt => opt.Ignore())
                 .ForMember(dest => dest.LoaiVi, opt => opt.Ignore())
                 .ForMember(dest => dest.KichCo, opt => opt.Ignore());
 
@@ -79,13 +79,13 @@ namespace API.HeThong
                     src.TheLoai != null && !string.IsNullOrWhiteSpace(src.TheLoai.Ten)
                     ? src.TheLoai.Ten : ""))
                 .ForMember(a => a.AnhDaTai, opt => opt.MapFrom(src =>
-                    src.ChiTietMonAns != null &&
-                    src.ChiTietMonAns.Any() &&
-                    src.ChiTietMonAns.First().Anhs != null &&
-                    src.ChiTietMonAns.First().Anhs.Any() &&
-                    !string.IsNullOrWhiteSpace(src.ChiTietMonAns.First().Anhs.First().DuongDan)
-                        ? src.ChiTietMonAns.First().Anhs.First().DuongDan
-                        : ""))
+                    src.ChiTietMonAns != null
+                    ? src.ChiTietMonAns
+                        .Where(ct => ct.Anhs != null && ct.Anhs.Any() &&
+                                        !string.IsNullOrWhiteSpace(ct.Anhs.First().DuongDan))
+                        .Select(ct => ct.Anhs.First().DuongDan)
+                        .FirstOrDefault() ?? ""
+                    : ""))
                 .ForMember(dg => dg.Gia, opt => opt.MapFrom(src =>
                     src.ChiTietMonAns != null &&
                     src.ChiTietMonAns.Any() &&

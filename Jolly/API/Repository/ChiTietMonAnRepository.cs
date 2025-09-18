@@ -19,7 +19,7 @@ namespace API.Repository
                 .Where(x => x.MonAnId == id)
                 .Include(c => c.MonAn)
                 .Include(c => c.LoaiVi)
-                .Include(c => c.DongGoi)
+                .Include(c => c.NguyenLieu)
                 .Include(c => c.KichCo)
                 .Include(c => c.NhaCungCap)
                 .Include(c => c.Anhs)
@@ -32,7 +32,7 @@ namespace API.Repository
             return await _context.chiTietMonAns
                 .Include(c => c.MonAn)
                 .Include(c => c.LoaiVi)
-                .Include(c => c.DongGoi)
+                .Include(c => c.NguyenLieu)
                 .Include(c => c.KichCo)
                 .Include(c => c.NhaCungCap)
                 .Include(c => c.Anhs)

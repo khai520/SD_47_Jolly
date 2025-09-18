@@ -22,13 +22,7 @@
         <div class="product-grid">
             @foreach (var item in MonAns)
             {
-                <div class="product-card">
-                    <div class="product-emoji"><img src="@item.AnhDaTai" alt="Alternate Text" /></div>
-                    <h3>@item.Ten</h3>
-                    <p>@item.Mota</p>
-                    <div class="price">@FormatMoney(item.Gia)</div>
-                    <button class="add-to-cart" @onclick="() => AddToCart(item)">Thêm vào giỏ 🛒</button>
-                </div>
+                <JollyWeb.Components.Pages.SanPham.SanPham monAn="item"/>
             }
         </div>
     </div>
@@ -74,11 +68,7 @@
         MonAns = monAns.Where(x => x.TrangThai == true ).Take(5).ToList();
     }
 
-    private void AddToCart(MonAnDTO item)
-    {
-        
-        JS.InvokeVoidAsync("alert", $"✅ Đã thêm '{item.Ten}' vào giỏ hàng!");
-    }
+
 
     private void ToggleCart()
     {
@@ -90,8 +80,5 @@
         Console.WriteLine("Test");
         await JS.InvokeVoidAsync("document.getElementById", "products");
     }
-    private string FormatMoney(float amount)
-    {
-        return string.Format("{0:N0} VND", amount);
-    }
+
 }

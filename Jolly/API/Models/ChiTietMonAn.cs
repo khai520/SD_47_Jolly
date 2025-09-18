@@ -12,7 +12,7 @@ namespace API.Models
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string? Mota { get; set; }
         public Guid? LoaiViId { get; set; }
-        public Guid? DongGoiId { get; set; }
+        public Guid? NguyenLieuId { get; set; }
         
         public Guid? NhaCungCapId { get; set; }
         public Guid? KichCoId { get; set; }
@@ -22,7 +22,7 @@ namespace API.Models
         public string MonAnId { get; set; }
         public virtual MonAn? MonAn { get; set; }
         public virtual NhaCungCap? NhaCungCap { get; set; }
-        public virtual NguyenLieu? DongGoi { get; set; }
+        public virtual NguyenLieu? NguyenLieu { get; set; }
         public virtual LoaiVi? LoaiVi { get; set; }
         public virtual KichCo? KichCo { get; set; }
         [JsonIgnore]
