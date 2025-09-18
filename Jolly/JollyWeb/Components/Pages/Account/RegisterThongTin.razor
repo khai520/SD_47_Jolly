@@ -46,6 +46,7 @@
     private EditContext editContext;
     private RegisterModel registerModel { get; set; } = new();
     private Guid Idnew;
+    private KhachHangDTO khachHangnew;
     protected override void OnInitialized()
     {
         editContext = new EditContext(nguoiDung);
@@ -93,6 +94,11 @@
             };
             var result2 = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
             Idnew = result2.Id;
+            khachHangnew = new KhachHangDTO()
+            {
+                NguoiDungId = Idnew
+            };
+            await apiService.PostAsync<KhachHang, KhachHang>("KhachHang", _mapper.Map<KhachHang>(khachHangnew));
         }
         taikhoannew = new TaiKhoan
         {
