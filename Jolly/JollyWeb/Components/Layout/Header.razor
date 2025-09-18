@@ -17,6 +17,7 @@
         @if (!string.IsNullOrWhiteSpace(username))
         {
             @username
+            <button class="auth-btn logout" @onclick="Logout">Đăng xuất</button>
         } 
         else
         {
@@ -54,6 +55,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
+        
         if (firstRender && !_hasInitialized)
         {
             var role = await JS.InvokeAsync<string>("localStorage.getItem", "KhachHangRole");
@@ -64,4 +66,18 @@
         }
     }
     private void GoToCart() => Navigation.NavigateTo("/giohang");
+    private async Task Logout()
+    {
+
+        await JS.InvokeVoidAsync("localStorage.removeItem", "KhachHangRole");
+        await JS.InvokeVoidAsync("localStorage.removeItem", "KhachHangUserName");
+
+        username = "";
+
+
+        Navigation.NavigateTo("/");
+
+        StateHasChanged();
+    }
+
 }

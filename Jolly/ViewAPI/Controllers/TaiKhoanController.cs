@@ -28,7 +28,7 @@ namespace ViewAPI.Controllers
                 .Include(t => t.NguoiDung).ThenInclude(n => n.NhanVien).ThenInclude(cv => cv.ChucVu)
                 .FirstOrDefault(t => t.UserName == model.TaiKhoan && t.Password == model.MatKhau);
 
-            if (user == null)
+            if (user == null || user.NguoiDung == null || user.NguoiDung.NhanVien == null)
                 return BadRequest("Sai tài khoản hoặc mật khẩu.");
 
             var dto = _mapper.Map<TaiKhoanDTO>(user);
@@ -42,7 +42,7 @@ namespace ViewAPI.Controllers
                 .Include(t => t.NguoiDung).ThenInclude(n => n.KhachHang)
                 .FirstOrDefault(t => t.UserName == model.TaiKhoan && t.Password == model.MatKhau);
 
-            if (user == null)
+            if (user == null || user.NguoiDung == null || user.NguoiDung.KhachHang == null)
                 return BadRequest("Sai tài khoản hoặc mật khẩu.");
 
             var dto = _mapper.Map<TaiKhoanDTO>(user);
