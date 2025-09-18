@@ -21,6 +21,12 @@ namespace ViewAPI.Controllers
             _idColumnName = "Id";
             monAnRepository = repository;
         }
-
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<MonAn>>> GetAll()
+        {
+            var result = await monAnRepository.GetAllAsync();
+            var dto = _mapper.Map<IEnumerable<MonAnDTO>>(result);
+            return Ok(dto);
+        }
     }
 }

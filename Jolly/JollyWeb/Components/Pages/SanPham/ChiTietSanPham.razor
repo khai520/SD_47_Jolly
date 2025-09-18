@@ -2,119 +2,150 @@
 @using API.Models.DTO
 @inject IJSRuntime JSRuntime
 @inject IChiTietMonAnService ChiTietMonAn
+
 <link href="css/ChiTietSanPham.css" rel="stylesheet" />
-<PageTitle>@(Product?.Ten ?? "Chi tiết sản phẩm") - Jolly</PageTitle>
+<PageTitle>@(ProductName ?? "Chi tiết sản phẩm") - Jolly</PageTitle>
 
 <main>
-    @if (Product != null)
-    {
-        <section class="product-detail">
-            <div class="container content-container">
-                <div class="container detail-container">
-                    <div class="product-image">
-                        @if (Product.DanhSachAnh?.Any() == true)
-                        {
-                            <img src="@Product.DanhSachAnh.First().DuongDan" alt="@Product.Ten" />
-                        }
-                        else
-                        {
-                            <img src="https://via.placeholder.com/500x500.png?text=@Uri.EscapeDataString(Product.Ten)" alt="@Product.Ten" />
-                        }
-                    </div>
-                    <div class="product-info">
-                        <h2 class="detail-title">@Product.Ten</h2>
-
-                        <div class="detail-price">
-                            @if (Product.GiaGiam > 0 && Product.GiaGiam < Product.Gia)
-                            {
-                                <span class="original-price">@Product.Gia.ToString("N0")₫</span>
-                                <span class="sale-price">@Product.GiaGiam.ToString("N0")₫</span>
-                            }
-                            else
-                            {
-                                <span>Giá: @Product.Gia.ToString("N0")₫</span>
-                            }
-                        </div>
-
-                        @if (!string.IsNullOrEmpty(Product.Mota))
-                        {
-                            <p class="detail-description">@Product.Mota</p>
-                        }
-
-                        <div class="quantity-selector">
-                            <label for="quantity">Số lượng:</label>
-                            <div class="quantity-controls">
-                                <button type="button" @onclick="DecreaseQuantity" disabled="@(selectedQuantity <= 1)">-</button>
-                                <input type="number" id="quantity" @bind="selectedQuantity" min="1" max="@Product.Soluong" />
-                                <button type="button" @onclick="IncreaseQuantity" disabled="@(selectedQuantity >= Product.Soluong)">+</button>
-                            </div>
-                            <span class="stock-info">(@Product.Soluong có sẵn)</span>
-                        </div>
-
-                        <button class="add-to-cart" @onclick="AddToCart" disabled="@(!Product.TrangThai || Product.Soluong <= 0)">
-                            @if (Product.TrangThai && Product.Soluong > 0)
-                            {
-                                <text>🛒 Thêm vào giỏ</text>
-                            }
-                            else
-                            {
-                                <text>❌ Hết hàng</text>
-                            }
-                        </button>
-
-
-                    </div>
-                </div>
-                <div class="extra-info">
-                    @if (!string.IsNullOrEmpty(Product.LoaiVi))
-                    {
-                        <div class="info-item">
-                            <h4>📂 Hương Vị:</h4>
-                            <p>@Product.LoaiVi</p>
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Product.KichCo))
-                    {
-                        <div class="info-item">
-                            <h4> Kích Cỡ:</h4>
-                            <p>@Product.KichCo</p>
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Product.NguyenLieu))
-                    {
-                        <div class="info-item">
-                            <h4>📦 Đóng gói:</h4>
-                            <p>@Product.NguyenLieu</p>
-                        </div>
-                    }
-
-                    @if (!string.IsNullOrEmpty(Product.NhaCungCap))
-                    {
-                        <div class="info-item">
-                            <h4>🏭 Nhà cung cấp:</h4>
-                            <p>@Product.NhaCungCap</p>
-                        </div>
-                    }
-
-                    @if (Product.SoNgayHSD > 0)
-                    {
-                        <div class="info-item">
-                            <h4>📅 Hạn sử dụng:</h4>
-                            <p>@Product.SoNgayHSD ngày</p>
-                        </div>
-                    }
-                </div>
-            </div>
-        </section>
-    }
-    else if (isLoading)
+    @if (isLoading)
     {
         <div class="loading-container">
             <div class="loading-spinner"></div>
             <p>Đang tải sản phẩm...</p>
         </div>
+    }
+    else if (ChiTietList?.Any() == true)
+    {
+        <section class="product-detail">
+            <div class="container content-container">
+                <div class="container detail-container">
+
+                    <!-- Hình ảnh -->
+                    <div class="product-image">
+                        @if (selectedChiTiet?.DanhSachAnh?.Any() == true)
+                        {
+                            <img src="@selectedChiTiet.DanhSachAnh.First().DuongDan" alt="@ProductName" />
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/500x500.png?text=@Uri.EscapeDataString(ProductName)" alt="@ProductName" />
+                        }
+                    </div>
+
+                    <!-- Thông tin -->
+                    <div class="product-info">
+                        <h2 class="detail-title">@ProductName</h2>
+
+                        <!-- Giá -->
+                        <div class="detail-price">
+                            @if (selectedChiTiet != null)
+                            {
+                                if (selectedChiTiet.GiaGiam > 0 && selectedChiTiet.GiaGiam < selectedChiTiet.Gia)
+                                {
+                                    <span class="original-price">@selectedChiTiet.Gia.ToString("N0")₫</span>
+                                    <span class="sale-price">@selectedChiTiet.GiaGiam.ToString("N0")₫</span>
+                                }
+                                else
+                                {
+                                    <span>Giá: @selectedChiTiet.Gia.ToString("N0")₫</span>
+                                }
+                            }
+                        </div>
+
+                        <!-- Mô tả -->
+                        @if (!string.IsNullOrEmpty(ProductDescription))
+                        {
+                            <p class="detail-description">@ProductDescription</p>
+                        }
+
+                        <!-- Lựa chọn chi tiết -->
+                        <div class="detail-options">
+                            <label for="chiTietSelect">📂 Chọn phân loại:</label>
+                            <select id="chiTietSelect" @bind="selectedChiTietId">
+                                @foreach (var ct in ChiTietList)
+                                {
+                                    <option value="@ct.Id">@($"{ct.LoaiVi ?? ""} {ct.KichCo ?? ""} {ct.NguyenLieu ?? ""}".Trim())</option>
+                                }
+                            </select>
+
+                        </div>
+
+                        <!-- Số lượng -->
+                        @if (selectedChiTiet != null)
+                        {
+                            <div class="quantity-selector">
+                                <label>Số lượng:</label>
+                                <div class="quantity-controls">
+                                    <button type="button" @onclick="DecreaseQuantity" disabled="@(selectedQuantity <= 1)">-</button>
+                                    <input type="number" @bind="selectedQuantity" min="1" max="@selectedChiTiet.Soluong" />
+                                    <button type="button" @onclick="IncreaseQuantity" disabled="@(selectedQuantity >= selectedChiTiet.Soluong)">+</button>
+                                </div>
+                                <span class="stock-info">(@selectedChiTiet.Soluong có sẵn)</span>
+                            </div>
+
+                            <button class="add-to-cart"
+                                    @onclick="AddToCart"
+                                    disabled="@(!selectedChiTiet.TrangThai || selectedChiTiet.Soluong <= 0)">
+                                @if (selectedChiTiet.TrangThai && selectedChiTiet.Soluong > 0)
+                                {
+                                    <text>🛒 Thêm vào giỏ</text>
+                                }
+                                else
+                                {
+                                    <text>❌ Hết hàng</text>
+                                }
+                            </button>
+                        }
+                    </div>
+                </div>
+
+                <!-- Extra info -->
+                @if (selectedChiTiet != null)
+                {
+                    <div class="extra-info">
+                        @if (!string.IsNullOrEmpty(selectedChiTiet.LoaiVi))
+                        {
+                            <div class="info-item">
+                                <h4>📂 Hương vị:</h4>
+                                <p>@selectedChiTiet.LoaiVi</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(selectedChiTiet.KichCo))
+                        {
+                            <div class="info-item">
+                                <h4>📏 Kích cỡ:</h4>
+                                <p>@selectedChiTiet.KichCo</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(selectedChiTiet.NguyenLieu))
+                        {
+                            <div class="info-item">
+                                <h4>📦 Đóng gói:</h4>
+                                <p>@selectedChiTiet.NguyenLieu</p>
+                            </div>
+                        }
+
+                        @if (!string.IsNullOrEmpty(selectedChiTiet.NhaCungCap))
+                        {
+                            <div class="info-item">
+                                <h4>🏭 Nhà cung cấp:</h4>
+                                <p>@selectedChiTiet.NhaCungCap</p>
+                            </div>
+                        }
+
+                        @if (selectedChiTiet.SoNgayHSD > 0)
+                        {
+                            <div class="info-item">
+                                <h4>📅 Hạn sử dụng:</h4>
+                                <p>@selectedChiTiet.SoNgayHSD ngày</p>
+                            </div>
+                        }
+                    </div>
+                }
+            </div>
+        </section>
     }
     else
     {
@@ -126,11 +157,27 @@
     }
 </main>
 
-
 @code {
     [Parameter] public string MonAnId { get; set; } = "";
 
-    private ChiTietMonAnDTO? Product { get; set; }
+    private List<ChiTietMonAnDTO> ChiTietList = new();
+    private ChiTietMonAnDTO? selectedChiTiet;
+    private Guid? selectedChiTietId;
+
+    private Guid? SelectedChiTietId
+    {
+        get => selectedChiTietId;
+        set
+        {
+            selectedChiTietId = value;
+            UpdateSelectedChiTiet();
+        }
+    }
+
+
+    private string? ProductName;
+    private string? ProductDescription;
+
     private int selectedQuantity = 1;
     private bool isLoading = true;
 
@@ -141,10 +188,8 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        if (Product?.MonAnId == MonAnId)
-        {
-            await LoadProduct();
-        }
+        // Khi route đổi sang sản phẩm khác
+        await LoadProduct();
     }
 
     private async Task LoadProduct()
@@ -154,14 +199,21 @@
 
         try
         {
+            await Task.Delay(300); // giả lập loading
+            ChiTietList = await ChiTietMonAn.GetChiTiet(MonAnId) ?? new();
 
-            await Task.Delay(500); 
-            var take = await ChiTietMonAn.GetChiTiet(MonAnId);
-            Product = take.FirstOrDefault();
+            if (ChiTietList.Any())
+            {
+                var first = ChiTietList.First();
+                ProductName = first.Ten;
+                ProductDescription = first.Mota;
+                selectedChiTietId = first.Id;
+                UpdateSelectedChiTiet();
+            }
         }
-        catch (Exception ex)
+        catch
         {
-            Product = null;
+            ChiTietList = new();
         }
         finally
         {
@@ -170,11 +222,25 @@
         }
     }
 
-    
+    private void OnChiTietChanged(ChangeEventArgs e)
+    {
+        if (Guid.TryParse(e.Value?.ToString(), out var guid))
+        {
+            selectedChiTietId = guid;
+            UpdateSelectedChiTiet();
+        }
+    }
+
+
+    private void UpdateSelectedChiTiet()
+    {
+        selectedChiTiet = ChiTietList.FirstOrDefault(c => c.Id == selectedChiTietId);
+        selectedQuantity = 1;
+    }
 
     private void IncreaseQuantity()
     {
-        if (selectedQuantity < Product.Soluong)
+        if (selectedChiTiet != null && selectedQuantity < selectedChiTiet.Soluong)
         {
             selectedQuantity++;
         }
@@ -184,29 +250,22 @@
     {
         if (selectedQuantity > 1)
         {
-            selectedQuantity--; 
+            selectedQuantity--;
         }
     }
 
     private async Task AddToCart()
     {
-        if (Product == null || !Product.TrangThai || Product.Soluong <= 0)
-            return;
+        if (selectedChiTiet == null) return;
 
         try
         {
-            // TODO: Implement actual cart service
-            // await CartService.AddToCartAsync(Product.Id, selectedQuantity);
-            
-            await JSRuntime.InvokeVoidAsync("alert", $"Đã thêm {selectedQuantity} {Product.Ten} vào giỏ hàng!");
-            
-            // Optional: Navigate to cart or show success message
+            await JSRuntime.InvokeVoidAsync("alert",
+                $"Đã thêm {selectedQuantity} {ProductName} ({selectedChiTiet.LoaiVi} {selectedChiTiet.KichCo} {selectedChiTiet.NguyenLieu}) vào giỏ hàng!");
         }
-        catch (Exception ex)
+        catch
         {
-            // TODO: Log exception and show error message
             await JSRuntime.InvokeVoidAsync("alert", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
         }
     }
 }
-

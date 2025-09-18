@@ -87,10 +87,12 @@ namespace API.HeThong
                         .FirstOrDefault() ?? ""
                     : ""))
                 .ForMember(dg => dg.Gia, opt => opt.MapFrom(src =>
-                    src.ChiTietMonAns != null &&
-                    src.ChiTietMonAns.Any() &&
-                    src.ChiTietMonAns.First().TrangThai == true
-                    ? src.ChiTietMonAns.First().Gia : 0))
+                    src.ChiTietMonAns != null
+                        ? src.ChiTietMonAns
+                            .Where(ct => ct.TrangThai == true && ct.Gia > 0)
+                            .Select(ct => ct.Gia)
+                            .FirstOrDefault()
+                        : 0))
                 .ReverseMap();
             CreateMap<MonAnDTO, MonAn>()
                 .ForMember(dest => dest.ThuongHieu, opt => opt.Ignore())

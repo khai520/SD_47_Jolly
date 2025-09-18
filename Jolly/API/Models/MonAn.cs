@@ -17,9 +17,9 @@ namespace API.Models
         public string? Mota { get; set; }
         public Guid? TheLoaiId { get; set; }
         public Guid? ThuongHieuId { get; set; }
-        [JsonIgnore]
         public virtual ThuongHieu? ThuongHieu { get; set; }
         public virtual TheLoai? TheLoai { get; set; }
+        [JsonIgnore]
         public virtual ICollection<ChiTietMonAn>? ChiTietMonAns { get; set; }
     }
 }

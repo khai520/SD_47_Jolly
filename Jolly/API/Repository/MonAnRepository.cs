@@ -19,12 +19,16 @@ namespace API.Repository
             return await _context.monAns
                 .Include(m => m.ChiTietMonAns)?
                 .ThenInclude(m => m.Anhs)
+                .Include(m => m.TheLoai)
+                .Include(m => m.ThuongHieu)
                 .ToListAsync();
         }
 
         public override async Task<MonAn> GetByIdAsync(string id)
         {
               return await _context.monAns
+                .Include(m => m.TheLoai)
+                .Include(m => m.ThuongHieu)
                 .Include(m => m.ChiTietMonAns)?
                 .ThenInclude(m => m.Anhs)
                 .FirstOrDefaultAsync(m => m.Id == id);
