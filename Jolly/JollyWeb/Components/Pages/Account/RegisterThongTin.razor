@@ -149,7 +149,7 @@
                 UserName = registerModel.Username,
                 Password = registerModel.Password
             };
-            var result3 = await apiService.PostAsync<TaiKhoan , TaiKhoan>("TaiKhoan", _mapper.Map<TaiKhoan>(taikhoannew));
+            var result3 = await apiService.PostAsync<TaiKhoan , TaiKhoan>("TaiKhoan", taikhoannew);
                 if (result3 != null)
                 {
                     await JS.InvokeVoidAsync("Swal.fire", new
