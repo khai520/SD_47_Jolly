@@ -2,6 +2,7 @@
 @using AutoMapper
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IApiService apiService
+@inject ITaiKhoanService taiKhoanService
 @inject IMapper _mapper
 @inject IJSRuntime JS
 <link href="css/Register.css" rel="stylesheet" />
@@ -66,122 +67,66 @@
     }
     private async Task HandleSubmit(EditContext context)
     {
-        if (context.Validate())   
+        if (!context.Validate()) return;
+        if (nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT) != null)
         {
-            if (nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT) != null)
-            {
-                Idnew = nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT).Id;
-                nguoiDungnew = new NguoiDungDTO()
-                    {
-                    Ho = nguoiDung.Ho,
-                    Ten = nguoiDung.Ten,
-                    NgaySinh = nguoiDung.NgaySinh,
-                    GioiTinh = nguoiDung.GioiTinh,
-                    Gmail = nguoiDung.Gmail
-                    };
-                var result = await apiService.PutAsync<NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
-                if (result)
+            Idnew = nguoiDungDTO.FirstOrDefault(x => x.Sdt == registerModel.SDT).Id;
+            nguoiDungnew = new NguoiDungDTO()
                 {
-
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "success",
-                        text = "Tạo tài khoản thành công",
-                        customClass = new { popup = "swal-success" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-                else
-                {
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "error",
-                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
-                        customClass = new { popup = "swal-error" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-            }
-            else
-            {
-                nguoiDungnew = new NguoiDungDTO()
-                {
-                    Ho = nguoiDung.Ho,
-                    Ten = nguoiDung.Ten,
-                    NgaySinh = nguoiDung.NgaySinh,
-                    GioiTinh = nguoiDung.GioiTinh,
-                    Gmail = nguoiDung.Gmail
+                Ho = nguoiDung.Ho,
+                Ten = nguoiDung.Ten,
+                NgaySinh = nguoiDung.NgaySinh,
+                GioiTinh = nguoiDung.GioiTinh,
+                Gmail = nguoiDung.Gmail
                 };
-                var result2 = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
-                if (result2 != null)
-                {
-                    Idnew = result2.Id;
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "success",
-                        text = "Tạo tài khoản thành công",
-                        customClass = new { popup = "swal-success" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-                else
-                {
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "error",
-                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
-                        customClass = new { popup = "swal-error" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-            }
-            taikhoannew = new TaiKhoan()
-            {
-                NguoiDungId = Idnew,
-                UserName = registerModel.Username,
-                Password = registerModel.Password
-            };
-            var result3 = await apiService.PostAsync<TaiKhoan , TaiKhoan>("TaiKhoan", taikhoannew);
-                if (result3 != null)
-                {
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "success",
-                        text = "Tạo tài khoản thành công",
-                        customClass = new { popup = "swal-success" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-                else
-                {
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "error",
-                        text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
-                        customClass = new { popup = "swal-error" },
-                        timer = 2000,
-                        showConfirmButton = false,
-                        position = "top"
-                    });
-                }
-            if (OnTabChanged.HasDelegate)
-            {
-                await OnTabChanged.InvokeAsync("login");
-            }
+            var result = await apiService.PutAsync<NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
         }
         else
         {
-
+            nguoiDungnew = new NguoiDungDTO()
+            {
+                Ho = nguoiDung.Ho,
+                Ten = nguoiDung.Ten,
+                NgaySinh = nguoiDung.NgaySinh,
+                GioiTinh = nguoiDung.GioiTinh,
+                Gmail = nguoiDung.Gmail
+            };
+            var result2 = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
+            Idnew = result2.Id;
         }
+        taikhoannew = new TaiKhoan
+        {
+            NguoiDungId = Idnew,
+            UserName = registerModel.Username,
+            Password = registerModel.Password
+        };
+
+        var taiKhoanResult = await taiKhoanService.AddTaiKhoanAsync(taikhoannew);
+        if (taiKhoanResult != null)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "success",
+                text = "Tạo tài khoản thành công",
+                timer = 2000,
+                showConfirmButton = false,
+                position = "top"
+            });
+
+            if (OnTabChanged.HasDelegate)
+                await OnTabChanged.InvokeAsync("login");
+        }
+        else
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "error",
+                text = "Tạo tài khoản thất bại! Vui lòng thử lại sau",
+                timer = 2000,
+                showConfirmButton = false,
+                position = "top"
+            });
+        }
+    
     }
 }

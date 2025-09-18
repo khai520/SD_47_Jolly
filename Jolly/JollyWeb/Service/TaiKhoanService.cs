@@ -64,6 +64,22 @@ namespace JollyWeb.Service
                 return $"Lỗi khi gọi API: {ex.Message}";
             }
         }
+        public async Task<bool> AddTaiKhoanAsync(TaiKhoan model)
+        {
+            try
+            {
+                var response = await _httpclient.PostAsJsonAsync($"TaiKhoan/add", model);
 
+                if (!response.IsSuccessStatusCode)
+                    return false;
+
+                var result = await response.Content.ReadFromJsonAsync<bool>();
+                return result;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

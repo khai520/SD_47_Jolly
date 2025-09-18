@@ -69,6 +69,22 @@ namespace ViewAPI.Controllers
 
             return Ok();
         }
+        [HttpPost("add")]
+        public async Task<IActionResult> AddTaiKhoan( TaiKhoan model)
+        {
+            try
+            {
+                _context.taiKhoans.Add(model);
+                await _context.SaveChangesAsync();
+
+                return Ok(true);
+            }
+            catch (Exception)
+            {
+                return StatusCode(500, false);
+            }
+            
+        }
 
     }
 }
