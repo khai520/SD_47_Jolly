@@ -81,9 +81,9 @@ namespace API.HeThong
                     src.TheLoai != null && !string.IsNullOrWhiteSpace(src.TheLoai.Ten)
                     ? src.TheLoai.Ten : ""))
                 .ForMember(a => a.AnhDaTai, opt => opt.MapFrom(src =>
-                    src.ChiTietMonAns != null
+                    src.ChiTietMonAns != null 
                     ? src.ChiTietMonAns
-                        .Where(ct => ct.Anhs != null && ct.Anhs.Any() &&
+                        .Where(ct => ct.Anhs != null && ct.TrangThai == true && ct.Anhs.Any() &&
                                         !string.IsNullOrWhiteSpace(ct.Anhs.First().DuongDan))
                         .Select(ct => ct.Anhs.First().DuongDan)
                         .FirstOrDefault() ?? ""
