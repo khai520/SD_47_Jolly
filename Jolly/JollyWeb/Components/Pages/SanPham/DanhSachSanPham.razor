@@ -2,7 +2,8 @@
 @using API.Models.DTO
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Nav
-@inject IApiService monAnService
+@inject IMonAnService monAnService
+@inject IChiTietMonAnService chiTietMonAnService
 <PageTitle>Jolly - Đồ Ăn Vặt Ngon</PageTitle>
 
 <link href="css/DanhSachSanPham.css" rel="stylesheet" />
@@ -97,8 +98,17 @@
 
     private async Task LoadProducts()
     {
-        var monAns = await monAnService.GetAsync<List<MonAnDTO>>("MonAn") ?? new();
-        products = monAns.Where(x => x.TrangThai == true ).ToList();
+        var monAns = await monAnService.GetAll() ?? new();
+        var ctma = await chiTietMonAnService.GetAll() ?? new();
+
+
+        products = monAns
+            .Where(mon => mon.TrangThai == true &&
+                        ctma.Any(c => c.MonAnId == mon.Id 
+                                    && c.TrangThai == true 
+                                    && c.Soluong > 0))
+            .ToList();
+
         InitializeFilterOptions();
         ApplyFilters();
     }

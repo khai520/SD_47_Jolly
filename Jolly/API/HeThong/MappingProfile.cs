@@ -31,7 +31,9 @@ namespace API.HeThong
                 .ForMember(tl => tl.KichCo, opt => opt.MapFrom(src =>
                     src.KichCo != null && !string.IsNullOrWhiteSpace(src.KichCo.Ten)
                     ? src.KichCo.Ten : ""))
+                .ForMember(dg => dg.Gia, opt => opt.MapFrom(src => src.Gia))
                 .ReverseMap();
+
             CreateMap<ChiTietMonAnDTO, ChiTietMonAn>()
                 .ForMember(dest => dest.MonAn, opt => opt.Ignore())
                 .ForMember(dest => dest.NhaCungCap, opt => opt.Ignore())

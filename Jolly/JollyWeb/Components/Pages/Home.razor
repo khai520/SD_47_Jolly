@@ -2,8 +2,8 @@
 @layout Layout.MainLayout
 
 @inject IJSRuntime JS
-@inject IApiService monAnService
-
+@inject IMonAnService monAnService
+@inject IChiTietMonAnService chiTietMonAnService
 <PageTitle>Jolly - Đồ Ăn Vặt Ngon</PageTitle>
 <link href="css/Home.css" rel="stylesheet" />
 
@@ -64,8 +64,16 @@
 
     protected override async Task OnInitializedAsync()
     {
-        var monAns = await monAnService .GetAsync<List<MonAnDTO>>("MonAn") ?? new();
-        MonAns = monAns.Where(x => x.TrangThai == true ).Take(5).ToList();
+        var monAns = await monAnService.GetAll() ?? new();
+        var ctma = await chiTietMonAnService.GetAll() ?? new();
+
+
+        MonAns = monAns
+            .Where(mon => mon.TrangThai == true &&
+                        ctma.Any(c => c.MonAnId == mon.Id
+                                    && c.TrangThai == true
+                                    && c.Soluong > 0)).Take(5)
+            .ToList();
     }
 
 

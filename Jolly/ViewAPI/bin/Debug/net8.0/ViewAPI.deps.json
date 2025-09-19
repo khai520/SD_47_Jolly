@@ -9,7 +9,8 @@
       "ViewAPI/1.0.0": {
         "dependencies": {
           "API": "1.0.0",
-          "Swashbuckle.AspNetCore": "8.1.2"
+          "Swashbuckle.AspNetCore": "8.1.2",
+          "VNPAY_CS_ASPX": "1.0.0"
         },
         "runtime": {
           "ViewAPI.dll": {}
@@ -674,6 +675,22 @@
             "fileVersion": "1.0.0.0"
           }
         }
+      },
+      "VNPAY_CS_ASPX/1.0.0": {
+        "runtime": {
+          "VNPAY_CS_ASPX.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      },
+      "log4net/1.2.15.0": {
+        "runtime": {
+          "log4net.dll": {
+            "assemblyVersion": "1.2.15.0",
+            "fileVersion": "1.2.15.0"
+          }
+        }
       }
     }
   },
@@ -1154,6 +1171,16 @@
     },
     "API/1.0.0": {
       "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "VNPAY_CS_ASPX/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "log4net/1.2.15.0": {
+      "type": "reference",
       "serviceable": false,
       "sha512": ""
     }

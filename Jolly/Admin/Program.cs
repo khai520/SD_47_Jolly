@@ -40,6 +40,7 @@ builder.Services.AddScoped<INhanVienService, NhanVienService>();
 builder.Services.AddScoped<IHoaDonService, HoaDonService>();
 builder.Services.AddScoped<IHoaDonRepository, HoaDonRepository>();
 builder.Services.AddScoped<IHoaDonChiTietService, HoaDonChiTietService>();
+builder.Services.AddScoped<IVnPayService, VnPayService>();
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 builder.Services.AddScoped<IXuLyDiaChi, XuLyDiaChi>();
 builder.Services.AddHttpClient();
@@ -59,6 +60,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddBlazoredLocalStorage();
 
 var app = builder.Build();
+
 
 using (var scope = app.Services.CreateScope())
 {

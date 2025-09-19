@@ -9,6 +9,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\API\API.csproj" />
 		<ProjectReference Include="..\ViewAPI\ViewAPI.csproj" />
+		<ProjectReference Include="C:\Users\khai5\Downloads\vnpay_cs\vnpay_cs\VNPAY_CS_ASPX\VNPAY_CS_ASPX.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
@@ -26,6 +27,12 @@
 	<ItemGroup>
 	  <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
 	  <PackageReference Include="VNPAY.NET" Version="8.5.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <Content Update="Admin.appsettings.json">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </Content>
 	</ItemGroup>
 
 </Project>

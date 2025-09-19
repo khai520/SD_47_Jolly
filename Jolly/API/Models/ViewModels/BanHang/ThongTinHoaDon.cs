@@ -12,6 +12,7 @@
         public string? GhiChu { get; set; }
         public string? GiamGiaId { get; set; }
         public bool IsDelivery { get; set; } = false;
+        public bool PhuongThucThanhToan { get; set; } = false;
         
     }
 }

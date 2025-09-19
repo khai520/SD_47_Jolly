@@ -49,7 +49,7 @@
                 var statusClass = $"status-{status}";
                 
                 <div class="product-card">
-                    <div class="product-image" style="background:url('@product.AnhDaTai') no-repeat center center fixed">
+                    <div class="product-image" style="background:url('@product.AnhDaTai') no-repeat center; background-size: contain;">
                         <div class="product-status @statusClass">
                             @GetStatusText(status)
                         </div>
@@ -64,6 +64,10 @@
                             <div class="detail-item">
                                 <i class="fas fa-star"></i>
                                 <span>@(product?.ThuongHieu ?? "Chưa có")</span>
+                            </div>
+                            <div class="detail-item">
+                                <i class="fas fa-star"></i>
+                                <span>@(product?.TheLoai ?? "Chưa có")</span>
                             </div>
                         </div>
                         <p class="product-description">@(product.Mota ?? "Không có mô tả")</p>

@@ -4,6 +4,7 @@
 @using API.Models.ViewModels.BanHang
 @using API.Models.DTO
 @using AutoMapper
+@inject NavigationManager Nav
 @inject IChiTietMonAnService GetChiTietMonAnService
 @implements IDisposable
 @inject IXuLyDiaChi xuLyDiaChi
@@ -12,6 +13,7 @@
 @inject IMapper _mapper
 @inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 @inject IHoaDonService HoaDonService
+@inject IVnPayService vnPayService
 <link href="css/BanHang.css" rel="stylesheet" />
 <div class="sell-container">
     <!-- Tabs đơn hàng -->
@@ -239,20 +241,39 @@
                         <span>Tổng số tiền</span>
                         <span>@FormatMoney(TotalAmount)</span>
                     </div>
-                    <div class="order-row">
-                        <span>Khách thanh toán:</span>
-                        <input class="pay-input" type="text" @bind="CustomerPay" />
+                    <div class="payment-method">
+                        <h4>Phương thức thanh toán</h4>
+                        <div class="btn-group">
+                            <button type="button"
+                                    class="btn @(PaymentMethod == "Cash" ? "btn-primary" : "btn-outline-primary")"
+                                    @onclick='() => SelectPaymentMethod("Cash")'>
+                                💵 Tiền mặt
+                            </button>
+
+                            <button type="button"
+                                    class="btn @(PaymentMethod == "QR" ? "btn-success" : "btn-outline-success")"
+                                    @onclick='() => SelectPaymentMethod("QR")'>
+                                📱 Quét QR
+                            </button>
+                        </div>
                     </div>
-                    <div class="order-row deficit">
-                        <span>Tiền thiếu</span>
-                        <span>@DeficitAmount</span>
-                    </div>
-                    <button class="confirm-btn" @onclick="ConfirmOrder">XÁC NHẬN ĐẶT HÀNG</button>
+                    @if (PaymentMethod == "Cash")
+                    {
+                        <div class="cash-payment">
+                            <label>Khách trả:</label>
+                            <input type="number" min="0" @bind="CustomerPay" @bind:event="oninput" />
+                            <div>
+                                <strong>Tiền thối:</strong> @FormatMoney(CustomerPay - TotalAmount)
+                            </div>
+                        </div>
+                    }
+                    <button class="confirm-btn" @onclick="ThanhToan">XÁC NHẬN ĐẶT HÀNG</button>
                 </div>
             </div>
         </div>
     }
 </div>
+
 
 @code {
 
@@ -266,33 +287,40 @@
     ? Orders[CurrentOrderIndex]
     : null;
 
-
-
-    // 💰 Tính toán đơn hàng
-    private float DiscountPercent { get; set; } = 0;
     private float _CustomerPay;
     private float CustomerPay
     {
         get => _CustomerPay;
         set
         {
-            FormatMoney(DeficitAmount);
             _CustomerPay = value;
+            StateHasChanged(); 
         }
     }
 
+
+
+    // 💰 Tính toán đơn hàng
+    private float DiscountPercent { get; set; } = 0;
+
+
     private float Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.Gia) ?? 0f;
-    private float ShippingFee => CurrentOrder.ThongTinHoaDon.IsDelivery ? 20000f : 0f;
+
+    private float ShippingFee => (CurrentOrder?.ThongTinHoaDon?.IsDelivery ?? false) ? 20000f : 0f;
+
     private float DiscountAmount => (Subtotal * DiscountPercent) / 100f;
+
     private float TotalAmount => Subtotal + ShippingFee - DiscountAmount;
-    private float DeficitAmount => TotalAmount - CustomerPay;
+
+    private float DeficitAmount => CustomerPay - TotalAmount;
+
     private List<ChiTietMonAnDTO> Products = new();
     private List<MonAnDTO> allProducts = new();
     private List<DiaChiNhap> TinhThanh = new();
     private List<DiaChiNhap> HuyenXa = new();
     private List<DiaChiNhap> XaPhuong = new();
     private List<Voucher> vouchers = new();
-
+    private string PaymentMethod { get; set; } = "Cash";
 
 
     // 🛒 Hành động
@@ -380,6 +408,7 @@
         Tinh = CurrentOrder.ThongTinHoaDon.TinhThanhPho;
         Huyen = CurrentOrder.ThongTinHoaDon.QuanHuyen;
         Phuong = CurrentOrder.ThongTinHoaDon.XaPhuongThiTran;
+        PaymentMethod = CurrentOrder.ThongTinHoaDon.PhuongThucThanhToan == true ? "QR" : "Cash";
 
         var tinh = TinhThanh.FirstOrDefault(t => t.Ten == Tinh);
         HuyenXa = tinh?.Con ?? new();
@@ -443,8 +472,6 @@
 
     protected override async void OnInitialized()
     {
-
-        
         Orders ??= new();
         OrderCleanupTimer = new System.Threading.Timer(_ =>
         {
@@ -460,6 +487,10 @@
                 await SaveOrdersToStorage();
             });
         }, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1)); 
+        var uri = Nav.ToAbsoluteUri(Nav.Uri);
+        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
+        status = query["status"];
+
     }
 
 
@@ -542,7 +573,7 @@
                 return;
             }
         }
-        if (CustomerPay < TotalAmount)
+        if (PaymentMethod == "Cash" && CustomerPay < TotalAmount)
         {
             await JS.InvokeVoidAsync("Swal.fire", new
             {
@@ -675,7 +706,7 @@
                     });
                     return;
                 }
-                
+
 
             }
 
@@ -777,7 +808,6 @@
         await SaveOrdersToStorage();
 
     }
-
     protected override async Task OnInitializedAsync()
     {
         TinhThanh = await xuLyDiaChi.ParseDiaChiAsync("wwwroot/Files/ThanhPho.txt");
@@ -785,7 +815,7 @@
 
         var savedOrders = await LocalStorage.GetItemAsync<List<Order>>("banhang_orders");
         var savedIndex = await LocalStorage.GetItemAsync<int>("banhang_currentIndex");
-       
+
         if (savedOrders != null && savedOrders.Count > 0)
         {
             Orders = savedOrders;
@@ -802,6 +832,10 @@
                 }
             }
             
+            if (status == "success")
+            {
+                ConfirmOrder();
+            }
 
         }
         else
@@ -810,7 +844,7 @@
             CurrentOrderIndex = 0;
         }
 
-        SwitchOrder(CurrentOrderIndex); 
+        SwitchOrder(CurrentOrderIndex);
     }
 
     private string Tinh = "";
@@ -880,6 +914,35 @@
     {
         await LocalStorage.SetItemAsync("banhang_orders", Orders);
         await LocalStorage.SetItemAsync("banhang_currentIndex", CurrentOrderIndex);
+    }
+    private string? status;
+
+    private async Task ThanhToanVnPay()
+    {
+        var orderId = DateTime.Now.Ticks.ToString();
+        var paymentUrl = vnPayService.CreatePaymentUrl((decimal)TotalAmount, orderId, "Thanh toán hóa đơn Jolly");
+
+        // Chuyển hướng sang VNPAY
+        Nav.NavigateTo(paymentUrl, forceLoad: true);
+    }
+
+    private async void SelectPaymentMethod(string method)
+    {
+        PaymentMethod = method;
+        CurrentOrder.ThongTinHoaDon.PhuongThucThanhToan = method == "QR" ? true : false;
+        StateHasChanged();
+        await SaveOrdersToStorage();
+    }
+
+    private async Task ThanhToan()
+    {
+        if (PaymentMethod == "Cash")
+        {
+        }
+        else if (PaymentMethod == "QR")
+        {
+            await ThanhToanVnPay();
+        }
     }
 
 }

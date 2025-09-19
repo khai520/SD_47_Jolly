@@ -929,7 +929,6 @@ datalist {
         font-weight: 600;
         border-top: 2px solid #eee;
         padding-top: 12px;
-        margin-top: 8px;
     }
 
     .order-row.deficit {
@@ -1369,4 +1368,140 @@ datalist {
     .product-select-list {
         height: calc(100vh - 80px);
     }
+}
+.payment-method {
+    text-align: right;
+}
+
+.cash-payment {
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    border: 2px solid #667eea;
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: 16px;
+    box-shadow: 0 4px 16px rgba(102, 126, 234, 0.15);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    transition: all 0.3s ease;
+}
+
+    .cash-payment label {
+        font-weight: 600;
+        font-size: 16px;
+        color: #667eea;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+
+        .cash-payment label::before {
+            content: '💵';
+            font-size: 18px;
+        }
+
+    .cash-payment input[type="number"] {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 18px;
+        font-weight: 600;
+        border: 2px solid #e2e8f0;
+        border-radius: 8px;
+        background: #ffffff;
+        color: #333;
+        text-align: right;
+        transition: all 0.3s ease;
+        outline: none;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    }
+
+        .cash-payment input[type="number"]:focus {
+            border-color: #667eea;
+            background: #fafbff;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            transform: translateY(-1px);
+        }
+
+        .cash-payment input[type="number"]:hover {
+            border-color: #a0aec0;
+        }
+
+    .cash-payment > div {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: #ffffff;
+        padding: 16px 20px;
+        border-radius: 8px;
+        text-align: center;
+        font-size: 18px;
+        font-weight: 600;
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        min-height: 56px;
+    }
+
+        .cash-payment > div strong {
+            font-weight: 700;
+            margin-right: 8px;
+        }
+
+        .cash-payment > div::before {
+            content: '💰';
+            font-size: 20px;
+        }
+
+
+@media (max-width: 768px) {
+    .cash-payment {
+        padding: 16px 18px;
+        gap: 14px;
+        margin-top: 12px;
+    }
+
+        .cash-payment input[type="number"] {
+            padding: 10px 14px;
+            font-size: 16px;
+        }
+
+        .cash-payment > div {
+            padding: 14px 16px;
+            font-size: 16px;
+            min-height: 48px;
+        }
+
+        .cash-payment label {
+            font-size: 15px;
+        }
+}
+
+@media (max-width: 480px) {
+    .cash-payment {
+        padding: 12px 14px;
+        gap: 12px;
+    }
+
+        .cash-payment input[type="number"] {
+            padding: 8px 12px;
+            font-size: 15px;
+        }
+
+        .cash-payment > div {
+            padding: 12px 14px;
+            font-size: 15px;
+            min-height: 44px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+            .cash-payment > div::before {
+                font-size: 18px;
+            }
+
+        .cash-payment label::before {
+            font-size: 16px;
+        }
 }

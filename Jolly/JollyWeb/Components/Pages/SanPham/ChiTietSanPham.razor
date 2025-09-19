@@ -19,18 +19,33 @@
         <section class="product-detail">
             <div class="container content-container">
                 <div class="container detail-container">
-
+                     
                     <!-- Hình ảnh -->
                     <div class="product-image">
-                        @if (selectedChiTiet?.DanhSachAnh?.Any() == true)
+                        @if (!string.IsNullOrEmpty(selectedImage))
                         {
-                            <img src="@selectedChiTiet.DanhSachAnh.First().DuongDan" alt="@ProductName" />
+                            <img src="@selectedImage" alt="@ProductName" class="main-image" />
                         }
                         else
                         {
-                            <img src="https://via.placeholder.com/500x500.png?text=@Uri.EscapeDataString(ProductName)" alt="@ProductName" />
+                            <img src="https://via.placeholder.com/500x500.png?text=@Uri.EscapeDataString(ProductName)"
+                                 alt="@ProductName" class="main-image" />
                         }
                     </div>
+
+                    @if (displayedImages?.Any() == true)
+                    {
+                        <div class="thumbnail-list">
+                            @foreach (var img in displayedImages)
+                            {
+                                <img src="@img"
+                                     alt="@ProductName"
+                                     class="thumbnail @(selectedImage == img ? "active" : "")"
+                                     @onclick="() => ChangeImage(img)" />
+                            }
+                        </div>
+                    }
+
 
                     <!-- Thông tin -->
                     <div class="product-info">
@@ -60,14 +75,33 @@
 
                         <!-- Lựa chọn chi tiết -->
                         <div class="detail-options">
-                            <label for="chiTietSelect">📂 Chọn phân loại:</label>
-                            <select id="chiTietSelect" @bind="selectedChiTietId">
-                                @foreach (var ct in ChiTietList)
+                            <label>📂 Hương vị:</label>
+                            <select @bind-Value="selectedLoaiVi" @bind-Value:event="onchange">
+                                <option value="">-- Chọn hương vị --</option>
+                                @foreach (var v in FilteredLoaiVi)
                                 {
-                                    <option value="@ct.Id">@($"{ct.LoaiVi ?? ""} {ct.KichCo ?? ""} {ct.NguyenLieu ?? ""}".Trim())</option>
+                                    <option value="@v">@v</option>
                                 }
                             </select>
 
+
+                            <label>📏 Kích cỡ:</label>
+                            <select @bind-Value="selectedKichCo" @bind-Value:event="onchange">
+                                <option value="">-- Chọn kích cỡ --</option>
+                                @foreach (var s in FilteredKichCo)
+                                {
+                                    <option value="@s">@s</option>
+                                }
+                            </select>
+
+                            <label>📦 Nguyên Liệu:</label>
+                            <select @bind-Value="selectedNguyenLieu" @bind-Value:event="onchange">
+                                <option value="">-- Chọn nguyên liệu --</option>
+                                @foreach (var p in FilteredNguyenLieu)
+                                {
+                                    <option value="@p">@p</option>
+                                }
+                            </select>
                         </div>
 
                         <!-- Số lượng -->
@@ -98,52 +132,6 @@
                         }
                     </div>
                 </div>
-
-                <!-- Extra info -->
-                @if (selectedChiTiet != null)
-                {
-                    <div class="extra-info">
-                        @if (!string.IsNullOrEmpty(selectedChiTiet.LoaiVi))
-                        {
-                            <div class="info-item">
-                                <h4>📂 Hương vị:</h4>
-                                <p>@selectedChiTiet.LoaiVi</p>
-                            </div>
-                        }
-
-                        @if (!string.IsNullOrEmpty(selectedChiTiet.KichCo))
-                        {
-                            <div class="info-item">
-                                <h4>📏 Kích cỡ:</h4>
-                                <p>@selectedChiTiet.KichCo</p>
-                            </div>
-                        }
-
-                        @if (!string.IsNullOrEmpty(selectedChiTiet.NguyenLieu))
-                        {
-                            <div class="info-item">
-                                <h4>📦 Đóng gói:</h4>
-                                <p>@selectedChiTiet.NguyenLieu</p>
-                            </div>
-                        }
-
-                        @if (!string.IsNullOrEmpty(selectedChiTiet.NhaCungCap))
-                        {
-                            <div class="info-item">
-                                <h4>🏭 Nhà cung cấp:</h4>
-                                <p>@selectedChiTiet.NhaCungCap</p>
-                            </div>
-                        }
-
-                        @if (selectedChiTiet.SoNgayHSD > 0)
-                        {
-                            <div class="info-item">
-                                <h4>📅 Hạn sử dụng:</h4>
-                                <p>@selectedChiTiet.SoNgayHSD ngày</p>
-                            </div>
-                        }
-                    </div>
-                }
             </div>
         </section>
     }
@@ -162,17 +150,53 @@
 
     private List<ChiTietMonAnDTO> ChiTietList = new();
     private ChiTietMonAnDTO? selectedChiTiet;
-    private Guid? selectedChiTietId;
 
-    private Guid? SelectedChiTietId
+    private string? _selectedLoaiVi;
+    private string? selectedLoaiVi
     {
-        get => selectedChiTietId;
+        get => _selectedLoaiVi;
         set
         {
-            selectedChiTietId = value;
-            UpdateSelectedChiTiet();
+            if (_selectedLoaiVi != value)
+            {
+                _selectedLoaiVi = value;
+                ApplyFilters();
+            }
         }
     }
+    private string? _selectedKichCo;
+    private string? selectedKichCo
+    {
+        get => _selectedKichCo;
+        set
+        {
+            if (_selectedKichCo != value)
+            {
+                _selectedKichCo = value;
+                ApplyFilters();
+            }
+        }
+    }
+
+    private string? _selectedNguyenLieu;
+    private string? selectedNguyenLieu
+    {
+        get => _selectedNguyenLieu;
+        set
+        {
+            if (_selectedNguyenLieu != value)
+            {
+                _selectedNguyenLieu = value;
+                ApplyFilters();
+            }
+        }
+    }
+
+    private List<string> FilteredLoaiVi = new();
+    private List<string> FilteredKichCo = new();
+    private List<string> FilteredNguyenLieu = new();
+    private List<string> displayedImages = new();
+    private string? selectedImage;
 
 
     private string? ProductName;
@@ -188,7 +212,6 @@
 
     protected override async Task OnParametersSetAsync()
     {
-        // Khi route đổi sang sản phẩm khác
         await LoadProduct();
     }
 
@@ -199,17 +222,28 @@
 
         try
         {
-            await Task.Delay(300); // giả lập loading
-            ChiTietList = await ChiTietMonAn.GetChiTiet(MonAnId) ?? new();
-
+            await Task.Delay(300);
+            var ctma = await ChiTietMonAn.GetChiTiet(MonAnId);
+            ChiTietList = ctma.Where(x => x.TrangThai == true).ToList() ?? new();
             if (ChiTietList.Any())
             {
                 var first = ChiTietList.First();
                 ProductName = first.Ten;
                 ProductDescription = first.Mota;
-                selectedChiTietId = first.Id;
-                UpdateSelectedChiTiet();
+
+                // lấy danh sách ban đầu
+                FilteredLoaiVi = ChiTietList.Select(c => c.LoaiVi).Where(v => !string.IsNullOrEmpty(v)).Distinct().ToList();
+                FilteredKichCo = ChiTietList.Select(c => c.KichCo).Where(v => !string.IsNullOrEmpty(v)).Distinct().ToList();
+                FilteredNguyenLieu = ChiTietList.Select(c => c.NguyenLieu).Where(v => !string.IsNullOrEmpty(v)).Distinct().ToList();
+
+                // mặc định chọn bản ghi đầu tiên
+                selectedLoaiVi = first.LoaiVi;
+                selectedKichCo = first.KichCo;
+                selectedNguyenLieu = first.NguyenLieu;
+                ApplyFilters();
             }
+            selectedImage = selectedChiTiet?.DanhSachAnh?.FirstOrDefault()?.DuongDan;
+
         }
         catch
         {
@@ -222,20 +256,91 @@
         }
     }
 
-    private void OnChiTietChanged(ChangeEventArgs e)
+    private void OnFilterChanged(ChangeEventArgs e)
     {
-        if (Guid.TryParse(e.Value?.ToString(), out var guid))
-        {
-            selectedChiTietId = guid;
-            UpdateSelectedChiTiet();
-        }
+        ApplyFilters();
     }
 
-
-    private void UpdateSelectedChiTiet()
+    private void ApplyFilters()
     {
-        selectedChiTiet = ChiTietList.FirstOrDefault(c => c.Id == selectedChiTietId);
+        var filtered = ChiTietList.AsEnumerable();
+
+        if (!string.IsNullOrEmpty(selectedLoaiVi))
+            filtered = filtered.Where(c => c.LoaiVi == selectedLoaiVi);
+
+        if (!string.IsNullOrEmpty(selectedKichCo))
+            filtered = filtered.Where(c => c.KichCo == selectedKichCo);
+
+        if (!string.IsNullOrEmpty(selectedNguyenLieu))
+            filtered = filtered.Where(c => c.NguyenLieu == selectedNguyenLieu);
+
+        // cập nhật lại danh sách hợp lệ
+        FilteredLoaiVi = ChiTietList
+            .Where(c => (string.IsNullOrEmpty(selectedKichCo) || c.KichCo == selectedKichCo)
+                     && (string.IsNullOrEmpty(selectedNguyenLieu) || c.NguyenLieu == selectedNguyenLieu))
+            .Select(c => c.LoaiVi)
+            .Where(v => !string.IsNullOrEmpty(v))
+            .Distinct()
+            .ToList();
+
+        FilteredKichCo = ChiTietList
+            .Where(c => (string.IsNullOrEmpty(selectedLoaiVi) || c.LoaiVi == selectedLoaiVi)
+                     && (string.IsNullOrEmpty(selectedNguyenLieu) || c.NguyenLieu == selectedNguyenLieu))
+            .Select(c => c.KichCo)
+            .Where(v => !string.IsNullOrEmpty(v))
+            .Distinct()
+            .ToList();
+
+        FilteredNguyenLieu = ChiTietList
+            .Where(c => (string.IsNullOrEmpty(selectedLoaiVi) || c.LoaiVi == selectedLoaiVi)
+                     && (string.IsNullOrEmpty(selectedKichCo) || c.KichCo == selectedKichCo))
+            .Select(c => c.NguyenLieu)
+            .Where(v => !string.IsNullOrEmpty(v))
+            .Distinct()
+            .ToList();
+
+        // nếu chọn đủ 3 thì lấy đúng chi tiết
+        // Nếu chọn đủ 3 thuộc tính -> ảnh của đúng chi tiết
+        if (!string.IsNullOrEmpty(selectedLoaiVi) &&
+            !string.IsNullOrEmpty(selectedKichCo) &&
+            !string.IsNullOrEmpty(selectedNguyenLieu))
+        {
+            selectedChiTiet = ChiTietList.FirstOrDefault(c =>
+                c.LoaiVi == selectedLoaiVi &&
+                c.KichCo == selectedKichCo &&
+                c.NguyenLieu == selectedNguyenLieu
+            );
+
+            displayedImages = selectedChiTiet?.DanhSachAnh?.Select(a => a.DuongDan).ToList() ?? new();
+        }
+        else
+        {
+            selectedChiTiet = null;
+
+            // Lấy các chi tiết khớp với bộ lọc hiện tại
+            var filtered1 = ChiTietList.AsEnumerable();
+
+            if (!string.IsNullOrEmpty(selectedLoaiVi))
+                filtered1 = filtered1.Where(c => c.LoaiVi == selectedLoaiVi);
+
+            if (!string.IsNullOrEmpty(selectedKichCo))
+                filtered1 = filtered1.Where(c => c.KichCo == selectedKichCo);
+
+            if (!string.IsNullOrEmpty(selectedNguyenLieu))
+                filtered1 = filtered1.Where(c => c.NguyenLieu == selectedNguyenLieu);
+
+            // gom tất cả ảnh của các chi tiết phù hợp
+            displayedImages = filtered1
+                .SelectMany(c => c.DanhSachAnh ?? new List<AnhDTO>())
+                .Select(a => a.DuongDan)
+                .Distinct()
+                .ToList();
+        }
+
+        // Ảnh chính = ảnh đầu tiên
+        selectedImage = displayedImages.FirstOrDefault();
         selectedQuantity = 1;
+
     }
 
     private void IncreaseQuantity()
@@ -268,4 +373,9 @@
             await JSRuntime.InvokeVoidAsync("alert", "Có lỗi xảy ra khi thêm sản phẩm vào giỏ hàng!");
         }
     }
+    private void ChangeImage(string duongDan)
+    {
+        selectedImage = duongDan;
+    }
+
 }
