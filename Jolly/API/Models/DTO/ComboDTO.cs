@@ -4,7 +4,7 @@
     {
         public string? Id { get; set; }
         public string Ten { get; set; }
-        public float Gia { get; set; }
+        public decimal Gia { get; set; }
         public string? Mota { get; set; }
         public Guid? LoaiId { get; set; }
     }

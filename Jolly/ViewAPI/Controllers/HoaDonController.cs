@@ -13,11 +13,19 @@ namespace ViewAPI.Controllers
     [Route("api/[controller]")]
     public class HoaDonController : BaseController<HoaDon, HoaDonDTO, string>
     {
-        public HoaDonController(IRepository<HoaDon, string> repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
+        private readonly IHoaDonRepository hoaDonRepository;
+        public HoaDonController(IHoaDonRepository repository, DBAppContext context, IMapper mapper, XulyId xulyId) : base(repository, context, mapper, xulyId)
         {
             _useXulyIdGeneration = true;
             _idPrefix = "HD";
             _idColumnName = "Id";
+            hoaDonRepository = repository;
+        }
+        [HttpGet("lichsu/{id}")]
+        public async Task<ActionResult<IEnumerable<LichSuTrangThai>>> GetAll(string id)
+        {
+            var result = await hoaDonRepository.GetLichSu(id);
+            return Ok(result);
         }
     }
 }

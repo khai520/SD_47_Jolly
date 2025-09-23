@@ -1,7 +1,11 @@
-﻿namespace API.Repository.IRepository
+﻿using API.Models;
+
+namespace API.Repository.IRepository
 {
-    public interface IHoaDonRepository 
+    public interface IHoaDonRepository : IRepository<HoaDon , string>
     {
-        Task UpdateOrderStatus(string orderId, string newStatus, string reason);
+        Task UpdateOrderStatus(Guid hoaDonChiTietId, string newStatus, string reason);
+
+        Task<List<LichSuTrangThai>> GetLichSu(string hoaDonId);
     }
 }

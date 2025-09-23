@@ -93,6 +93,19 @@ namespace JollyWeb.Service
                 return false;
             }
         }
+        public async Task<T?> GetByIdAsync<T, TKey>(string baseUrl, TKey id)
+        {
+            try
+            {
+                var url = $"{baseUrl}/{id}";
+                return await _httpClient.GetFromJsonAsync<T>(url);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"[GET BY ID] Error calling {baseUrl}/{id}: {ex.Message}");
+                return default;
+            }
+        }
 
     }
 }

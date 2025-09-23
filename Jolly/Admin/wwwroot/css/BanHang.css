@@ -334,6 +334,7 @@
     flex-direction: column;
     gap: 12px;
     margin-bottom: 16px;
+    padding: 0px 24px 0px 24px;
 }
 
 .product-select-item {
@@ -1089,12 +1090,16 @@ datalist {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 16px;
-    margin-bottom: 24px;
     padding: 20px;
     background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
-    border-radius: 12px;
+    border-radius: 12px 12px 0 0; 
     border: 1px solid #e3e8ff;
+    border-bottom: 2px solid #667eea; 
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.08);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    margin-bottom: 0; 
 }
 
 .filter-item {
@@ -1199,7 +1204,6 @@ datalist {
     border-radius: 12px;
     background: #ffffff;
     border: 1px solid #f1f5f9;
-    overflow: hidden;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
 }
 
@@ -1215,6 +1219,7 @@ datalist {
     top: 0;
     z-index: 10;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    border-radius: 12px 12px 0px 0px;
 }
 
 /* Cải tiến cho product select item */

@@ -10,7 +10,7 @@ namespace API.Models
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string Ten { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Giá phải lớn hơn 0")]
-        public float Gia { get; set; }
+        public decimal Gia { get; set; }
         [RegularExpression(@"^[\p{L}0-9\s]+$", ErrorMessage = "Không được chứa ký tự đặc biệt")]
         public string? Mota { get; set; }
         public Guid? LoaiId { get; set; }

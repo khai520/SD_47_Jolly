@@ -382,7 +382,7 @@
             chiTietMoi.Id = Guid.NewGuid();
             DanhSachChiTiet.Add(chiTietMoi);
         }
-
+        
         if (ButtonText == "Thêm" || ButtonText == "+ Tạm thêm")
         {
             await OnThemChiTiet.InvokeAsync(chiTietMoi);

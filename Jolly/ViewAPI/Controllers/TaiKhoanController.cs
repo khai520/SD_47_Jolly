@@ -45,7 +45,7 @@ namespace ViewAPI.Controllers
             if (user == null || user.NguoiDung == null || user.NguoiDung.KhachHang == null)
                 return BadRequest("Sai tài khoản hoặc mật khẩu.");
 
-            var dto = _mapper.Map<TaiKhoanDTO>(user);
+            var dto = _mapper.Map<TaiKhoanKHDTO>(user);
             return Ok(dto);
         }
         [HttpPost("checktk")]
@@ -59,7 +59,7 @@ namespace ViewAPI.Controllers
 
              
             bool sdtDaCoTaiKhoan = _context.taiKhoans
-            .Include(t => t.NguoiDung)
+            .Include(t => t.NguoiDung).ThenInclude(n => n.KhachHang)
             .Any(t => t.NguoiDung != null && t.NguoiDung.Sdt == sdt);
 
             if (sdtDaCoTaiKhoan)

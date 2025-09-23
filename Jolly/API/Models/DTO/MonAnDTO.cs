@@ -12,6 +12,6 @@
         public bool TrangThai { get; set; } 
         public string? Mota { get; set; }
         public string? AnhDaTai { get; set; }
-        public float Gia { get; set; }
+        public decimal Gia { get; set; }
     }
 }

@@ -105,8 +105,9 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<float>("Gia")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Gia")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<Guid?>("KichCoId")
                         .HasColumnType("uniqueidentifier");
@@ -177,8 +178,9 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float>("Gia")
-                        .HasColumnType("real");
+                    b.Property<decimal>("Gia")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<Guid?>("LoaiId")
                         .HasColumnType("uniqueidentifier");
@@ -245,8 +247,9 @@ namespace API.Migrations
                     b.Property<bool>("DotGiamGia")
                         .HasColumnType("bit");
 
-                    b.Property<float?>("GiaTriToiDa")
-                        .HasColumnType("real");
+                    b.Property<decimal?>("GiaTriToiDa")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<bool?>("Kieu")
                         .HasColumnType("bit");
@@ -263,11 +266,13 @@ namespace API.Migrations
                     b.Property<int?>("PhanTramKhuyenMai")
                         .HasColumnType("int");
 
-                    b.Property<float?>("SoTienKhuyenMai")
-                        .HasColumnType("real");
+                    b.Property<decimal?>("SoTienKhuyenMai")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
-                    b.Property<float?>("SoTienToiThieu")
-                        .HasColumnType("real");
+                    b.Property<decimal?>("SoTienToiThieu")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<int?>("Soluong")
                         .HasColumnType("int");
@@ -299,11 +304,12 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<int?>("Soluong")
+                    b.Property<int>("Soluong")
                         .HasColumnType("int");
 
-                    b.Property<int>("TongGia")
-                        .HasColumnType("int");
+                    b.Property<decimal>("TongGia")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.HasKey("Id");
 
@@ -339,6 +345,9 @@ namespace API.Migrations
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("DiaChi")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("GhiChu")
                         .HasColumnType("nvarchar(max)");
 
@@ -361,11 +370,13 @@ namespace API.Migrations
                     b.Property<string>("NhanVienId")
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<float>("TongTien")
-                        .HasColumnType("real");
+                    b.Property<decimal>("TongTien")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
-                    b.Property<float>("TongTienSauKhiGiam")
-                        .HasColumnType("real");
+                    b.Property<decimal>("TongTienSauKhiGiam")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<string>("TrangThai")
                         .IsRequired()
@@ -403,8 +414,9 @@ namespace API.Migrations
                     b.Property<int>("Soluong")
                         .HasColumnType("int");
 
-                    b.Property<float>("ThanhTien")
-                        .HasColumnType("real");
+                    b.Property<decimal>("ThanhTien")
+                        .HasPrecision(20, 2)
+                        .HasColumnType("decimal(20,2)");
 
                     b.Property<bool>("TrangThai")
                         .HasColumnType("bit");
@@ -468,9 +480,8 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("HoaDonId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<Guid>("HoaDonChiTietId")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("LyDo")
                         .IsRequired()
@@ -485,7 +496,7 @@ namespace API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("HoaDonId");
+                    b.HasIndex("HoaDonChiTietId");
 
                     b.ToTable("trangThais");
                 });
@@ -910,13 +921,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.LichSuTrangThai", b =>
                 {
-                    b.HasOne("API.Models.HoaDon", "HoaDon")
+                    b.HasOne("API.Models.HoaDonChiTiet", "HoaDonChiTiet")
                         .WithMany("lichSuTrangThais")
-                        .HasForeignKey("HoaDonId")
+                        .HasForeignKey("HoaDonChiTietId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("HoaDon");
+                    b.Navigation("HoaDonChiTiet");
                 });
 
             modelBuilder.Entity("API.Models.MonAn", b =>
@@ -1004,7 +1015,10 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.HoaDon", b =>
                 {
                     b.Navigation("hoaDonChiTiets");
+                });
 
+            modelBuilder.Entity("API.Models.HoaDonChiTiet", b =>
+                {
                     b.Navigation("lichSuTrangThais");
                 });
 

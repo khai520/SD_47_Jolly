@@ -147,6 +147,15 @@ namespace API.HeThong
                 src.NguoiDung.NhanVien != null ?
                 src.NguoiDung.NhanVien.Id : ""));
             CreateMap<TaiKhoan, TaiKhoanKHDTO>()
+            .ForMember(dest => dest.Quyen, opt => opt.MapFrom(src =>
+                src.NguoiDung != null &&
+                src.NguoiDung.NhanVien != null &&
+                src.NguoiDung.NhanVien.ChucVu != null &&
+                !string.IsNullOrWhiteSpace(src.NguoiDung.NhanVien.ChucVu.Ten)
+                    ? src.NguoiDung.NhanVien.ChucVu.Ten
+                    : "User"
+
+            ))
             .ForMember(tt => tt.TrangThai, opt => opt.MapFrom(src =>
                 src.NguoiDung != null &&
                 src.NguoiDung.KhachHang != null 
@@ -159,6 +168,7 @@ namespace API.HeThong
             CreateMap<TaiKhoanDTO, TaiKhoan>();
             CreateMap<TheLoai, TheLoaiDTO>().ReverseMap();
             CreateMap<ThuongHieu, ThuongHieuDTO>().ReverseMap();
+
         }
     }
 }

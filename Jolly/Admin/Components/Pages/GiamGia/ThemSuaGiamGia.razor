@@ -2,6 +2,7 @@
 @using System.ComponentModel.DataAnnotations
 @using API.Models.ViewModels.QuanLyGiamGia
 @using System.Globalization
+@inject IJSRuntime JS
 <link href="css/ThemSuaGiamGia.css" rel="stylesheet" />
 <!-- Modal Overlay -->
 <div class="modal-overlay">
@@ -212,12 +213,45 @@
 
     private async Task HandleSubmit()
     {
-        
+        if (formData.NgayKetThuc < formData.NgayBatDau)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "error",
+                title = "Ngày không hợp lệ",
+                text = "Ngày kết thúc phải lớn hơn hoặc bằng ngày bắt đầu."
+            });
+            return;
+        }
+
+        if (discountType == "percentage" && (!formData.PhanTramKhuyenMai.HasValue || formData.PhanTramKhuyenMai <= 0))
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "error",
+                title = "Giá trị không hợp lệ",
+                text = "Vui lòng nhập phần trăm giảm giá từ 1 đến 100."
+            });
+            return;
+        }
+
+        if (discountType == "fixed" && (!formData.SoTienKhuyenMai.HasValue || formData.SoTienKhuyenMai < 1000))
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "error",
+                title = "Giá trị không hợp lệ",
+                text = "Vui lòng nhập số tiền giảm tối thiểu 1000đ."
+            });
+            return;
+        }
+
         formData.PhanTramKhuyenMai = discountType == "percentage" ? formData.PhanTramKhuyenMai : null;
         formData.SoTienKhuyenMai = discountType == "fixed" ? formData.SoTienKhuyenMai : null;
 
         await OnSave.InvokeAsync(formData);
     }
+
 
     private async Task HandleOverlayClick()
     {

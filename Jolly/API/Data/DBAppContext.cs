@@ -82,7 +82,41 @@ namespace API.Data
                 .WithMany(c => c.Anhs)
                 .HasForeignKey(a => a.ChiTietMonAnId)
                 .OnDelete(DeleteBehavior.Cascade);
-           
+            modelBuilder.Entity<ChiTietMonAn>()
+                 .Property(c => c.Gia)
+                 .HasPrecision(20, 2); 
+
+            modelBuilder.Entity<Combo>()
+                .Property(c => c.Gia)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<GiamGia>()
+                .Property(g => g.GiaTriToiDa)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<GiamGia>()
+                .Property(g => g.SoTienKhuyenMai)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<GiamGia>()
+                .Property(g => g.SoTienToiThieu)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<GioHang>()
+                .Property(g => g.TongGia)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<HoaDon>()
+                .Property(h => h.TongTien)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<HoaDon>()
+                .Property(h => h.TongTienSauKhiGiam)
+                .HasPrecision(20, 2);
+
+            modelBuilder.Entity<HoaDonChiTiet>()
+                .Property(h => h.ThanhTien)
+                .HasPrecision(20, 2);
         }
         public DbSet<Anh> anhs { get; set; }
         public DbSet<Combo> combos { get; set; }

@@ -90,7 +90,8 @@
                 Ten = nguoiDung.Ten,
                 NgaySinh = nguoiDung.NgaySinh,
                 GioiTinh = nguoiDung.GioiTinh,
-                Gmail = nguoiDung.Gmail
+                Gmail = nguoiDung.Gmail,
+                Sdt = registerModel.SDT
             };
             var result2 = await apiService.PostAsync<NguoiDung, NguoiDung>("NguoiDung", _mapper.Map<NguoiDung>(nguoiDungnew));
             Idnew = result2.Id;

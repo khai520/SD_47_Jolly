@@ -10,6 +10,7 @@
                 <div class="filter-item">
                     <label class="filter-label">Kích Cỡ:</label>
                     <select @bind="selectedKichCo" class="filter-select">
+                        <option value="" selected></option>
                         @foreach (var kc in allKichCo)
                         {
                             <option value="@kc">@kc</option>
@@ -20,6 +21,7 @@
                 <div class="filter-item">
                     <label class="filter-label">Nguyên Liệu:</label>
                     <select @bind="selectedNguyenLieu" class="filter-select">
+                        <option value="" selected></option>
                         @foreach (var nl in allNguyenLieu)
                         {
                             <option value="@nl">@nl</option>
@@ -30,6 +32,7 @@
                 <div class="filter-item">
                     <label class="filter-label">Loại Vị:</label>
                     <select @bind="selectedLoaiVi" class="filter-select">
+                        <option value="" selected></option>
                         @foreach (var lv in allLoaiVi)
                         {
                             <option value="@lv">@lv</option>
@@ -57,7 +60,9 @@
                             <div class="product-select-item">
                                 <img src="@(product.DanhSachAnh?.FirstOrDefault()?.DuongDan ?? "")" class="order-img" alt="@product.Ten" />
                                 <div class="item-info">
-                                    <div class="order-size">Thể Loại: <strong>@product.LoaiVi</strong></div>
+                                    <div class="order-size">Vị: <strong>@product.LoaiVi</strong></div>
+                                    <div class="order-size">Cỡ: <strong>@product.KichCo</strong></div>
+                                    <div class="order-size">Nguyên Liệu: <strong>@product.NguyenLieu</strong></div>
                                     <div class="order-price">Giá: <strong>@FormatMoney(product.Gia)</strong></div>
                                 </div>
                                 <div class="order-qty">
@@ -109,9 +114,9 @@
                             .Where(s => !string.IsNullOrWhiteSpace(s))
                             .Distinct().OrderBy(s => s).ToList();
 
-        selectedKichCo = allKichCo.FirstOrDefault() ?? "";
-        selectedNguyenLieu = allNguyenLieu.FirstOrDefault() ?? "";
-        selectedLoaiVi = allLoaiVi.FirstOrDefault() ?? "";
+        selectedKichCo = "";
+        selectedNguyenLieu = "";
+        selectedLoaiVi = "";
     }
 
 
@@ -169,7 +174,7 @@
         OnClose.InvokeAsync();
     }
 
-    private string FormatMoney(float amount)
+    private string FormatMoney(decimal amount)
     {
         return string.Format("{0:N0} VND", amount);
     }

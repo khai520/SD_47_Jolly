@@ -4,9 +4,9 @@
     <div class="navbar-left">
         <div class="logo" @onclick='() => Navigation.NavigateTo("/")'><img src="https://github.com/khai520/SD_47_Jolly/blob/main/Img/logo_DoAnVat.png?raw=true" width="50px" alt="Alternate Text" /></div>
         <div class="nav-links">
-            <a href="#">Trang chủ</a>
+            <a href="">Trang chủ</a>
             <a href="SanPham">Sản phẩm</a>
-            <a href="#">Khuyến mãi</a>
+            <a href="">Khuyến mãi</a>
             <a href="lienhe">Liên hệ</a>
         </div>
     </div>
@@ -37,7 +37,7 @@
 </div>
 
 <JollyWeb.Components.Pages.Account.AuthModal Visible="showAuthModal"
-                                             OnClose="() => showAuthModal = false"  
+                                             OnClose="() => Close()"  
                                              InitialTab="@initialAuthTab" />
 @code {
     [Inject] NavigationManager Navigation { get; set; }
@@ -55,7 +55,7 @@
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        
+
         if (firstRender && !_hasInitialized)
         {
             var role = await JS.InvokeAsync<string>("localStorage.getItem", "KhachHangRole");
@@ -65,19 +65,37 @@
             StateHasChanged();
         }
     }
-    private void GoToCart() => Navigation.NavigateTo("/giohang");
+    private async Task Close()
+    {
+        showAuthModal = false;
+    }
+    private void GoToCart() {
+        if (string.IsNullOrWhiteSpace(username))
+        {
+            ShowAuthModal("login");
+        }
+        else
+        {
+            Navigation.NavigateTo("/giohang");
+        }
+    }
     private async Task Logout()
     {
-
+        await JS.InvokeVoidAsync("localStorage.removeItem", "KhachHangId" );
         await JS.InvokeVoidAsync("localStorage.removeItem", "KhachHangRole");
         await JS.InvokeVoidAsync("localStorage.removeItem", "KhachHangUserName");
 
         username = "";
 
-
-        Navigation.NavigateTo("/");
-
-        StateHasChanged();
+        if (Navigation.Uri != "https://localhost:7084/checkout")
+        {
+            Navigation.NavigateTo(Navigation.Uri, forceLoad: true);
+        }
+        else
+        {
+            Navigation.NavigateTo("/", forceLoad: true);
+        }
+        
     }
 
 }

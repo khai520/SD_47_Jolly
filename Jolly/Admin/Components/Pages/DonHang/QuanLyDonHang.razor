@@ -1,7 +1,8 @@
 ﻿@page "/hoadon"
 @layout Layout.MainLayout
+@inject IHoaDonChiTietService ChiTietHoaDonService
+@inject IChiTietMonAnService GetChiTietMonAnService
 @inject IHoaDonService HoaDonService
-@inject IHoaDonChiTietService hoaDonChiTietService
 @inject IApiService ApiService
 @inject IJSRuntime JS
 
@@ -9,13 +10,13 @@
 
 <h2 class="text-xl font-semibold mb-4">Quản lý đơn hàng</h2>
 
-<!-- Ô tìm kiếm và nút tải lại -->
+
 <div class="search-row">
     <input @bind="TuKhoa" @bind:event="oninput" placeholder="Tìm kiếm..." />
     <button @onclick="TaiLai">Tải lại</button>
 </div>
 
-<!-- Tabs lọc theo trạng thái -->
+
 <div class="tabs">
     @foreach (var trangThaiItem in TrangThaiList)
     {
@@ -26,7 +27,7 @@
     }
 </div>
 
-<!-- Bảng danh sách hóa đơn -->
+
 <table class="table-auto w-full text-sm">
     <thead>
         <tr class="bg-gray-100">
@@ -64,24 +65,29 @@
                     <td class="p-2 space-x-1">
                         @if (hoaDon.TrangThai == "Chờ xác nhận")
                         {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
                             <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Chờ giao"))" class="btn-action">Xác nhận</button>
                             <button @onclick="@(() => HuyDon(hoaDon.Id))" class="btn-danger">Huỷ đơn</button>
                         }
                         else if (hoaDon.TrangThai == "Chờ giao")
                         {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
                             <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Vận chuyển"))" class="btn-action">Giao hàng</button>
                             <button @onclick="@(() => HuyDon(hoaDon.Id))" class="btn-danger">Huỷ đơn</button>
                         }
                         else if (hoaDon.TrangThai == "Vận chuyển")
                         {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
                             <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Đã giao"))" class="btn-action">Đã giao</button>
                         }
                         else if (hoaDon.TrangThai == "Đã giao")
                         {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
                             <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "Đã thanh toán"))" class="btn-action">Thanh toán</button>
                         }
                         else if (hoaDon.TrangThai == "Đã thanh toán")
                         {
+                            <button @onclick="@(() => XemChiTiet(hoaDon.Id))" class="btn-view">Xem</button>
                             <button @onclick="@(() => CapNhatTrangThai(hoaDon.Id, "hoàn thành"))" class="btn-action">Hoàn thành</button>
                         }
                         else if (hoaDon.TrangThai == "hoàn thành")
@@ -112,13 +118,136 @@
     </tbody>
 </table>
 
+@if (showHistory)
+{
+    <div class="modal-overlay">
+        <div class="modal1">
+            <!-- Header -->
+            <div class="modal-header">
+                <h3>Chi tiết đơn hàng #@selectedHoaDon?.Id</h3>
+            </div>
+
+            <!-- Thông tin đơn hàng -->
+            <div class="order-info-grid">
+                <div class="info-card">
+                    <h4>Khách hàng</h4>
+                    <div class="info-value">
+                        @(string.IsNullOrWhiteSpace(selectedHoaDon?.KhachHang?.NguoiDung?.Ten)
+                                            ? "Khách lẻ"
+                                            : selectedHoaDon.KhachHang.NguoiDung.Ten)
+                                                                                 </div>
+                                                                                 <div class="info-secondary">
+                        @(selectedHoaDon?.KhachHang != null
+                                            ? "Khách hàng thành viên"
+                                            : "Khách vãng lai")
+                </div>
+            </div>
+
+                <div class="info-card">
+                    <h4>Ngày đặt</h4>
+                    <div class="info-value">@selectedHoaDon?.NgayTao.ToString("dd/MM/yyyy")</div>
+                    <div class="info-secondary">@selectedHoaDon?.NgayTao.ToString("HH:mm")</div>
+                </div>
+
+                <div class="info-card">
+                    <h4>Loại đơn hàng</h4>
+                    <div class="info-value">@selectedHoaDon?.LoaiHoaDon</div>
+                    <div class="info-secondary">
+                        @(selectedHoaDon?.LoaiHoaDon == "Online" ? "Đặt hàng trực tuyến" : "Tại quầy")
+                    </div>
+                </div>
+
+                <div class="info-card">
+                    <h4>Trạng thái</h4>
+                    <div class="info-value">
+                        <span class="badge @(GetBadgeClass(selectedHoaDon?.TrangThai))">
+                            @selectedHoaDon?.TrangThai
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="total-summary">
+                <div class="total-amount">@selectedHoaDon?.TongTien.ToString("N0") đ</div>
+                <div class="total-label">Tổng giá trị đơn hàng</div>
+            </div>
+
+        @if (selectedChiTiet?.Any() == true)
+            {
+                var tongSoMon = selectedChiTiet.Sum(ct => ct.Soluong);
+                <h4 class="section-title">Chi tiết món ăn (@tongSoMon món)</h4>
+                <div class="items-list">
+                    @foreach (var chiTiet in MonAnTheoLichSu.Values.SelectMany(x => x))
+                    {
+
+                        <div class="item-row">
+                            <img src="@(string.IsNullOrEmpty(chiTiet.DanhSachAnh?.FirstOrDefault()?.DuongDan)
+                                                         ? "/images/default-food.jpg"
+                                                         : chiTiet.DanhSachAnh.First().DuongDan)"
+                     alt="@chiTiet.MonAnId"
+                     class="item-image" />
+
+                            <div class="item-info item-info-badges">
+                                <div class="item-name">@chiTiet.Ten</div>
+                                <div class="item-name">@chiTiet.LoaiVi</div>
+                                <div class="item-name">@chiTiet.KichCo</div>
+                                <div class="item-name">@chiTiet.NguyenLieu</div>
+                                <div class="item-details">@chiTiet.Mota</div>
+                            </div>
+
+                            <div class="item-quantity">x @chiTiet.SoLuongDat</div>
+                            <div class="item-price">@chiTiet.Gia.ToString("N0") đ</div>
+                        </div>
+                        }
+
+
+
+
+                </div>
+            }
+
+
+            <h4 class="section-title">Lịch sử trạng thái</h4>
+            @if (selectedLichSu?.Any() == true)
+            {
+                <div class="history-timeline">
+                    @foreach (var lichSu in selectedLichSu.OrderByDescending(ls => ls.ThoiGian))
+                    {
+                        <div class="history-item">
+                            <div class="history-status">@lichSu.TrangThai</div>
+                            <div class="history-time">@lichSu.ThoiGian.ToString("dd/MM/yyyy - HH:mm")</div>
+                            @if (!string.IsNullOrEmpty(lichSu.LyDo))
+                            {
+                                <div class="history-reason">@lichSu.LyDo</div>
+                            }
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="empty-state">
+                    <div style="font-size: 48px; color: #dee2e6; margin-bottom: 16px;">📋</div>
+                    <p>Chưa có lịch sử trạng thái</p>
+                </div>
+            }
+
+            <button class="btn-close1" @onclick="() => showHistory = false">Đóng</button>
+        </div>
+    </div>
+}
+
+
+
+
 @code {
     private List<HoaDon> DanhSachHoaDon;
-    private List<HoaDonChiTiet> DanhSachChiTiet;
-    private Dictionary<string, List<HoaDonChiTiet>> ChiTietTheoHoaDon = new();
+    private List<HoaDonChiTietDTO> DanhSachChiTiet;
+    private Dictionary<string, List<HoaDonChiTietDTO>> ChiTietTheoHoaDon = new();
     private HoaDon selectedHoaDon;
-    private List<HoaDonChiTiet> selectedChiTiet;
-
+    private List<HoaDonChiTietDTO> selectedChiTiet;
+    private List<ChiTietMonAnDTO> ChiTietMonAnDTOs = new();
     private string TuKhoa;
     private string TrangThai;
     private readonly List<string> TrangThaiList = new()
@@ -134,7 +263,8 @@
     private async Task TaiLai()
     {
         var allHoaDon = await ApiService.GetAsync<List<HoaDon>>("HoaDon");
-        DanhSachChiTiet = await ApiService.GetAsync<List<HoaDonChiTiet>>("HoaDonChiTiet") ?? new();
+        DanhSachChiTiet = await ApiService.GetAsync<List<HoaDonChiTietDTO>>("HoaDonChiTiet") ?? new();
+        
 
         ChiTietTheoHoaDon = DanhSachChiTiet
             .GroupBy(ct => ct.HoaDonId)
@@ -175,12 +305,16 @@
         bool xacNhan = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc muốn huỷ đơn hàng này không?");
         if (xacNhan)
         {
-            
+
             var hoaDon = await ApiService.GetbyId<HoaDon , string>( hoaDonId , "HoaDon");
             if (hoaDon != null)
             {
                 hoaDon.TrangThai = "Đã huỷ";
-                
+                await ApiService.PutAsync<HoaDon>("HoaDon", hoaDon);
+                foreach (var item in selectedChiTiet)
+                {
+                    await HoaDonService.LichSuTrangThai(item.Id, "Đã huỷ", "Bán Hàng Online");
+                }
                 await TaiLai();
             }
         }
@@ -188,17 +322,83 @@
 
     private async Task CapNhatTrangThai(string hoaDonId, string trangThaiMoi)
     {
-        var hoaDon = await ApiService.GetbyId< HoaDon, string> (hoaDonId, "HoaDon");
-        if (hoaDon != null)
+        bool xacNhan = await JS.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xác nhận đơn hàng này không?");
+        if (!xacNhan) return;
+
+        var hoaDon = await ApiService.GetbyId<HoaDon, string>(hoaDonId, "HoaDon");
+        if (hoaDon == null) return;
+
+        selectedChiTiet = await ChiTietHoaDonService.GetChiTiet(hoaDonId);
+
+        if (hoaDon.TrangThai == "Chờ xác nhận" )
         {
-            hoaDon.TrangThai = trangThaiMoi;
-            await ApiService.PutAsync<HoaDon>("HoaDon", hoaDon);
-            await TaiLai();
+            foreach (var item in selectedChiTiet)
+            {
+                var chiTietMonAnList = await GetChiTietMonAnService.GetAll();
+                var monAnChiTiet = chiTietMonAnList.FirstOrDefault(x => x.Id == item.ChiTietMonAnId);
+                if (monAnChiTiet == null) continue;
+
+                if (monAnChiTiet.Soluong < item.Soluong)
+                {
+                    await JS.InvokeVoidAsync("alert", $"Sản phẩm {monAnChiTiet.Ten} không đủ số lượng. Còn {monAnChiTiet.Soluong}, cần {item.Soluong}");
+                    return; 
+                }
+
+                monAnChiTiet.Soluong -= item.Soluong;
+                var updateResult = await ApiService.PutAsync("ChiTietMonAn", monAnChiTiet);
+                if (!updateResult)
+                {
+                    await JS.InvokeVoidAsync("alert", $"Cập nhật tồn kho cho {monAnChiTiet.Ten} thất bại!");
+                    return;
+                }
+            }
         }
+
+
+        hoaDon.TrangThai = trangThaiMoi;
+        await ApiService.PutAsync("HoaDon", hoaDon);
+
+        foreach (var item in selectedChiTiet)
+        {
+            await HoaDonService.LichSuTrangThai(item.Id, trangThaiMoi, "Bán Hàng Online");
+        }
+
+        await TaiLai();
     }
 
-    private void XemChiTiet(string hoaDonId)
+
+    private bool showHistory = false;
+    private List<LichSuTrangThai> selectedLichSu = new();
+
+    private Dictionary<Guid, List<ChiTietMonAnDTO>> MonAnTheoLichSu = new();
+
+    private async Task XemChiTiet(string hoaDonId)
     {
+        selectedHoaDon = DanhSachHoaDon.FirstOrDefault(x => x.Id == hoaDonId);
 
+        selectedLichSu = (await HoaDonService.GetLichSu(hoaDonId))
+                            ?.OrderByDescending(ls => ls.ThoiGian)
+                            .ToList() ?? new();
+
+        selectedChiTiet = await ChiTietHoaDonService.GetChiTiet(hoaDonId);
+        var chiTietMonAnList = await GetChiTietMonAnService.GetAll();
+
+        MonAnTheoLichSu.Clear();
+
+        foreach (var hoaDonCt in selectedChiTiet)
+        {
+            var chiTietMonAn = chiTietMonAnList.FirstOrDefault(ct => ct.Id == hoaDonCt.ChiTietMonAnId);
+            if (chiTietMonAn == null) continue;
+
+            chiTietMonAn.SoLuongDat = hoaDonCt.Soluong;
+
+            MonAnTheoLichSu[hoaDonCt.Id] = new List<ChiTietMonAnDTO> { chiTietMonAn };
+        }
+
+        showHistory = true;
     }
+
+
+
+
 }

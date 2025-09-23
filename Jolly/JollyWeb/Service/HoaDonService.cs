@@ -1,5 +1,6 @@
 ﻿using JollyWeb.Service.IService;
 using API.Repository.IRepository;
+using API.Models;
 
 namespace JollyWeb.Service
 {
@@ -12,7 +13,12 @@ namespace JollyWeb.Service
             this.hoaDonRepository = hoaDonRepository;
         }
 
-        public async Task<bool> LichSuTrangThai(string orderId, string newStatus, string reason)
+        public async Task<List<LichSuTrangThai>> GetLichSuTrangThaiByHoaDon(string hoaDonId)
+        {
+            return await hoaDonRepository.GetLichSu(hoaDonId);
+        }
+
+        public async Task<bool> LichSuTrangThai(Guid orderId, string newStatus, string reason)
         {
             try
             {

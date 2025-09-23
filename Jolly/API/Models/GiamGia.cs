@@ -12,11 +12,11 @@ namespace API.Models
         public string Ten { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Số lượng phải lớn hơn 0")]
         public int? Soluong { get; set; }
-        public float? SoTienKhuyenMai { get; set; }
+        public decimal? SoTienKhuyenMai { get; set; }
         [Range(1, int.MaxValue, ErrorMessage = "Phần trăm khuyến mãi phải lớn hơn 0")]
         public int? PhanTramKhuyenMai { get; set; }
-        public float? SoTienToiThieu { get; set; }
-        public float? GiaTriToiDa { get; set; }
+        public decimal? SoTienToiThieu { get; set; }
+        public decimal? GiaTriToiDa { get; set; }
         [NotFutureDate(ErrorMessage = "Ngày bắt đầu không được lớn hơn ngày hôm nay")]
         public DateTime? NgayBatDau { get; set; } = DateTime.Now;
         public DateTime? NgayKetThuc { get; set; }

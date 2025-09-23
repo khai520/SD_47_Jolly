@@ -1,7 +1,10 @@
-﻿namespace Admin.Service.IService
+﻿using API.Models;
+
+namespace Admin.Service.IService
 {
     public interface IHoaDonService
     {
-        Task<bool> LichSuTrangThai(string orderId, string newStatus, string reason);
+        Task<bool> LichSuTrangThai(Guid orderId, string newStatus, string reason);
+        Task<List<LichSuTrangThai>> GetLichSu(string hoadonId); 
     }
 }

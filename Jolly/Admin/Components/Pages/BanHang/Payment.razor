@@ -1,6 +1,7 @@
 ﻿@page "/payment-result"
 @layout Layout.LoginLayout
 @inject NavigationManager Nav
+@inject Blazored.LocalStorage.ILocalStorageService LocalStorage
 <link href="css/Payment.css" rel="stylesheet" />
 
 <div class="payment-result-container">
@@ -54,8 +55,9 @@
             status = "success";
             _ = Task.Run(async () =>
             {
+                await LocalStorage.SetItemAsync("status", status);
                 await Task.Delay(3000);
-                Nav.NavigateTo($"/banhang?status={status}");
+                Nav.NavigateTo($"/banhang");
             });
         }
         else

@@ -155,6 +155,7 @@
 
     private async Task SaveNhanVien()
     {
+        var nhanViens = await apiService.GetAsync<List<NhanVienDTO>>("NhanVien");
         if (string.IsNullOrWhiteSpace(currentnhanvien.Ten) || string.IsNullOrWhiteSpace(currentnhanvien.Ho))
         {
             string checktype = isEdit ? "Thêm" : "Sửa";
@@ -262,6 +263,17 @@
         {
             if (nv != null)
             {
+                if (nhanViens.Any(x => x.Sdt == currentnhanvien.Sdt && x.Id != currentnhanvien.Id))
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = "Trùng số điện thoại!",
+                        text = "Số điện thoại đã tồn tại ở nhân viên khác.",
+                        confirmButtonText = "OK"
+                    });
+                    return;
+                }
                 NguoiDung nguoiDung = new()
                 {
                     Id = currentnhanvien.NguoiDungId,
@@ -310,6 +322,17 @@
         }
         else
         {
+            if (nhanViens.Any(x => x.Sdt == currentnhanvien.Sdt))
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Trùng số điện thoại!",
+                    text = "Số điện thoại đã tồn tại trong hệ thống.",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
 
             NguoiDung nguoiDung = new()
             {

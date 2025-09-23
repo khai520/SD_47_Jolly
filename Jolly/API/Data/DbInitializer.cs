@@ -60,6 +60,35 @@ namespace API.Data
                 });
             }
 
+            if (!context.hinhThucThanhToans.Any())
+            {
+                context.hinhThucThanhToans.AddRange(
+                    new HinhThucThanhToan
+                    {
+                        Id = Guid.Parse("aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"),
+                        Ten = "Tiền mặt",
+                        Mota = "Thanh toán khi nhận hàng"
+                    },
+                    new HinhThucThanhToan
+                    {
+                        Id = Guid.Parse("bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb"),
+                        Ten = "Chuyển khoản",
+                        Mota = "Thanh toán qua ngân hàng"
+                    },
+                    new HinhThucThanhToan
+                    {
+                        Id = Guid.Parse("cccccccc-cccc-cccc-cccc-cccccccccccc"),
+                        Ten = "VNPay",
+                        Mota = "Thanh toán qua VNPay"
+                    },
+                    new HinhThucThanhToan
+                    {
+                        Id = Guid.Parse("dddddddd-dddd-dddd-dddd-dddddddddddd"),
+                        Ten = "Momo",
+                        Mota = "Thanh toán qua ví Momo"
+                    }
+                );
+            }
             context.SaveChanges();
         }
     }

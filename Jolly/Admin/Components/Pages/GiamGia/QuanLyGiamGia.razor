@@ -286,7 +286,7 @@
                     var used = GetUsedCount(v);
                     if (v.PhanTramKhuyenMai.HasValue)
                     {
-                        return used * 100_000 * v.PhanTramKhuyenMai.Value / 100.0;
+                        return used * 100_000 * v.PhanTramKhuyenMai.Value / 100.0m;
                     }
                     return used * (v.SoTienKhuyenMai ?? 0);
                 }).ToString("N0", CultureInfo.GetCultureInfo("vi-VN")) + "đ",
@@ -436,7 +436,7 @@
 
     private double GetUsagePercentage(Voucher voucher)
     {
-        var total = voucher.Soluong ?? 0;
+        var total = voucher.Soluong == 0 ? 0 : voucher.Soluong;
         if (total == 0) return 0;
         return Math.Round((double)GetUsedCount(voucher) / total * 100, 2);
     }

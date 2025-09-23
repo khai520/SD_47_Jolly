@@ -17,7 +17,7 @@ namespace JollyWeb.Service
             _httpclient = httpClient;
         }
 
-        public async Task<TaiKhoanDTO> Login(LoginViewModel model)
+        public async Task<TaiKhoanKHDTO> Login(LoginViewModel model)
         {
             try
             {
@@ -31,7 +31,7 @@ namespace JollyWeb.Service
                 if (string.IsNullOrWhiteSpace(content))
                     return null;
 
-                return JsonSerializer.Deserialize<TaiKhoanDTO>(content, new JsonSerializerOptions
+                return JsonSerializer.Deserialize<TaiKhoanKHDTO>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
                 });

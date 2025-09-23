@@ -24,7 +24,7 @@
             🏭 Nhà cung cấp
         </button>
         <button class="tab @(currentTab == "donggoi" ? "active" : "")" @onclick='() => SwitchTab("donggoi")'>
-            📦 Đóng gói
+            📦 Nguyên liệu
         </button>
     </div>
 
@@ -242,7 +242,7 @@
         <div class="stats-cards">
             <div class="stat-card">
                 <div class="stat-number">@dongGoiList.Count</div>
-                <div class="stat-label">Tổng loại đóng gói</div>
+                <div class="stat-label">Tổng loại nguyên liệu</div>
             </div>
         </div>
 
@@ -375,7 +375,7 @@
         {
             switch (tab)
             {
-                case "theloai":
+                case "loaivi":
                     LoaiViList = await apiService.GetAsync<List<LoaiVi>>("LoaiVi") ?? new();
                     filteredLoaiVi = LoaiViList;
                     break;
@@ -388,7 +388,7 @@
                     filteredNhaCungCap = nhaCungCapList;
                     break;
                 case "donggoi":
-                    dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("DongGoi") ?? new();
+                    dongGoiList = await apiService.GetAsync<List<NguyenLieu>>("NguyenLieu") ?? new();
                     filteredDongGoi = dongGoiList;
                     break;
             }
@@ -404,7 +404,7 @@
     {
         switch (tab)
         {
-            case "theloai":
+            case "loaivi":
                 filteredLoaiVi = LoaiViList.Where(x => x.Ten.Contains(searchLoaiVi, StringComparison.OrdinalIgnoreCase)).ToList();
                 break;
             case "thuonghieu":

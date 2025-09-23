@@ -128,6 +128,7 @@
     {
         try
         {
+            var khachhangs = await apiService.GetAsync<List<KhachHangDTO>>("KhachHang");
             if (string.IsNullOrWhiteSpace(currentKhachHang.Ten) || string.IsNullOrWhiteSpace(currentKhachHang.Ho))
             {
                 string checktype = isEdit ? "Thêm" : "Sửa";
@@ -229,7 +230,17 @@
             {
                 if (khach != null)
                 {
-                    
+                    if (khachhangs.Any(x => x.Sdt == currentKhachHang.Sdt && x.Id != currentKhachHang.Id))
+                    {
+                        await JS.InvokeVoidAsync("Swal.fire", new
+                        {
+                            icon = "warning",
+                            title = "Trùng số điện thoại!",
+                            text = "Số điện thoại đã tồn tại ở nhân viên khác.",
+                            confirmButtonText = "OK"
+                        });
+                        return;
+                    }
                     NguoiDung nguoiDung = new()
                     {
                         Id = currentKhachHang.NguoiDungId,
@@ -276,7 +287,17 @@
             }
             else
             {
-
+                if (khachhangs.Any(x => x.Sdt == currentKhachHang.Sdt))
+                {
+                    await JS.InvokeVoidAsync("Swal.fire", new
+                    {
+                        icon = "warning",
+                        title = "Trùng số điện thoại!",
+                        text = "Số điện thoại đã tồn tại trong hệ thống.",
+                        confirmButtonText = "OK"
+                    });
+                    return;
+                }
                 NguoiDung nguoiDung = new()
                 {
                     Ho = currentKhachHang.Ho,

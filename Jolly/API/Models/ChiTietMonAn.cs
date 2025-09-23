@@ -16,7 +16,7 @@ namespace API.Models
         
         public Guid? NhaCungCapId { get; set; }
         public Guid? KichCoId { get; set; }
-        public float Gia { get; set; }
+        public decimal Gia { get; set; }
         public int SoNgayHSD { get; set; }
         public bool TrangThai { get; set; } = false;
         public string MonAnId { get; set; }
@@ -29,6 +29,7 @@ namespace API.Models
         public virtual ICollection<Anh>? Anhs { get; set; } = new List<Anh>();
         public virtual ICollection<ChiTietCombo>? ChiTietCombos { get; set; }
         public virtual ICollection<GioHang>? GioHangs { get; set; }
+        [JsonIgnore]
         public virtual ICollection<HoaDonChiTiet>? HoaDonChiTiets { get; set; }
         public virtual ICollection<ChiTietGiamGia>? ChiTietGiamGias { get; set; }
 

@@ -75,9 +75,6 @@
                             <button class="action-btn btn-view" @onclick="() => ViewProduct(product.Id)">
                                 <i class="fas fa-eye"></i> Xem
                             </button>
-                            <button class="action-btn btn-edit" @onclick="() => EditProduct(product.Id)">
-                                <i class="fas fa-edit"></i> Sửa
-                            </button>
                         </div>
                     </div>
                 </div>
@@ -249,10 +246,7 @@
         nav.NavigateTo($"/mon-an/{id}");
     }
 
-    private async Task EditProduct(string id)
-    {
-        await JSRuntime.InvokeVoidAsync("alert", $"Chức năng chỉnh sửa sản phẩm {id} sẽ được triển khai");
-    }
+
 
 
 }

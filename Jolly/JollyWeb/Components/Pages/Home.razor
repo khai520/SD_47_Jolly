@@ -61,9 +61,21 @@
 @code {
     [Inject] NavigationManager Navigation { get; set; }
     public List<MonAnDTO> MonAns = new();
+    private bool _hasInitialized = false;
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
 
+        if (firstRender && !_hasInitialized)
+        {
+            await JS.InvokeVoidAsync("localStorage.removeItem", "checkoutItems");
+            await JS.InvokeVoidAsync("localStorage.removeItem", "pendingOrder");
+            _hasInitialized = true;
+            StateHasChanged();
+        }
+    }
     protected override async Task OnInitializedAsync()
     {
+        
         var monAns = await monAnService.GetAll() ?? new();
         var ctma = await chiTietMonAnService.GetAll() ?? new();
 

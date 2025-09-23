@@ -258,15 +258,22 @@
                         </div>
                     </div>
                     @if (PaymentMethod == "Cash")
-                    {
-                        <div class="cash-payment">
-                            <label>Khách trả:</label>
-                            <input type="number" min="0" @bind="CustomerPay" @bind:event="oninput" />
-                            <div>
-                                <strong>Tiền thối:</strong> @FormatMoney(CustomerPay - TotalAmount)
+                        {
+                            <div class="cash-payment">
+                                <label>Khách trả:</label>
+                                <input type="number" min="0" step="0.01" @bind="CustomerPay" @bind:event="oninput" />
+                                <div>
+                                    @if (CustomerPay < TotalAmount)
+                                    {
+                                        <strong>Khách còn thiếu:</strong> @FormatMoney(TotalAmount - CustomerPay)
+                                    }
+                                    else
+                                    {
+                                        <strong>Tiền thừa:</strong> @FormatMoney(CustomerPay - TotalAmount)
+                                    }
+                                </div>
                             </div>
-                        </div>
-                    }
+                        }
                     <button class="confirm-btn" @onclick="ThanhToan">XÁC NHẬN ĐẶT HÀNG</button>
                 </div>
             </div>
@@ -287,32 +294,33 @@
     ? Orders[CurrentOrderIndex]
     : null;
 
-    private float _CustomerPay;
-    private float CustomerPay
+    private decimal _CustomerPay;
+    private decimal CustomerPay
     {
         get => _CustomerPay;
         set
         {
             _CustomerPay = value;
-            StateHasChanged(); 
+            StateHasChanged();
         }
     }
 
 
 
+
     // 💰 Tính toán đơn hàng
-    private float DiscountPercent { get; set; } = 0;
+    private decimal DiscountPercent { get; set; } = 0;
 
 
-    private float Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.Gia) ?? 0f;
+    private decimal Subtotal => CurrentOrder?.Products?.Sum(p => p.SoLuongDat * p.Gia) ?? 0m;
 
-    private float ShippingFee => (CurrentOrder?.ThongTinHoaDon?.IsDelivery ?? false) ? 20000f : 0f;
+    private decimal ShippingFee => (CurrentOrder?.ThongTinHoaDon?.IsDelivery ?? false) ? 20000m : 0m;
 
-    private float DiscountAmount => (Subtotal * DiscountPercent) / 100f;
+    private decimal DiscountAmount => (Subtotal * DiscountPercent) / 100m;
 
-    private float TotalAmount => Subtotal + ShippingFee - DiscountAmount;
+    private decimal TotalAmount => Subtotal + ShippingFee - DiscountAmount;
 
-    private float DeficitAmount => CustomerPay - TotalAmount;
+    private decimal DeficitAmount => CustomerPay - TotalAmount;
 
     private List<ChiTietMonAnDTO> Products = new();
     private List<MonAnDTO> allProducts = new();
@@ -324,7 +332,7 @@
 
 
     // 🛒 Hành động
-    private async void CreateOrder()
+    private async Task CreateOrder()
     {
 
         if (Orders.Count >= 5)
@@ -404,7 +412,7 @@
     {
         CurrentOrderIndex = index;
 
-
+        CustomerPay = 0;
         Tinh = CurrentOrder.ThongTinHoaDon.TinhThanhPho;
         Huyen = CurrentOrder.ThongTinHoaDon.QuanHuyen;
         Phuong = CurrentOrder.ThongTinHoaDon.XaPhuongThiTran;
@@ -487,9 +495,6 @@
                 await SaveOrdersToStorage();
             });
         }, null, TimeSpan.FromMinutes(1), TimeSpan.FromMinutes(1)); 
-        var uri = Nav.ToAbsoluteUri(Nav.Uri);
-        var query = System.Web.HttpUtility.ParseQueryString(uri.Query);
-        status = query["status"];
 
     }
 
@@ -514,76 +519,7 @@
 
     private async void ConfirmOrder()
     {
-        if (CurrentOrder.Products.Count == 0)
-        {
-            await JS.InvokeVoidAsync("Swal.fire", new
-            {
-                icon = "warning",
-                title = "Chưa thêm sản phẩm",
-                text = "Đơn hàng chưa được thêm sản phẩm."
-            });
-            return;
-        }
 
-        if (CurrentOrder.ThongTinHoaDon.IsDelivery)
-        {
-            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.TenNguoiNhan) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.Sdt))
-            {
-                await JS.InvokeVoidAsync("Swal.fire", new
-                {
-                    icon = "warning",
-                    title = "Dữ liệu chưa đủ!",
-                    text = $"Chưa nhập thông tin người nhận",
-                    confirmButtonText = "OK"
-                });
-                return;
-            }
-
-            if (!System.Text.RegularExpressions.Regex.IsMatch(CurrentOrder.ThongTinHoaDon.Sdt, @"^\d{9,11}$"))
-            {
-                await JS.InvokeVoidAsync("Swal.fire", new
-                {
-                    icon = "warning",
-                    title = "Dữ liệu chưa đủ!",
-                    text = $"Số điện thoại không hợp lệ",
-                    confirmButtonText = "OK"
-                });
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.TinhThanhPho) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.QuanHuyen) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.XaPhuongThiTran))
-            {
-                await JS.InvokeVoidAsync("Swal.fire", new
-                {
-                    icon = "warning",
-                    title = "Dữ liệu chưa đủ!",
-                    text = $"Chưa chọn địa chỉ khu vực",
-                    confirmButtonText = "OK"
-                });
-                return;
-            }
-            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.DiaChiCuThe))
-            {
-                await JS.InvokeVoidAsync("Swal.fire", new
-                {
-                    icon = "warning",
-                    title = "Dữ liệu chưa đủ!",
-                    text = $"Địa chỉ cụ thể chưa thêm",
-                    confirmButtonText = "OK"
-                });
-                return;
-            }
-        }
-        if (PaymentMethod == "Cash" && CustomerPay < TotalAmount)
-        {
-            await JS.InvokeVoidAsync("Swal.fire", new
-            {
-                icon = "warning",
-                title = "Chưa đủ tiền!",
-                text = $"Khách còn thiếu {FormatMoney(TotalAmount - CustomerPay)}",
-                confirmButtonText = "OK"
-            });
-            return;
-        }
         if (CurrentOrder.Customer != null && CurrentOrder.ThongTinHoaDon.IsDelivery)
         {
             var nguoidung = new NguoiDungDTO()
@@ -670,7 +606,6 @@
         var result2 = await apiService.PostAsync<HoaDon, HoaDon>("HoaDon", _mapper.Map<HoaDon>(hoadon));
         if (result2 != null)
         {
-            await HoaDonService.LichSuTrangThai(result2.Id, result2.TrangThai,"Hóa Đơn bán hàng tại quầy" );
             foreach (var item in CurrentOrder.Products)
             {
                 var monanchitiet = await apiService.GetbyId<ChiTietMonAn, Guid>(item.Id, "ChiTietMonAn");
@@ -696,15 +631,9 @@
                     ThanhTien  = item.Gia * item.SoLuongDat,
                 };
                 var result3 = await apiService.PostAsync<HoaDonChiTiet, HoaDonChiTiet>("HoaDonChiTiet", _mapper.Map<HoaDonChiTiet>(hoadonchitiet));
-                if (result3 == null)
+                if (result3 != null)
                 {
-                    await JS.InvokeVoidAsync("Swal.fire", new
-                    {
-                        icon = "warning",
-                        title = $"Thất bại",
-                        text = $"Thêm chi tiết hóa đơn thất bại."
-                    });
-                    return;
+                    await HoaDonService.LichSuTrangThai(result3.Id, result2.TrangThai, "Hóa Đơn bán hàng tại quầy");
                 }
 
 
@@ -732,7 +661,7 @@
 
     }
 
-    private string FormatMoney(float amount)
+    private string FormatMoney(decimal amount)
     {
         return string.Format("{0:N0} VND", amount);
     }
@@ -815,7 +744,7 @@
 
         var savedOrders = await LocalStorage.GetItemAsync<List<Order>>("banhang_orders");
         var savedIndex = await LocalStorage.GetItemAsync<int>("banhang_currentIndex");
-
+        var status = await LocalStorage.GetItemAsync<string?>("status");
         if (savedOrders != null && savedOrders.Count > 0)
         {
             Orders = savedOrders;
@@ -831,10 +760,11 @@
                     item.Products.RemoveAll(item => !Products.Any(p => p.Id == item.Id));
                 }
             }
-            
+
             if (status == "success")
             {
                 ConfirmOrder();
+                await LocalStorage.RemoveItemAsync("status");
             }
 
         }
@@ -897,7 +827,7 @@
         {
             if (voucher.PhanTramKhuyenMai != null || voucher.PhanTramKhuyenMai != 0)
             {
-                DiscountPercent = (float)(voucher.PhanTramKhuyenMai ?? 0) * 0.1f;
+                DiscountPercent = voucher.PhanTramKhuyenMai ?? 0 * 0.1m;
             }
             else if (voucher.SoTienKhuyenMai != null || voucher.SoTienKhuyenMai != 0)
             {
@@ -920,7 +850,7 @@
     private async Task ThanhToanVnPay()
     {
         var orderId = DateTime.Now.Ticks.ToString();
-        var paymentUrl = vnPayService.CreatePaymentUrl((decimal)TotalAmount, orderId, "Thanh toán hóa đơn Jolly");
+        var paymentUrl = vnPayService.CreatePaymentUrl(TotalAmount, orderId, "Thanh toán hóa đơn Jolly");
 
         // Chuyển hướng sang VNPAY
         Nav.NavigateTo(paymentUrl, forceLoad: true);
@@ -936,8 +866,96 @@
 
     private async Task ThanhToan()
     {
+        foreach (var product in CurrentOrder.Products)
+        {
+            var chiTiet = Products.FirstOrDefault(p => p.Id == product.Id);
+            if (chiTiet == null || chiTiet.Soluong < product.Soluong)
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "error",
+                    title = "Không đủ số lượng",
+                    text = $"Sản phẩm {product.Ten} chỉ còn {chiTiet?.Soluong ?? 0} trong kho!"
+                });
+                return;
+            }
+        }
+        if (CurrentOrder.Products.Count == 0)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = "Chưa thêm sản phẩm",
+                text = "Đơn hàng chưa được thêm sản phẩm."
+            });
+            return;
+        }
+
+        if (CurrentOrder.ThongTinHoaDon.IsDelivery)
+        {
+            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.TenNguoiNhan) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.Sdt))
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Dữ liệu chưa đủ!",
+                    text = $"Chưa nhập thông tin người nhận",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+
+            if (!System.Text.RegularExpressions.Regex.IsMatch(CurrentOrder.ThongTinHoaDon.Sdt, @"^\d{9,11}$"))
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Dữ liệu chưa đủ!",
+                    text = $"Số điện thoại không hợp lệ",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.TinhThanhPho) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.QuanHuyen) || string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.XaPhuongThiTran))
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Dữ liệu chưa đủ!",
+                    text = $"Chưa chọn địa chỉ khu vực",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+            if (string.IsNullOrWhiteSpace(CurrentOrder.ThongTinHoaDon.DiaChiCuThe))
+            {
+                await JS.InvokeVoidAsync("Swal.fire", new
+                {
+                    icon = "warning",
+                    title = "Dữ liệu chưa đủ!",
+                    text = $"Địa chỉ cụ thể chưa thêm",
+                    confirmButtonText = "OK"
+                });
+                return;
+            }
+        }
+        if (PaymentMethod == "Cash" && CustomerPay < TotalAmount)
+        {
+            await JS.InvokeVoidAsync("Swal.fire", new
+            {
+                icon = "warning",
+                title = "Chưa đủ tiền!",
+                text = $"Khách còn thiếu {FormatMoney(TotalAmount - CustomerPay)}",
+                confirmButtonText = "OK"
+            });
+            return;
+        }
+
+
+
         if (PaymentMethod == "Cash")
         {
+            ConfirmOrder();
         }
         else if (PaymentMethod == "QR")
         {

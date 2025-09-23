@@ -12,8 +12,8 @@ namespace API.Models.DTO
         public string? LoaiVi { get; set; }
         public string? KichCo { get; set; }
         public string MonAnId { get; set; }
-        public float Gia { get; set; }
-        public float GiaGiam { get; set; }
+        public decimal Gia { get; set; }
+        public decimal GiaGiam { get; set; }
         public int Soluong { get; set; }
         public int SoNgayHSD { get; set; }
         public string? Mota { get; set; }
@@ -24,5 +24,7 @@ namespace API.Models.DTO
         public Guid? NhaCungCapId { get; set; }
         public List<AnhDTO>? DanhSachAnh { get; set; }
         public int SoLuongDat { get; set; } = 1;
+        public bool IsSelected { get; set; } = false;
+
     }
 }

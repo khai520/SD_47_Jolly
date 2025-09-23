@@ -1,4 +1,4 @@
-﻿@page "/SanPham"
+﻿ @page "/SanPham"
 @using API.Models.DTO
 @inject IJSRuntime JSRuntime
 @inject NavigationManager Nav
@@ -10,7 +10,7 @@
 
 <main>
     <section class="products-with-filter" id="products">
-        <div class="container">
+        <div class="container1">
             <div class="product-layout">
                 <!-- Cột trái: Bộ lọc -->
                 <aside class="product-filters">
@@ -82,9 +82,9 @@
     private string selectedBrand = "";
     private string selectedSupplier = "";
     private string selectedPackaging = "";
-    private float priceFilter = 100000;
-    private float minPrice = 10000;
-    private float maxPrice = 100000;
+    private decimal priceFilter = 100000;
+    private decimal minPrice = 10000;
+    private decimal maxPrice = 100000;
 
     // Filter options
     private List<string> categories = new();
@@ -163,7 +163,7 @@
 
     private async Task OnPriceChange(ChangeEventArgs e)
     {
-        if (float.TryParse(e.Value?.ToString(), out float newPrice)) 
+        if (decimal.TryParse(e.Value?.ToString(), out decimal newPrice))
         {
             priceFilter = newPrice;
             ApplyFilters();
